@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我是如何复刻 WorkBuddy 网站内容的 — virusbee</title>
+<meta name="description" content="一次对 WorkBuddy 视觉语言的完整拆解：从结构、设计 Token、终端氛围，到数字滚动与滚动入场动效。文末附可运行的复刻 Demo。">
+<link rel="canonical" href="https://virusbee.github.io/posts/how-i-replicated-workbuddy.html">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我是如何复刻 WorkBuddy 网站内容的 — virusbee">
+<meta property="og:description" content="从结构、设计 Token、终端氛围，到数字滚动与滚动入场动效，完整记录一次 1:1 复刻。">
+<meta property="og:url" content="https://virusbee.github.io/posts/how-i-replicated-workbuddy.html">
+<meta name="theme-color" content="#0F1115">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-primary:#0F1115;
+  --bg-secondary:#151922;
+  --bg-card:#1B202B;
+  --bg-elevated:#222938;
+  --bg-code:#0B0E12;
+  --text-primary:#F3F7FA;
+  --text-secondary:#AAB7C4;
+  --text-muted:#7A889C;
+  --accent:#00D9A3;
+  --accent-2:#7CFFCB;
+  --warning:#F9D65C;
+  --red:#FF6B6B;
+  --blue:#61A5FF;
+  --purple:#A78BFA;
+  --orange:#FFB86B;
+  --gradient:linear-gradient(135deg,#00D9A3 0%,#7CFFCB 100%);
+  --border:rgba(124,255,203,0.14);
+  --border-hover:rgba(124,255,203,0.36);
+  --radius:12px;
+  --radius-lg:18px;
+  --shadow:0 10px 30px rgba(0,0,0,0.35);
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC",sans-serif;
+  --font-mono:"SF Mono","Fira Code",Menlo,Consolas,"DejaVu Sans Mono",monospace;
+  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-sans);
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  line-height:1.65;
+  overflow-x:hidden;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background-image:
+    linear-gradient(rgba(124,255,203,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(124,255,203,0.03) 1px,transparent 1px),
+    radial-gradient(circle at 20% 0%,rgba(0,217,163,0.12),transparent 34%),
+    radial-gradient(circle at 85% 15%,rgba(97,165,255,0.08),transparent 28%);
+  background-size:36px 36px,36px 36px,100% 100%,100% 100%;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(0,217,163,0.28);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.skip-link{
+  position:fixed;left:16px;top:-100px;z-index:100;
+  background:var(--accent);color:#04120D;
+  font-family:var(--font-mono);font-size:.8rem;font-weight:600;
+  padding:10px 14px;border-radius:8px;transition:top .2s ease;
+}
+.skip-link:focus{top:12px}
+
+/* ── 顶部终端栏 ───────────────────────────── */
+.terminal-bar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(15,17,21,0.92);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.terminal-inner{
+  max-width:1180px;margin:0 auto;padding:12px 24px;
+  display:flex;align-items:center;gap:14px;overflow-x:auto;
+}
+.lights{display:flex;gap:7px;flex-shrink:0}
+.lights span{width:10px;height:10px;border-radius:50%}
+.r{background:#FF5F57}
+.y{background:#FFBD2E}
+.g{background:#28C840}
+.prompt{font-family:var(--font-mono);font-size:.8rem;color:var(--text-muted);white-space:nowrap}
+.prompt strong{color:var(--accent);font-weight:500}
+.nav{margin-left:auto;display:flex;gap:6px}
+.nav a{
+  font-family:var(--font-mono);font-size:.74rem;color:var(--text-secondary);
+  padding:5px 10px;border:1px solid transparent;border-radius:999px;
+  white-space:nowrap;transition:var(--transition);
+}
+.nav a:hover{border-color:var(--border-hover);color:var(--accent)}
+.progress-track{
+  position:absolute;left:0;right:0;bottom:-1px;height:2px;
+  background:transparent;pointer-events:none;
+}
+.progress-track span{
+  display:block;width:0;height:100%;background:var(--gradient);
+  box-shadow:0 0 12px rgba(0,217,163,.55);
+}
+
+/* ── 文章头部 ─────────────────────────────── */
+.article-hero{padding:76px 24px 46px;border-bottom:1px solid var(--border)}
+.article-hero-inner{max-width:1180px;margin:0 auto}
+.eyebrow{
+  font-family:var(--font-mono);font-size:.78rem;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:18px;
+}
+.article-hero h1{
+  max-width:980px;font-size:clamp(2.2rem,5vw,4rem);line-height:1.08;
+  letter-spacing:-1.8px;margin-bottom:20px;
+}
+.article-hero h1 span{
+  background:var(--gradient);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.article-desc{max-width:780px;color:var(--text-secondary);font-size:1.05rem;margin-bottom:24px}
+.article-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.time{
+  font-family:var(--font-mono);font-size:.72rem;color:var(--accent-2);
+  background:rgba(0,217,163,.08);border:1px solid rgba(0,217,163,.18);
+  padding:2px 8px;border-radius:999px;
+}
+.source{font-size:.78rem;color:var(--text-muted)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px}
+.tag{
+  font-family:var(--font-mono);font-size:.7rem;color:var(--text-secondary);
+  border:1px solid var(--border);background:rgba(255,255,255,.02);
+  padding:3px 9px;border-radius:999px;
+}
+
+/* ── 双栏：目录 + 正文 ─────────────────────── */
+.article-layout{
+  max-width:1180px;margin:0 auto;padding:50px 24px 60px;
+  display:grid;grid-template-columns:200px minmax(0,760px);gap:56px;
+  align-items:start;flex:1;width:100%;
+}
+.toc{position:sticky;top:86px;padding-top:6px}
+.toc-title{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;
+}
+.toc a{
+  display:block;font-size:.8rem;color:var(--text-muted);
+  padding:6px 0 6px 12px;border-left:1px solid var(--border);
+  transition:var(--transition);
+}
+.toc a span{font-family:var(--font-mono);font-size:.68rem;color:var(--accent);margin-right:8px}
+.toc a:hover,.toc a.active{color:var(--text-primary);border-left-color:var(--accent)}
+.toc a.active span{color:var(--accent-2)}
+.toc a.toc-demo{
+  margin-top:22px;display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);font-size:.72rem;color:var(--accent);
+  border:1px solid var(--border);border-radius:999px;padding:7px 11px;
+  transition:var(--transition);
+}
+.toc a.toc-demo:hover{border-color:var(--border-hover);background:rgba(0,217,163,.06);color:var(--accent-2)}
+
+.article-body{min-width:0;color:var(--text-secondary);font-size:1rem;line-height:1.85}
+.lede{font-size:1.1rem;line-height:1.8;color:var(--text-primary);margin-bottom:26px}
+.article-body section{margin-top:48px;scroll-margin-top:88px}
+.article-body h2{
+  display:flex;align-items:baseline;gap:12px;
+  font-size:1.55rem;line-height:1.35;letter-spacing:-.4px;
+  color:var(--text-primary);margin-bottom:16px;
+}
+.h-index{
+  flex-shrink:0;font-family:var(--font-mono);font-size:.76rem;letter-spacing:0;
+  color:var(--accent);border:1px solid var(--border-hover);
+  border-radius:8px;padding:2px 8px;
+}
+.article-body p{margin-bottom:1.15em}
+.article-body strong{color:var(--text-primary);font-weight:650}
+.article-body a{
+  color:var(--accent);border-bottom:1px dashed rgba(0,217,163,.5);
+  transition:var(--transition);
+}
+.article-body a:hover{color:var(--accent-2);border-bottom-color:var(--accent-2)}
+.article-body ul,.article-body ol{margin:0 0 1.2em 1.15em}
+.article-body li{margin-bottom:.45em;padding-left:.2em}
+.article-body li::marker{color:var(--accent)}
+.article-body code{
+  font-family:var(--font-mono);font-size:.86em;color:var(--accent-2);
+  background:rgba(0,217,163,.07);border:1px solid rgba(0,217,163,.14);
+  padding:.1em .4em;border-radius:5px;
+}
+.article-body hr{
+  border:0;border-top:1px solid var(--border);margin:36px 0;
+}
+
+/* ── 代码块 ───────────────────────────────── */
+.code-block{
+  margin:22px 0;background:var(--bg-code);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;box-shadow:var(--shadow);
+}
+.code-head{
+  display:flex;align-items:center;gap:7px;padding:9px 14px;
+  border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);
+  font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted);
+  letter-spacing:.4px;
+}
+.code-head .dots{display:flex;gap:5px;margin-right:4px}
+.code-head .dots i{width:7px;height:7px;border-radius:50%;display:block}
+.code-head .dots i:nth-child(1){background:rgba(255,95,87,.75)}
+.code-head .dots i:nth-child(2){background:rgba(255,189,46,.75)}
+.code-head .dots i:nth-child(3){background:rgba(40,200,64,.75)}
+.code-head .filename{margin-left:auto;color:var(--accent);opacity:.75}
+.code-block pre{
+  padding:16px 18px;overflow-x:auto;
+  font-family:var(--font-mono);font-size:.8rem;line-height:1.7;
+  color:#D9E2EA;tab-size:2;
+}
+.code-block code{
+  background:none;border:0;padding:0;border-radius:0;
+  color:inherit;font-size:inherit;font-family:inherit;white-space:pre;
+}
+
+/* ── 特殊内容块 ───────────────────────────── */
+.callout{
+  margin:24px 0;padding:16px 18px;border:1px solid var(--border);
+  border-left:3px solid var(--accent);border-radius:10px;
+  background:rgba(0,217,163,.045);
+}
+.callout-label{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:6px;
+}
+.callout p:last-child{margin-bottom:0}
+.table-scroll{overflow-x:auto;margin:22px 0;-webkit-overflow-scrolling:touch}
+.token-table{
+  min-width:520px;border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;background:var(--bg-card);
+  font-family:var(--font-mono);font-size:.74rem;
+}
+.token-row{
+  display:grid;grid-template-columns:1.05fr 1.55fr 1.25fr;gap:12px;
+  padding:9px 14px;border-top:1px solid var(--border);align-items:center;
+}
+.token-row:first-child{border-top:0}
+.token-head{
+  background:rgba(255,255,255,.025);color:#8492A6;
+  font-size:.66rem;letter-spacing:1px;text-transform:uppercase;
+}
+.token-row span:first-child{color:var(--accent-2)}
+.token-row .value{color:var(--text-primary)}
+.token-row .use{color:var(--text-muted)}
+.swatch{
+  display:inline-block;width:9px;height:9px;border-radius:3px;
+  margin-right:6px;vertical-align:baseline;
+  border:1px solid rgba(255,255,255,.2);
+}
+.checklist{list-style:none;margin:20px 0;display:grid;gap:8px}
+.checklist li{position:relative;padding-left:28px;margin:0;color:var(--text-secondary)}
+.checklist li::before{
+  content:"✓";position:absolute;left:0;top:1px;
+  width:18px;height:18px;display:grid;place-items:center;
+  font-family:var(--font-mono);font-size:.72rem;color:var(--accent);
+  border:1px solid var(--border-hover);border-radius:5px;line-height:1;
+}
+.demo-card{
+  margin:34px 0 0;padding:22px;border:1px solid var(--border-hover);
+  border-radius:var(--radius-lg);
+  background:linear-gradient(135deg,rgba(0,217,163,.08),rgba(97,165,255,.04));
+  display:flex;align-items:center;gap:20px;justify-content:space-between;
+  flex-wrap:wrap;
+}
+.demo-card .kpi-label{color:var(--accent);margin-bottom:4px}
+.demo-card h3{font-size:1.15rem;letter-spacing:-.2px;margin-bottom:4px}
+.demo-card p{font-size:.88rem;color:var(--text-secondary);margin:0}
+.cta{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:7px;
+  background:var(--gradient);color:#04120D;
+  font-family:var(--font-mono);font-size:.78rem;font-weight:700;
+  padding:10px 16px;border-radius:999px;transition:var(--transition);
+}
+.cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,217,163,.22)}
+.article-body a.cta,
+.article-body a.cta:hover{
+  color:#04120D;
+  border-bottom:0;
+}
+.cta svg{width:12px;height:12px}
+
+/* ── 结尾与页脚 ───────────────────────────── */
+.post-end{
+  margin-top:48px;padding-top:20px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:wrap;
+}
+.signature{font-family:var(--font-mono);font-size:.76rem;color:var(--text-muted)}
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);font-size:.76rem;color:var(--accent);
+  transition:var(--transition);
+}
+.back-link:hover{color:var(--accent-2)}
+.back-link svg{width:12px;height:12px;transition:transform .2s ease}
+.back-link:hover svg{transform:translateX(-2px)}
+footer{
+  padding:42px 24px;text-align:center;border-top:1px solid var(--border);
+  background:var(--bg-secondary);font-family:var(--font-mono);
+  font-size:.78rem;color:var(--text-muted);
+}
+footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
+
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.reveal.visible{opacity:1;transform:none}
+
+@media(max-width:1000px){
+  .article-layout{grid-template-columns:180px minmax(0,1fr);gap:40px}
+}
+@media(max-width:900px){
+  .article-layout{grid-template-columns:1fr;padding-top:36px}
+  .toc{display:none}
+  .article-body{max-width:760px}
+}
+@media(max-width:560px){
+  .article-hero{padding:58px 18px 34px}
+  .article-layout{padding:32px 18px 50px}
+  .terminal-inner{padding:10px 16px}
+  .nav{display:none}
+  .article-hero h1{letter-spacing:-1px}
+  .article-body{font-size:.96rem}
+  .article-body h2{font-size:1.34rem;gap:10px}
+  .demo-card{padding:18px}
+  .cta{width:100%;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#article">跳到正文</a>
+
+<div class="terminal-bar">
+  <div class="terminal-inner">
+    <div class="lights" aria-hidden="true"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+    <div class="prompt">$ cat posts/<strong>how-i-replicated-workbuddy.md</strong></div>
+    <nav class="nav" aria-label="页面导航">
+      <a href="../index.html">← index</a>
+      <a href="../workbuddy_replica_01.html" target="_blank" rel="noopener noreferrer">demo ↗</a>
+    </nav>
+  </div>
+  <div class="progress-track" aria-hidden="true"><span id="readingProgress"></span></div>
+</div>
+
+<header class="article-hero">
+  <div class="article-hero-inner">
+    <div class="eyebrow">Build Log · 001 · 2026-11-11</div>
+    <h1>我是如何复刻 <span>WorkBuddy</span> 网站内容的</h1>
+    <p class="article-desc">一次对 WorkBuddy 视觉语言的完整拆解：如何从页面里提取结构、颜色与节奏，再把它变成可运行的 HTML / CSS / JS。文末附复刻 Demo。</p>
+    <div class="article-meta">
+      <span class="time">2026-11-11</span>
+      <span class="source">virusbee · Build Log</span>
+      <span class="source">约 10 分钟阅读</span>
+    </div>
+    <div class="tags" aria-label="文章标签">
+      <span class="tag">HTML</span>
+      <span class="tag">CSS</span>
+      <span class="tag">JavaScript</span>
+      <span class="tag">Single File</span>
+      <span class="tag">Interaction</span>
+    </div>
+  </div>
+</header>
+
+<main class="article-layout" id="article">
+  <aside class="toc" aria-label="文章目录">
+    <div class="toc-title">On this page</div>
+    <a href="#structure"><span>01</span>先拆骨架</a>
+    <a href="#tokens"><span>02</span>设计 Token</a>
+    <a href="#terminal"><span>03</span>终端氛围</a>
+    <a href="#motion"><span>04</span>交互动效</a>
+    <a href="#responsive"><span>05</span>响应式</a>
+    <a href="#single-file"><span>06</span>单文件取舍</a>
+    <a href="#review"><span>07</span>复盘</a>
+    <a class="toc-demo" href="../workbuddy_replica_01.html" target="_blank" rel="noopener noreferrer">
+      Live demo
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+    </a>
+  </aside>
+
+  <article class="article-body">
+    <p class="lede">做这个主页时，我想找一种既能保持开发者气质、又不会让内容显得冷冰冰的视觉语言。最后我选了 WorkBuddy 灵感社区的深色终端风：固定顶栏像终端窗口，主视觉用网格与光晕铺底，内容以情报卡片的方式排列。</p>
+    <p>这个仓库里的 <a href="../workbuddy_replica_01.html"><code>workbuddy_replica_01.html</code></a> 就是那次复刻的结果——一份包含全部样式与交互的单文件页面。下面是我拆解和实现它的过程。当然本页面的风格也是据此实现的。</p>
+
+    <div class="callout">
+      <div class="callout-label">TL;DR</div>
+      <p>复刻的核心不是抄像素，而是提取规则：颜色之间的关系、间距的节奏、动效的时长、信息的层级。骨架对了，细节自然会长出来。</p>
+    </div>
+
+    <section id="structure" class="reveal">
+      <h2><span class="h-index">01</span>先拆骨架，再谈还原</h2>
+      <p>复刻最怕一上来就调颜色。第一步应该把页面还原成几个矩形：哪些部分是固定的，哪些会随内容增长，哪些元素会重复出现。</p>
+      <p>拆完之后，页面其实只有四层：</p>
+      <ul>
+        <li><strong>终端栏</strong>：sticky 固定在顶部，包含三色窗口灯、命令行提示符和分类导航。</li>
+        <li><strong>Hero</strong>：一句带渐变的标题、一段说明，以及四张 KPI 卡，其中一张嵌入分类分布环图。</li>
+        <li><strong>Dashboard</strong>：分类标题 + 重复出现的情报卡片，是页面的内容主体。</li>
+        <li><strong>Footer</strong>：来源、计数与版权信息，为页面收尾。</li>
+      </ul>
+      <p>一旦找到重复单元，CSS 就好写了。卡片只有一种，分类头只有一种，剩下的都是间距与内容差异。</p>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          index.html
+        </div>
+        <pre><code>&lt;div class="terminal-bar"&gt;…&lt;/div&gt;
+&lt;header class="hero"&gt;…&lt;/header&gt;
+&lt;main class="dashboard"&gt;
+  &lt;section class="category" id="model"&gt;
+    &lt;div class="category-head"&gt;…&lt;/div&gt;
+    &lt;div class="intel-list"&gt;…&lt;/div&gt;
+  &lt;/section&gt;
+&lt;/main&gt;
+&lt;footer&gt;…&lt;/footer&gt;</code></pre>
+      </div>
+
+      <p>我给自己定的顺序是：<strong>结构 → 间距 → 颜色 → 字体 → 动效</strong>。每完成一步都截图对比，避免一次性改太多变量。</p>
+    </section>
+
+    <section id="tokens" class="reveal">
+      <h2><span class="h-index">02</span>把视觉语言翻译成 Token</h2>
+      <p>WorkBuddy 的深色不是纯黑，而是带一点蓝的深灰；高亮也不是常见的蓝紫，而是偏青的薄荷绿。把这类观察写成变量，页面才不会在迭代中走样。</p>
+
+      <div class="table-scroll">
+        <div class="token-table" role="table" aria-label="设计 Token 与用途">
+          <div class="token-row token-head" role="row"><span role="columnheader">Token</span><span role="columnheader">Value</span><span role="columnheader">用途</span></div>
+          <div class="token-row" role="row"><span role="cell">--bg-primary</span><span class="value" role="cell"><i class="swatch" style="background:#0F1115"></i>#0F1115</span><span class="use" role="cell">页面底色</span></div>
+          <div class="token-row" role="row"><span role="cell">--bg-card</span><span class="value" role="cell"><i class="swatch" style="background:#1B202B"></i>#1B202B</span><span class="use" role="cell">卡片 / 标签底</span></div>
+          <div class="token-row" role="row"><span role="cell">--bg-elevated</span><span class="value" role="cell"><i class="swatch" style="background:#222938"></i>#222938</span><span class="use" role="cell">卡片悬停</span></div>
+          <div class="token-row" role="row"><span role="cell">--text-primary</span><span class="value" role="cell"><i class="swatch" style="background:#F3F7FA"></i>#F3F7FA</span><span class="use" role="cell">标题</span></div>
+          <div class="token-row" role="row"><span role="cell">--text-secondary</span><span class="value" role="cell"><i class="swatch" style="background:#AAB7C4"></i>#AAB7C4</span><span class="use" role="cell">正文</span></div>
+          <div class="token-row" role="row"><span role="cell">--text-muted</span><span class="value" role="cell"><i class="swatch" style="background:#697789"></i>#697789</span><span class="use" role="cell">元信息</span></div>
+          <div class="token-row" role="row"><span role="cell">--accent</span><span class="value" role="cell"><i class="swatch" style="background:#00D9A3"></i>#00D9A3</span><span class="use" role="cell">强调 / 链接</span></div>
+          <div class="token-row" role="row"><span role="cell">--accent-2</span><span class="value" role="cell"><i class="swatch" style="background:#7CFFCB"></i>#7CFFCB</span><span class="use" role="cell">渐变高光</span></div>
+          <div class="token-row" role="row"><span role="cell">--border</span><span class="value" role="cell">rgba(124,255,203,.14)</span><span class="use" role="cell">默认描边</span></div>
+          <div class="token-row" role="row"><span role="cell">--border-hover</span><span class="value" role="cell">rgba(124,255,203,.36)</span><span class="use" role="cell">悬停描边</span></div>
+        </div>
+      </div>
+
+      <p>这里有一个关键细节：边框没有使用单独的灰色，而是<strong>强调色的透明版本</strong>（14% 和 36%）。这样即使换成别的主题色，整套描边也会自动跟着变，不会出现两种色温打架的情况。</p>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          style.css
+        </div>
+        <pre><code>:root {
+  --bg-primary: #0F1115;
+  --bg-card: #1B202B;
+  --text-primary: #F3F7FA;
+  --text-secondary: #AAB7C4;
+  --accent: #00D9A3;
+  --accent-2: #7CFFCB;
+  --border: rgba(124, 255, 203, 0.14);
+  --border-hover: rgba(124, 255, 203, 0.36);
+  --font-sans: -apple-system, "PingFang SC", sans-serif;
+  --font-mono: "SF Mono", Menlo, Consolas, monospace;
+}</code></pre>
+      </div>
+
+      <p>字体分工同样重要：标题和正文使用系统 sans，保证中文阅读；编号、时间、来源、导航使用 mono，负责制造“终端感”。两者混排，才有工具界面和信息面板的味道。</p>
+      <p>一个很实用的检查方法：把强调色关掉，页面是否还成立？如果全部靠绿色撑着，说明层级还不够。</p>
+    </section>
+
+    <section id="terminal" class="reveal">
+      <h2><span class="h-index">03</span>用 CSS 搭出终端氛围</h2>
+      <p>背景是第一层氛围。纯色会显得平，我用了两张 36px 的网格线叠加两层径向光晕：左上偏绿，右上偏蓝，既打破单调，又把视线推向内容。</p>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          style.css
+        </div>
+        <pre><code>body {
+  background-color: var(--bg-primary);
+  background-image:
+    linear-gradient(rgba(124,255,203,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,255,203,.03) 1px, transparent 1px),
+    radial-gradient(circle at 20% 0%, rgba(0,217,163,.12), transparent 34%),
+    radial-gradient(circle at 85% 15%, rgba(97,165,255,.08), transparent 28%);
+  background-size: 36px 36px, 36px 36px, 100% 100%, 100% 100%;
+}</code></pre>
+      </div>
+
+      <p>顶部终端栏的关键词是<strong>“固定但不厚重”</strong>：92% 不透明度的深色底，加上 14px 的 <code>backdrop-filter</code>，让滚动时内容从底下若隐若现。三个红黄绿圆点几乎是终端视觉的暗号，成本极低，辨识度很高。</p>
+      <p>标题的渐变不用图片，直接让背景渐变透过文字：</p>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          style.css
+        </div>
+        <pre><code>.hero h1 span {
+  background: linear-gradient(135deg, #00D9A3 0%, #7CFFCB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}</code></pre>
+      </div>
+
+      <p>卡片是出现频率最高的组件，所以值得多花时间。左侧 3px 强调条负责视觉锚点，悬停时整张卡片上浮 2px、边框变亮、加一层很淡的绿色辉光。幅度都很小，但组合起来会让页面显得“活着”。</p>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          style.css
+        </div>
+        <pre><code>.intel-card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  opacity: .6;
+}
+
+.intel-card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-elevated);
+  box-shadow: 0 0 26px rgba(0, 217, 163, .08);
+  transform: translateY(-2px);
+}</code></pre>
+      </div>
+
+      <p>信息密度也要克制：标题 1.02rem，摘要 0.9rem，元信息 0.72rem。字号差距不大，但通过字重、颜色和等宽字体建立层级，而不是不停放大标题。</p>
+    </section>
+
+    <section id="motion" class="reveal">
+      <h2><span class="h-index">04</span>让交互跟着内容呼吸</h2>
+      <p>页面里只有三类动效，各自负责一件事。</p>
+
+      <p><strong>第一类：数字滚动。</strong>KPI 从 0 增长到目标值，用 easeOutCubic 在 1.1 秒内完成。它不是为了炫技，而是把“统计”这个动作可视化。</p>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          app.js
+        </div>
+        <pre><code>function animateNum(el, target, duration) {
+  const start = performance.now();
+
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    if (progress &lt; 1) requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+}</code></pre>
+      </div>
+
+      <p><strong>第二类：滚动入场。</strong>卡片初始下移 14px 并透明，进入视口后恢复；同一批出现的卡片间隔 28ms，形成轻微的顺序感。每个元素只触发一次，回滚时不会反复闪烁。</p>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          app.js
+        </div>
+        <pre><code>const cardObserver = new IntersectionObserver(entries =&gt; {
+  entries.forEach((entry, index) =&gt; {
+    if (!entry.isIntersecting) return;
+    entry.target.style.transitionDelay = (index % 8) * 28 + "ms";
+    entry.target.classList.add("visible");
+    cardObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.12 });</code></pre>
+      </div>
+
+      <p><strong>第三类：导航定位。</strong>用 IntersectionObserver 在视口上方 35% 到下方 42% 之间留出一条“检测带”，哪一段进入这条带，对应的导航项就亮起。它比监听 scroll 事件更轻，也更准确。</p>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          app.js
+        </div>
+        <pre><code>const spy = new IntersectionObserver(entries =&gt; {
+  entries.forEach(entry =&gt; {
+    if (!entry.isIntersecting) return;
+    links.forEach(link =&gt; {
+      const active = link.getAttribute("href") === "#" + entry.target.id;
+      link.classList.toggle("active", active);
+    });
+  });
+}, { rootMargin: "-35% 0px -58% 0px" });</code></pre>
+      </div>
+
+      <p>最后是悬停细节：链接箭头向右上移动 2px，卡片上浮 2px，过渡统一用 250ms 的 <code>cubic-bezier(0.4, 0, 0.2, 1)</code>。动效时长统一，页面才会有自己的节奏。</p>
+      <p>另外在首页补了一条 <code>prefers-reduced-motion</code>：当用户系统设置减少动态效果时，直接显示最终状态。复刻是视觉练习，但不应该以牺牲可用性为代价。</p>
+    </section>
+
+    <section id="responsive" class="reveal">
+      <h2><span class="h-index">05</span>响应式是重排，不是缩小</h2>
+      <p>我只设了两个断点，因为结构本身不复杂。</p>
+      <ul>
+        <li><strong>900px</strong>：KPI 从四列变两列，导航隐藏，卡片编号列从 52px 收窄到 42px。</li>
+        <li><strong>560px</strong>：KPI 变成单列，卡片改为单列布局，Hero 与内容区收窄内边距，分类头允许换行。</li>
+      </ul>
+      <p>标题使用 <code>clamp(2.4rem, 6vw, 4.6rem)</code>，让它在手机和宽屏之间自然缩放，不需要为每个尺寸单独写字号。</p>
+      <p>移动端的目标不是一模一样，而是<strong>同样清楚</strong>：标题不挤、正文可读、点击区域够大。把桌面版硬塞进 375px 的屏幕，只会得到一个缩小的、不可用的桌面版。</p>
+    </section>
+
+    <section id="single-file" class="reveal">
+      <h2><span class="h-index">06</span>为什么最后是单文件</h2>
+      <p>把 HTML、CSS、JS 全部放进一个文件，是一个很实际的取舍。</p>
+      <ul>
+        <li><strong>优点</strong>：零构建、零依赖，双击就能看，直接丢进 GitHub Pages 就能上线；分享给别人时只需要一个文件。</li>
+        <li><strong>代价</strong>：设计 Token 会在页面间重复，样式规模变大后难以复用，团队协作也不友好。</li>
+      </ul>
+      <p>当站点只有一页时，单文件是优势；当它开始有第二篇、第三篇文章时，就应该把公共部分抽出来。这个主页保留了同样的思路：每一页都自包含、可独立阅读，同时共用一套视觉 Token。</p>
+      <p>你可以直接打开复刻页面对照本文，所有结构、颜色和动效都在里面。</p>
+
+      <div class="demo-card">
+        <div>
+          <div class="kpi-label">Live Demo</div>
+          <h3>WorkBuddy 风格复刻</h3>
+          <p>单文件 HTML / CSS / JS，可直接查看源码。</p>
+        </div>
+        <a class="cta" href="../workbuddy_replica_01.html" target="_blank" rel="noopener noreferrer">
+          打开 demo
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <section id="review" class="reveal">
+      <h2><span class="h-index">07</span>复盘：1:1 不是像素复制</h2>
+      <p>做完之后，我对“1:1 复刻”的理解变得更具体了：真正要复刻的是<strong>规则</strong>，而不是某一帧画面。</p>
+      <ul class="checklist">
+        <li>结构上，能找到重复单元，并让内容可以无限增长。</li>
+        <li>颜色上，所有层级来自同一组变量，换主题色不会崩。</li>
+        <li>排版上，字号、行高、间距有固定节奏，而不是逐段手调。</li>
+        <li>交互上，动效服务于信息，不抢内容。</li>
+        <li>工程上，页面可以直接打开、部署和分享。</li>
+      </ul>
+      <p>如果接下来继续迭代，我会优先做三件事：把公共样式抽成共享文件、补上文章模板与标签归档、继续打磨键盘导航与移动端细节。</p>
+      <p>如果你也想复刻一个喜欢的网站，建议从一张截图开始：标出所有重复模块，写下 8 个颜色变量，然后只做第一屏。第一屏立住了，后面会快很多。</p>
+
+      <div class="post-end">
+        <span class="signature">— virusbee，2026-11-11</span>
+        <a class="back-link" href="../index.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5m6-6l-6 6 6 6"/></svg>
+          返回首页
+        </a>
+      </div>
+    </section>
+  </article>
+</main>
+
+<footer>
+  © 2026 <a href="https://github.com/virusbee" target="_blank" rel="noopener noreferrer">virusbee</a> · <a href="../index.html">index</a> · 用代码理解设计
+</footer>
+
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+<script>
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 阅读进度 */
+const progress = document.getElementById('readingProgress');
+let ticking = false;
+function updateProgress() {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  const ratio = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
+  progress.style.width = (ratio * 100).toFixed(2) + '%';
+  ticking = false;
+}
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    ticking = true;
+    requestAnimationFrame(updateProgress);
+  }
+}, { passive: true });
+window.addEventListener('resize', updateProgress, { passive: true });
+updateProgress();
+
+/* 滚动入场 */
+const reveals = document.querySelectorAll('.reveal');
+if (reduceMotion) {
+  reveals.forEach(el => el.classList.add('visible'));
+} else {
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => revealObserver.observe(el));
+}
+
+/* 目录高亮 */
+const tocLinks = document.querySelectorAll('.toc a[href^="#"]');
+const sections = document.querySelectorAll('.article-body section[id]');
+const tocObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    tocLinks.forEach(link => {
+      const isActive = link.getAttribute('href') === '#' + entry.target.id;
+      link.classList.toggle('active', isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'true');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  });
+}, { rootMargin: '-18% 0px -72% 0px' });
+
+sections.forEach(section => tocObserver.observe(section));
+</script>
+</body>
+</html>

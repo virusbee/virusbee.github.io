@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>virusbee 的复刻实验室 — Build Log</title>
+<meta name="description" content="virusbee 的个人构建日志：把喜欢的网站拆开、读懂，再用代码重新拼起来。目前收录 1 篇复刻记录。">
+<link rel="canonical" href="https://virusbee.github.io/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="virusbee 的复刻实验室 — Build Log">
+<meta property="og:description" content="把喜欢的网站拆开、读懂，再用代码重新拼起来。记录每一次复刻的过程、取舍与意外收获。">
+<meta property="og:url" content="https://virusbee.github.io/">
+<meta name="theme-color" content="#0F1115">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-primary:#0F1115;
+  --bg-secondary:#151922;
+  --bg-card:#1B202B;
+  --bg-elevated:#222938;
+  --text-primary:#F3F7FA;
+  --text-secondary:#AAB7C4;
+  --text-muted:#7A889C;
+  --accent:#00D9A3;
+  --accent-2:#7CFFCB;
+  --warning:#F9D65C;
+  --red:#FF6B6B;
+  --blue:#61A5FF;
+  --purple:#A78BFA;
+  --orange:#FFB86B;
+  --gradient:linear-gradient(135deg,#00D9A3 0%,#7CFFCB 100%);
+  --border:rgba(124,255,203,0.14);
+  --border-hover:rgba(124,255,203,0.36);
+  --radius:12px;
+  --radius-lg:18px;
+  --shadow:0 10px 30px rgba(0,0,0,0.35);
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC",sans-serif;
+  --font-mono:"SF Mono","Fira Code",Menlo,Consolas,"DejaVu Sans Mono",monospace;
+  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-sans);
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  line-height:1.65;
+  overflow-x:hidden;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background-image:
+    linear-gradient(rgba(124,255,203,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(124,255,203,0.03) 1px,transparent 1px),
+    radial-gradient(circle at 20% 0%,rgba(0,217,163,0.12),transparent 34%),
+    radial-gradient(circle at 85% 15%,rgba(97,165,255,0.08),transparent 28%);
+  background-size:36px 36px,36px 36px,100% 100%,100% 100%;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+mark{background:rgba(249,214,92,0.28);color:#fff;border:1px solid rgba(249,214,92,0.28);border-radius:4px;padding:0 3px}
+::selection{background:rgba(0,217,163,0.28);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.skip-link{
+  position:fixed;left:16px;top:-100px;z-index:100;
+  background:var(--accent);color:#04120D;
+  font-family:var(--font-mono);font-size:.8rem;font-weight:600;
+  padding:10px 14px;border-radius:8px;transition:top .2s ease;
+}
+.skip-link:focus{top:12px}
+
+.terminal-bar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(15,17,21,0.92);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.terminal-inner{
+  max-width:1180px;margin:0 auto;padding:12px 24px;
+  display:flex;align-items:center;gap:14px;overflow-x:auto;
+}
+.lights{display:flex;gap:7px;flex-shrink:0}
+.lights span{width:10px;height:10px;border-radius:50%}
+.r{background:#FF5F57}
+.y{background:#FFBD2E}
+.g{background:#28C840}
+.prompt{font-family:var(--font-mono);font-size:.8rem;color:var(--text-muted);white-space:nowrap}
+.prompt strong{color:var(--accent);font-weight:500}
+.nav{margin-left:auto;display:flex;gap:6px}
+.nav a{
+  font-family:var(--font-mono);font-size:.74rem;color:var(--text-secondary);
+  padding:5px 10px;border:1px solid transparent;border-radius:999px;
+  white-space:nowrap;transition:var(--transition);
+}
+.nav a:hover,.nav a.active{border-color:var(--border-hover);color:var(--accent)}
+
+.hero{padding:84px 24px 44px;border-bottom:1px solid var(--border)}
+.hero-inner{max-width:1180px;margin:0 auto}
+.eyebrow{
+  font-family:var(--font-mono);font-size:.78rem;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:18px;
+}
+.hero h1{
+  font-size:clamp(2.4rem,6vw,4.6rem);line-height:1.05;
+  letter-spacing:-2px;margin-bottom:18px;
+}
+.hero h1 span{
+  background:var(--gradient);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-desc{max-width:760px;color:var(--text-secondary);font-size:1.05rem;margin-bottom:30px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:14px}
+.kpi{
+  background:linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.015));
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;box-shadow:var(--shadow);
+}
+.kpi-label{
+  font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:1px;
+}
+.kpi-num{font-family:var(--font-mono);font-size:2.1rem;font-weight:700;margin-top:6px;color:var(--accent)}
+.kpi-note{font-size:.8rem;color:var(--text-secondary);margin-top:4px}
+.pie-wrap{display:flex;align-items:center;gap:14px}
+.pie svg{width:76px;height:76px;transform:rotate(-90deg)}
+.pie circle{fill:none;stroke-width:12;stroke-linecap:round}
+.legend{display:grid;gap:4px;font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted)}
+.legend span::before{
+  content:"";display:inline-block;width:8px;height:8px;
+  border-radius:50%;margin-right:6px;background:currentColor;
+}
+
+.dashboard{max-width:1180px;margin:0 auto;padding:46px 24px 70px;flex:1;width:100%}
+.category{margin-bottom:56px;scroll-margin-top:72px}
+.category-head{
+  display:flex;align-items:center;gap:14px;margin-bottom:20px;
+  padding-bottom:12px;border-bottom:1px solid var(--border);
+}
+.cat-index{
+  font-family:var(--font-mono);font-size:.76rem;color:var(--accent);
+  border:1px solid var(--border-hover);border-radius:8px;padding:3px 8px;
+}
+.category h2{font-size:1.45rem;letter-spacing:-.4px}
+.cat-count{
+  margin-left:auto;font-family:var(--font-mono);font-size:.78rem;
+  color:var(--text-muted);background:var(--bg-card);border:1px solid var(--border);
+  padding:4px 10px;border-radius:999px;
+}
+.intel-list{display:grid;gap:12px}
+.intel-card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;display:grid;grid-template-columns:52px 1fr;gap:14px;
+  transition:var(--transition);opacity:0;transform:translateY(14px);
+  position:relative;overflow:hidden;
+}
+.intel-card.visible{opacity:1;transform:none}
+.intel-card::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);opacity:.6;
+}
+.intel-card:hover{
+  border-color:var(--border-hover);background:var(--bg-elevated);
+  box-shadow:0 0 26px rgba(0,217,163,.08);transform:translateY(-2px);
+}
+.num{font-family:var(--font-mono);font-size:.9rem;color:var(--accent);padding-top:2px}
+.intel-title{font-size:1.02rem;font-weight:650;line-height:1.45;margin-bottom:8px}
+.meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.time{
+  font-family:var(--font-mono);font-size:.72rem;color:var(--accent-2);
+  background:rgba(0,217,163,.08);border:1px solid rgba(0,217,163,.18);
+  padding:2px 8px;border-radius:999px;
+}
+.source{font-size:.78rem;color:var(--text-muted)}
+.summary{font-size:.9rem;color:var(--text-secondary);line-height:1.65;margin-bottom:10px}
+.link{
+  display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);
+  font-size:.76rem;color:var(--accent);transition:var(--transition);
+}
+.link:hover{color:var(--accent-2)}
+.link svg{width:12px;height:12px;transition:transform .2s ease}
+.link:hover svg{transform:translate(2px,-2px)}
+
+footer{
+  padding:42px 24px;text-align:center;border-top:1px solid var(--border);
+  background:var(--bg-secondary);font-family:var(--font-mono);
+  font-size:.78rem;color:var(--text-muted);
+}
+footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .nav{display:none}
+  .intel-card{grid-template-columns:42px 1fr}
+}
+@media(max-width:560px){
+  .hero{padding:60px 18px 34px}
+  .dashboard{padding:36px 18px 56px}
+  .kpi-grid{grid-template-columns:1fr}
+  .terminal-inner{padding:10px 16px}
+  .category-head{flex-wrap:wrap}
+  .cat-count{margin-left:0}
+  .intel-card{grid-template-columns:1fr}
+  .num{font-size:.76rem}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .intel-card{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#log">跳到正文</a>
+
+<div class="terminal-bar">
+  <div class="terminal-inner">
+    <div class="lights" aria-hidden="true"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+    <div class="prompt">$ virusbee log --latest <strong>1</strong> --status shipped</div>
+    <nav class="nav" aria-label="页面导航">
+      <a href="#log">log</a>
+      <a href="https://github.com/virusbee" target="_blank" rel="noopener noreferrer">github</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">virusbee · Build Log</div>
+    <h1>virusbee 的<span>复刻实验室</span></h1>
+    <p class="hero-desc">把喜欢的网站拆开、读懂，再用代码重新拼起来。这里记录每一次复刻的过程、取舍与意外收获——目前是第 1 篇。</p>
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Total Logs</div>
+        <div class="kpi-num" data-target="1">1</div>
+        <div class="kpi-note">共 1 篇构建日志</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Latest</div>
+        <div class="kpi-num">11.11</div>
+        <div class="kpi-note">2026-11-11 更新</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Categories</div>
+        <div class="kpi-num" data-target="1">1</div>
+        <div class="kpi-note">按 1 个主题归档</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Distribution</div>
+        <div class="pie-wrap">
+          <div class="pie">
+            <svg viewBox="0 0 120 120" role="img" aria-label="分类分布饼图：复刻日志 1 篇">
+              <title>分类分布：复刻日志 1 篇</title>
+              <circle cx="60" cy="60" r="42" stroke="rgba(255,255,255,.08)"/>
+              <circle cx="60" cy="60" r="42" stroke="#00D9A3" stroke-dasharray="264 264" stroke-dashoffset="0"/>
+            </svg>
+          </div>
+          <div class="legend"><span style="color:#00D9A3">复刻日志 1</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="dashboard">
+  <section class="category" id="log">
+    <div class="category-head">
+      <span class="cat-index">01</span>
+      <h2>复刻日志</h2>
+      <span class="cat-count">1 条</span>
+    </div>
+    <div class="intel-list">
+      <article class="intel-card">
+        <div class="num">01</div>
+        <div>
+          <h3 class="intel-title">我是如何复刻 <mark>WorkBuddy</mark> 网站内容的</h3>
+          <div class="meta">
+            <span class="time">2026-11-11</span>
+            <span class="source">virusbee · Build Log</span>
+          </div>
+          <p class="summary">从终端式导航、深色网格背景到滚动入场动效：记录我如何拆解 WorkBuddy 的视觉语言，把颜色、排版和交互翻译成可复用的设计 Token，并最终用一份单文件 HTML / CSS / JS 完成 1:1 复刻。</p>
+          <a class="link" href="posts/how-i-replicated-workbuddy.html">
+            read the log
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2026 <a href="https://github.com/virusbee" target="_blank" rel="noopener noreferrer">virusbee</a> · 共 1 篇构建日志 · 用代码理解设计
+</footer>
+
+<noscript><style>.intel-card{opacity:1;transform:none}</style></noscript>
+<script>
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function animateNum(el, target, duration) {
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const counters = document.querySelectorAll('.kpi-num[data-target]');
+
+if (reduceMotion) {
+  counters.forEach(el => {
+    el.textContent = el.dataset.target;
+  });
+} else {
+  const numObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const target = parseInt(entry.target.dataset.target, 10);
+      if (!isNaN(target)) animateNum(entry.target, target, 1100);
+      numObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.4 });
+  counters.forEach(el => numObserver.observe(el));
+}
+
+const cards = document.querySelectorAll('.intel-card');
+
+if (!reduceMotion) {
+  const cardObserver = new IntersectionObserver(entries => {
+    entries.forEach((entry, index) => {
+      if (!entry.isIntersecting) return;
+      entry.target.style.transitionDelay = (index % 8) * 28 + 'ms';
+      entry.target.classList.add('visible');
+      cardObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.12 });
+  cards.forEach(el => cardObserver.observe(el));
+} else {
+  cards.forEach(el => el.classList.add('visible'));
+}
+
+const sections = document.querySelectorAll('.category[id]');
+const navLinks = document.querySelectorAll('.nav a[href^="#"]');
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    navLinks.forEach(link => {
+      const isActive = link.getAttribute('href') === '#' + entry.target.id;
+      link.classList.toggle('active', isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'true');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  });
+}, { rootMargin: '-35% 0px -58% 0px' });
+
+sections.forEach(section => spy.observe(section));
+</script>
+</body>
+</html>
