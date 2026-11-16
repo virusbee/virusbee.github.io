@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>virusbee 的复刻实验室 — Build Log</title>
-<meta name="description" content="virusbee 的个人构建日志：把喜欢的网站拆开、读懂，再用代码重新拼起来。目前收录 1 篇复刻记录。">
+<meta name="description" content="virusbee 的个人构建日志：把喜欢的网站拆开、读懂，再用代码重新拼起来。目前收录 2 篇复刻记录。">
 <link rel="canonical" href="https://virusbee.github.io/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
@@ -87,6 +87,7 @@ mark{background:rgba(249,214,92,0.28);color:#fff;border:1px solid rgba(249,214,9
 .g{background:#28C840}
 .prompt{font-family:var(--font-mono);font-size:.8rem;color:var(--text-muted);white-space:nowrap}
 .prompt strong{color:var(--accent);font-weight:500}
+.prompt-extra{display:inline}
 .nav{margin-left:auto;display:flex;gap:6px}
 .nav a{
   font-family:var(--font-mono);font-size:.74rem;color:var(--text-secondary);
@@ -106,6 +107,7 @@ mark{background:rgba(249,214,92,0.28);color:#fff;border:1px solid rgba(249,214,9
   letter-spacing:-2px;margin-bottom:18px;
 }
 .hero h1 span{
+  display:inline-block;
   background:var(--gradient);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   background-clip:text;
@@ -199,6 +201,7 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
   .dashboard{padding:36px 18px 56px}
   .kpi-grid{grid-template-columns:1fr}
   .terminal-inner{padding:10px 16px}
+  .prompt-extra{display:none}
   .category-head{flex-wrap:wrap}
   .cat-count{margin-left:0}
   .intel-card{grid-template-columns:1fr}
@@ -217,7 +220,7 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
 <div class="terminal-bar">
   <div class="terminal-inner">
     <div class="lights" aria-hidden="true"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-    <div class="prompt">$ virusbee log --latest <strong>1</strong> --status shipped</div>
+    <div class="prompt">$ virusbee log --latest <strong>2</strong><span class="prompt-extra"> --status shipped</span></div>
     <nav class="nav" aria-label="页面导航">
       <a href="#log">log</a>
       <a href="https://github.com/virusbee" target="_blank" rel="noopener noreferrer">github</a>
@@ -229,17 +232,17 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
   <div class="hero-inner">
     <div class="eyebrow">virusbee · Build Log</div>
     <h1>virusbee 的<span>复刻实验室</span></h1>
-    <p class="hero-desc">把喜欢的网站拆开、读懂，再用代码重新拼起来。这里记录每一次复刻的过程、取舍与意外收获——目前是第 1 篇。</p>
+    <p class="hero-desc">把喜欢的网站拆开、读懂，再用代码重新拼起来。这里记录每一次复刻的过程、取舍与意外收获——目前是第 2 篇。</p>
     <div class="kpi-grid">
       <div class="kpi">
         <div class="kpi-label">Total Logs</div>
-        <div class="kpi-num" data-target="1">1</div>
-        <div class="kpi-note">共 1 篇构建日志</div>
+        <div class="kpi-num" data-target="2">2</div>
+        <div class="kpi-note">共 2 篇构建日志</div>
       </div>
       <div class="kpi">
         <div class="kpi-label">Latest</div>
-        <div class="kpi-num">11.11</div>
-        <div class="kpi-note">2026-11-11 更新</div>
+        <div class="kpi-num">11.16</div>
+        <div class="kpi-note">2026-11-16 更新</div>
       </div>
       <div class="kpi">
         <div class="kpi-label">Categories</div>
@@ -250,13 +253,13 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
         <div class="kpi-label">Distribution</div>
         <div class="pie-wrap">
           <div class="pie">
-            <svg viewBox="0 0 120 120" role="img" aria-label="分类分布饼图：复刻日志 1 篇">
-              <title>分类分布：复刻日志 1 篇</title>
+            <svg viewBox="0 0 120 120" role="img" aria-label="分类分布饼图：复刻日志 2 篇">
+              <title>分类分布：复刻日志 2 篇</title>
               <circle cx="60" cy="60" r="42" stroke="rgba(255,255,255,.08)"/>
               <circle cx="60" cy="60" r="42" stroke="#00D9A3" stroke-dasharray="264 264" stroke-dashoffset="0"/>
             </svg>
           </div>
-          <div class="legend"><span style="color:#00D9A3">复刻日志 1</span></div>
+          <div class="legend"><span style="color:#00D9A3">复刻日志 2</span></div>
         </div>
       </div>
     </div>
@@ -268,9 +271,24 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
     <div class="category-head">
       <span class="cat-index">01</span>
       <h2>复刻日志</h2>
-      <span class="cat-count">1 条</span>
+      <span class="cat-count">2 条</span>
     </div>
     <div class="intel-list">
+      <article class="intel-card">
+        <div class="num">02</div>
+        <div>
+          <h3 class="intel-title">我如何复刻 <mark>WorkBuddy</mark> 基金健康诊断报告</h3>
+          <div class="meta">
+            <span class="time">2026-11-16</span>
+            <span class="source">virusbee · Build Log</span>
+          </div>
+          <p class="summary">一份藏在 iframe 里的基金报告，如何变成可独立访问的单文件页面：找到真实内容地址，拆出 5 个报告模块，保留 6 只基金的完整数据，再用卡片式表格、双语切换和可靠的动效让它在 375px 与打印稿上都成立。</p>
+          <a class="link" href="posts/how-i-replicated-fund-report.html">
+            read the log
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+          </a>
+        </div>
+      </article>
       <article class="intel-card">
         <div class="num">01</div>
         <div>
@@ -291,7 +309,7 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
 </main>
 
 <footer>
-  © 2026 <a href="https://github.com/virusbee" target="_blank" rel="noopener noreferrer">virusbee</a> · 共 1 篇构建日志 · 用代码理解设计
+  © 2026 <a href="https://github.com/virusbee" target="_blank" rel="noopener noreferrer">virusbee</a> · 共 2 篇构建日志 · 用代码理解设计
 </footer>
 
 <noscript><style>.intel-card{opacity:1;transform:none}</style></noscript>

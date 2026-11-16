@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基金组合健康诊断 · virusbee 复刻</title>
+<meta name="description" content="WorkBuddy 生成的基金组合健康诊断报告复刻：资产配置、持仓明细、行业暴露、风险体检与优化建议。单文件 HTML / CSS / JS。">
+<link rel="canonical" href="https://virusbee.github.io/workbuddy_replica_02.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基金组合健康诊断 · virusbee 复刻">
+<meta property="og:description" content="一份可交互的基金组合健康诊断报告：评分、KPI、持仓、配置、风险与优化建议。">
+<meta property="og:url" content="https://virusbee.github.io/workbuddy_replica_02.html">
+<meta name="theme-color" content="#f4f6fb">
+<style>
+  :root{
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --ink:#1c2433;
+    --ink-soft:#5b6678;
+    --ink-faint:#8d97a8;
+    --line:#e7ebf2;
+    --brand:#2f5fe0;
+    --brand-soft:#eaf0ff;
+    --up:#e0392b;      /* 涨=红 */
+    --up-soft:#fbeae8;
+    --down:#1f9d57;    /* 跌=绿 */
+    --down-soft:#e6f6ee;
+    --warn:#d9822b;
+    --warn-soft:#fbf0e2;
+    --gold:#c79a3b;
+    --shadow:0 1px 2px rgba(20,30,55,.04),0 8px 24px rgba(20,30,55,.06);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.55;
+    padding:24px 16px 64px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+
+  /* ===== Header ===== */
+  .hero{
+    position:relative;
+    background:linear-gradient(135deg,#2f5fe0 0%,#3f7bf0 55%,#5a93ff 100%);
+    border-radius:24px;
+    padding:30px 30px 28px;
+    color:#fff;
+    overflow:hidden;
+    box-shadow:0 16px 40px rgba(47,95,224,.28);
+  }
+  .hero::after{
+    content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+    background:radial-gradient(circle,rgba(255,255,255,.22),transparent 70%);border-radius:50%;
+  }
+  .hero-top{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+  .logo{
+    width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.18);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .hero h1{font-size:23px;font-weight:700;letter-spacing:.5px}
+  .hero .sub{font-size:13px;opacity:.85;margin-top:2px}
+  .hero-body{
+    display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;
+    margin-top:24px;position:relative;z-index:1;
+  }
+  .hero-tag{font-size:13px;opacity:.9;max-width:480px;line-height:1.7}
+  .score-badge{
+    display:flex;align-items:center;gap:16px;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:18px;padding:14px 22px;backdrop-filter:blur(4px);
+  }
+  .score-ring{position:relative;width:78px;height:78px;flex-shrink:0}
+  .score-ring .num{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .score-ring .num b{font-size:26px;font-weight:800;line-height:1}
+  .score-ring .num span{font-size:10px;opacity:.8;margin-top:1px}
+  .score-meta .lvl{font-size:17px;font-weight:700}
+  .score-meta .desc{font-size:12px;opacity:.85;margin-top:2px}
+
+  /* ===== Section ===== */
+  .section{margin-top:30px}
+  .section-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;padding-left:2px}
+  .section-head .bar{width:4px;height:18px;background:var(--brand);border-radius:3px}
+  .section-head h2{font-size:17px;font-weight:700}
+  .section-head .hint{font-size:12px;color:var(--ink-faint);margin-left:auto}
+
+  /* ===== KPI ===== */
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  .kpi{
+    background:var(--card);border-radius:var(--radius);padding:18px 18px 16px;
+    box-shadow:var(--shadow);border:1px solid var(--line);
+  }
+  .kpi .ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--brand-soft);margin-bottom:12px}
+  .kpi .label{font-size:12.5px;color:var(--ink-soft)}
+  .kpi .val{font-size:23px;font-weight:800;margin-top:3px;letter-spacing:.3px}
+  .kpi .val.up{color:var(--up)}
+  .kpi .delta{font-size:12.5px;margin-top:3px;font-weight:600}
+  .kpi .delta.up{color:var(--up)}
+  .badge-risk{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:8px;margin-top:6px;background:var(--warn-soft);color:var(--warn)}
+
+  /* ===== Holdings table ===== */
+  .panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);overflow:hidden}
+  .table{width:100%;border-collapse:collapse}
+  .table thead th{
+    font-size:12px;color:var(--ink-faint);font-weight:600;text-align:right;
+    padding:13px 16px;border-bottom:1px solid var(--line);background:#fafbfe;white-space:nowrap;
+  }
+  .table thead th:first-child{text-align:left}
+  .table tbody td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;text-align:right;vertical-align:middle}
+  .table tbody tr:last-child td{border-bottom:none}
+  .table tbody tr:hover{background:#fafbff}
+  .fund-name{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:3px}
+  .fund-name b{font-size:14px;font-weight:600}
+  .fund-name .code{font-size:11.5px;color:var(--ink-faint);font-variant-numeric:tabular-nums}
+  .type-tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:7px;white-space:nowrap}
+  .t-mix{background:#eef2ff;color:#3651c9}
+  .t-idx{background:#fff1e8;color:#cf6a1f}
+  .t-qdii{background:#e9f5ff;color:#1f7fc4}
+  .t-bond{background:#eef7ee;color:#2e8b50}
+  .money{font-variant-numeric:tabular-nums;font-weight:600}
+  .ret{font-variant-numeric:tabular-nums;font-weight:700}
+  .ret.up{color:var(--up)}
+  .ret.down{color:var(--down)}
+  .pct-cell{min-width:130px}
+  .pct-wrap{display:flex;align-items:center;gap:9px;justify-content:flex-end}
+  .pct-bar{flex:1;max-width:90px;height:7px;border-radius:4px;background:#eef1f7;overflow:hidden}
+  .pct-bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#5a93ff,#2f5fe0)}
+  .pct-num{font-variant-numeric:tabular-nums;font-size:13px;color:var(--ink-soft);min-width:42px;text-align:right}
+  .table tfoot td{padding:13px 16px;font-size:13.5px;font-weight:700;background:#fafbfe;text-align:right;border-top:2px solid var(--line)}
+  .table tfoot td:first-child{text-align:left}
+
+  /* ===== Allocation ===== */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .donut-card{display:flex;gap:24px;align-items:center;padding:24px;flex-wrap:wrap}
+  .donut-wrap{position:relative;width:180px;height:180px;flex-shrink:0;margin:0 auto}
+  .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .donut-center b{font-size:15px;font-weight:700}
+  .donut-center span{font-size:11px;color:var(--ink-faint)}
+  .legend{flex:1;min-width:170px;display:flex;flex-direction:column;gap:11px}
+  .legend-row{display:flex;align-items:center;gap:10px;font-size:13px}
+  .legend-row .dot{width:11px;height:11px;border-radius:4px;flex-shrink:0}
+  .legend-row .lname{flex:1;color:var(--ink-soft)}
+  .legend-row .lval{font-weight:700;font-variant-numeric:tabular-nums}
+
+  .expo-card{padding:22px 24px}
+  .expo-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
+  .expo-card .note{font-size:12px;color:var(--ink-faint);margin-bottom:16px}
+  .expo-row{margin-bottom:15px}
+  .expo-row:last-child{margin-bottom:0}
+  .expo-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+  .expo-top .en{color:var(--ink-soft)}
+  .expo-top .ev{font-weight:700;font-variant-numeric:tabular-nums}
+  .expo-track{height:10px;border-radius:6px;background:#eef1f7;overflow:hidden;position:relative}
+  .expo-track i{display:block;height:100%;border-radius:6px}
+  .expo-track i.alert{background:linear-gradient(90deg,#f0a24a,#d9822b)}
+  .expo-track i.ok{background:linear-gradient(90deg,#6fb8ff,#2f5fe0)}
+  .expo-warn-line{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--warn);font-weight:600;margin-top:7px}
+  .expo-thresh{position:absolute;top:-3px;bottom:-3px;width:2px;background:rgba(217,57,43,.55)}
+
+  /* ===== Risk ===== */
+  .risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+  .gauge-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);padding:20px;text-align:center}
+  .gauge-card .gtitle{font-size:13px;color:var(--ink-soft);margin-bottom:12px}
+  .gauge-svg{margin:0 auto;display:block}
+  .gauge-val{font-size:24px;font-weight:800;margin-top:-6px}
+  .gauge-sub{font-size:11.5px;color:var(--ink-faint);margin-top:2px}
+  .warn-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .warn-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);border-left:4px solid var(--warn);padding:18px 20px}
+  .warn-card .wh{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+  .warn-card .wh .wi{width:30px;height:30px;border-radius:9px;background:var(--warn-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .warn-card .wh b{font-size:14.5px;font-weight:700}
+  .warn-card .wh .tag{margin-left:auto;font-size:11px;font-weight:700;color:var(--warn);background:var(--warn-soft);padding:2px 9px;border-radius:7px}
+  .warn-card p{font-size:13px;color:var(--ink-soft);line-height:1.65}
+  .warn-card p em{color:var(--up);font-style:normal;font-weight:700}
+
+  /* ===== Advice ===== */
+  .advice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .advice{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);padding:20px;position:relative;overflow:hidden}
+  .advice .step{
+    position:absolute;right:14px;top:10px;font-size:46px;font-weight:800;color:#f0f3fa;line-height:1;font-variant-numeric:tabular-nums;
+  }
+  .advice .ah{display:flex;align-items:center;gap:10px;margin-bottom:9px;position:relative;z-index:1}
+  .advice .ai{width:36px;height:36px;border-radius:11px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .advice .ah b{font-size:15px;font-weight:700}
+  .advice p{font-size:13px;color:var(--ink-soft);line-height:1.7;position:relative;z-index:1}
+  .advice p strong{color:var(--ink);font-weight:700}
+  .advice .chip{display:inline-block;margin-top:11px;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:8px;background:var(--down-soft);color:var(--down);position:relative;z-index:1}
+
+  /* ===== Footer ===== */
+  .footer{margin-top:34px;text-align:center;font-size:12px;color:var(--ink-faint);line-height:1.9}
+  .footer .src{font-weight:600;color:var(--ink-soft)}
+  .footer .disc{display:inline-block;margin-top:2px}
+
+  /* ===== Responsive ===== */
+  @media(max-width:860px){
+    .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .two-col{grid-template-columns:1fr}
+    .risk-grid{grid-template-columns:1fr}
+    .advice-grid{grid-template-columns:1fr}
+    .warn-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:560px){
+    body{padding:14px 10px 48px}
+    .hero{padding:24px 20px}
+    .hero-body{flex-direction:column;align-items:flex-start}
+    .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .hero h1{font-size:20px}
+    .section-head{flex-wrap:wrap;row-gap:4px}
+    .section-head h2{white-space:nowrap}
+    .section-head .hint{font-size:11px;line-height:1.4}
+
+    /* Holdings: turn rows into stacked cards so every value stays readable */
+    .holdings-panel{
+      background:transparent;border:0;box-shadow:none;border-radius:0;overflow:visible;
+    }
+    .holdings-panel .table{display:block}
+    .holdings-panel thead{display:none}
+    .holdings-panel tbody{display:block}
+    .holdings-panel tbody tr{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      grid-template-areas:
+        "name type"
+        "money ret"
+        "pct pct";
+      align-items:center;gap:10px 12px;
+      margin-bottom:10px;padding:14px 16px;
+      background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+    }
+    .holdings-panel tbody tr:last-child{margin-bottom:0}
+    .holdings-panel tbody tr:hover{background:var(--card)}
+    .holdings-panel tbody td{padding:0;border:0;text-align:left}
+    .holdings-panel tbody td:nth-child(1){grid-area:name}
+    .holdings-panel tbody td:nth-child(2){grid-area:type;justify-self:end}
+    .holdings-panel tbody td:nth-child(3){grid-area:money}
+    .holdings-panel tbody td:nth-child(4){grid-area:pct}
+    .holdings-panel tbody td:nth-child(5){grid-area:ret;justify-self:end;text-align:right;font-size:15px}
+    .holdings-panel tbody td:nth-child(3)::before,
+    .holdings-panel tbody td:nth-child(5)::before{
+      display:block;margin-bottom:2px;
+      font-size:11px;font-weight:600;color:var(--ink-faint);letter-spacing:.2px;
+    }
+    .holdings-panel tbody td:nth-child(3)::before{content:"市值"}
+    .holdings-panel tbody td:nth-child(5)::before{content:"持有收益率";text-align:right}
+    html[lang="en"] .holdings-panel tbody td:nth-child(3)::before{content:"Market Value"}
+    html[lang="en"] .holdings-panel tbody td:nth-child(5)::before{content:"Holding Return"}
+    .holdings-panel .pct-cell{min-width:0}
+    .holdings-panel .pct-wrap{justify-content:flex-start;gap:10px}
+    .holdings-panel .pct-bar{max-width:none}
+    .holdings-panel .pct-num{min-width:44px;text-align:left}
+    .holdings-panel tfoot{display:block}
+    .holdings-panel tfoot tr{
+      display:flex;align-items:baseline;gap:10px;
+      margin-top:10px;padding:14px 16px;
+      background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+    }
+    .holdings-panel tfoot td{
+      padding:0;border:0;background:transparent;text-align:left;font-size:13.5px;
+    }
+    .holdings-panel tfoot td:nth-child(2){display:none}
+    .holdings-panel tfoot td:nth-child(4){margin-left:auto;padding:0}
+    .holdings-panel tfoot td:nth-child(4) .pct-num{text-align:right}
+  }
+
+  /* ===== Replica chrome ===== */
+  .site-actions{
+    position:fixed;top:16px;right:16px;z-index:2147483647;
+    display:flex;align-items:center;gap:8px;
+  }
+  .site-actions a,.site-actions button{
+    display:inline-flex;align-items:center;gap:6px;
+    font:600 13px/1 -apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",sans-serif;
+    padding:8px 14px;border-radius:999px;cursor:pointer;text-decoration:none;
+    color:#1c2433;background:rgba(255,255,255,.9);
+    border:1px solid rgba(20,30,55,.14);
+    box-shadow:0 2px 10px rgba(20,30,55,.1);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    transition:background .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+  }
+  .site-actions a:hover,.site-actions button:hover{
+    background:#fff;border-color:rgba(47,95,224,.35);
+    transform:translateY(-1px);box-shadow:0 4px 14px rgba(20,30,55,.14);
+  }
+  .site-actions .back-link{color:#2f5fe0;font-weight:700}
+  .site-actions .back-link span{font-size:11px;opacity:.65;font-weight:600}
+
+  .replica-credit{
+    max-width:1080px;margin:16px auto 0;padding:0 2px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    font:500 11.5px/1.6 "SF Mono","Fira Code",Menlo,Consolas,monospace;
+    color:#8d97a8;
+  }
+  .replica-credit a{color:#2f5fe0;text-decoration:none;border-bottom:1px dashed rgba(47,95,224,.4)}
+  .replica-credit a:hover{color:#1c2433;border-bottom-color:#1c2433}
+
+  /* ===== Entrance motion ===== */
+  .score-ring circle:last-child{transition:stroke-dashoffset 1.25s cubic-bezier(.22,.75,.25,1)}
+  .gauge-svg path:last-child{transition:stroke-dashoffset 1.1s cubic-bezier(.22,.75,.25,1)}
+
+  @media(max-width:560px){
+    .site-actions{top:10px;right:10px;gap:6px}
+    .site-actions a,.site-actions button{font-size:12px;padding:7px 11px}
+    .site-actions .back-link span{display:none}
+    .replica-credit{font-size:10.5px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .score-ring circle:last-child,.gauge-svg path:last-child{transition:none!important}
+  }
+  @media print{
+    .site-actions,.replica-credit{display:none!important}
+    body{background:#fff;padding:0}
+    .hero{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== HEADER ===== -->
+  <header class="hero">
+    <div class="hero-top">
+      <div class="logo" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>
+        </svg>
+      </div>
+      <div>
+        <h1>基金组合健康诊断</h1>
+        <div class="sub">Fund Portfolio Health Check · 报告日期 2026-06-16</div>
+      </div>
+    </div>
+    <div class="hero-body">
+      <div class="hero-tag">基于您当前持有的 6 只基金，对资产配置、风险水平与集中度进行全面体检，并给出可执行的优化建议。持有时长约 2 年。</div>
+      <div class="score-badge">
+        <div class="score-ring">
+          <svg width="78" height="78" viewBox="0 0 78 78">
+            <circle cx="39" cy="39" r="33" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="8"/>
+            <circle cx="39" cy="39" r="33" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"
+              stroke-dasharray="207.3" stroke-dashoffset="58" transform="rotate(-90 39 39)"/>
+          </svg>
+          <div class="num"><b>72</b><span>/ 100</span></div>
+        </div>
+        <div class="score-meta">
+          <div class="lvl">组合评分 良好</div>
+          <div class="desc">结构合理，仍有优化空间</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== KPI ===== -->
+  <section class="section">
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f5fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/><path d="M6 6V4h12v2"/></svg></div>
+        <div class="label">总市值</div>
+        <div class="val">¥320,000</div>
+        <div class="delta" style="color:var(--ink-faint)">截至 2026-06-16</div>
+      </div>
+      <div class="kpi">
+        <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f5fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg></div>
+        <div class="label">累计收益</div>
+        <div class="val up">+¥38,400</div>
+        <div class="delta up">+13.6% · 持有以来</div>
+      </div>
+      <div class="kpi">
+        <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f5fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <div class="label">持仓数量</div>
+        <div class="val">6 <span style="font-size:14px;font-weight:600;color:var(--ink-faint)">只</span></div>
+        <div class="delta" style="color:var(--ink-faint)">覆盖 4 类资产</div>
+      </div>
+      <div class="kpi">
+        <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d9822b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 6v6c0 5 3.8 8.5 9 10 5.2-1.5 9-5 9-10V6z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>
+        <div class="label">风险等级</div>
+        <div class="val" style="font-size:21px">中高</div>
+        <span class="badge-risk">年化波动率 18.5%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOLDINGS ===== -->
+  <section class="section">
+    <div class="section-head"><span class="bar"></span><h2>持仓明细</h2><span class="hint">共 6 只 · 占比已按市值计算</span></div>
+    <div class="panel holdings-panel">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>基金 / 代码</th>
+            <th>类型</th>
+            <th>市值</th>
+            <th>占比</th>
+            <th>持有收益率</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="fund-name"><b>易方达蓝筹精选混合</b><span class="code">005827</span></div></td>
+            <td><span class="type-tag t-mix">混合型</span></td>
+            <td class="money">¥86,000</td>
+            <td class="pct-cell"><div class="pct-wrap"><div class="pct-bar"><i style="width:100%"></i></div><span class="pct-num">26.9%</span></div></td>
+            <td class="ret up">+18.2%</td>
+          </tr>
+          <tr>
+            <td><div class="fund-name"><b>招商中证白酒指数</b><span class="code">161725</span></div></td>
+            <td><span class="type-tag t-idx">指数型</span></td>
+            <td class="money">¥58,000</td>
+            <td class="pct-cell"><div class="pct-wrap"><div class="pct-bar"><i style="width:67%"></i></div><span class="pct-num">18.1%</span></div></td>
+            <td class="ret down">-6.5%</td>
+          </tr>
+          <tr>
+            <td><div class="fund-name"><b>富国天惠成长混合</b><span class="code">161005</span></div></td>
+            <td><span class="type-tag t-mix">混合型</span></td>
+            <td class="money">¥52,000</td>
+            <td class="pct-cell"><div class="pct-wrap"><div class="pct-bar"><i style="width:60%"></i></div><span class="pct-num">16.3%</span></div></td>
+            <td class="ret up">+22.4%</td>
+          </tr>
+          <tr>
+            <td><div class="fund-name"><b>天弘沪深300ETF联接</b><span class="code">000961</span></div></td>
+            <td><span class="type-tag t-idx">指数型</span></td>
+            <td class="money">¥48,000</td>
+            <td class="pct-cell"><div class="pct-wrap"><div class="pct-bar"><i style="width:55%"></i></div><span class="pct-num">15.0%</span></div></td>
+            <td class="ret up">+9.8%</td>
+          </tr>
+          <tr>
+            <td><div class="fund-name"><b>广发纳斯达克100</b><span class="code">270042</span></div></td>
+            <td><span class="type-tag t-qdii">QDII</span></td>
+            <td class="money">¥42,000</td>
+            <td class="pct-cell"><div class="pct-wrap"><div class="pct-bar"><i style="width:49%"></i></div><span class="pct-num">13.1%</span></div></td>
+            <td class="ret up">+31.5%</td>
+          </tr>
+          <tr>
+            <td><div class="fund-name"><b>易方达中短债债券</b><span class="code">000621</span></div></td>
+            <td><span class="type-tag t-bond">债券型</span></td>
+            <td class="money">¥34,000</td>
+            <td class="pct-cell"><div class="pct-wrap"><div class="pct-bar"><i style="width:39%"></i></div><span class="pct-num">10.6%</span></div></td>
+            <td class="ret up">+4.2%</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>合计</td>
+            <td></td>
+            <td class="money">¥320,000</td>
+            <td style="text-align:right;padding-right:16px"><span class="pct-num" style="min-width:auto">100%</span></td>
+            <td class="ret up">+13.6%</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== ALLOCATION ===== -->
+  <section class="section">
+    <div class="section-head"><span class="bar"></span><h2>资产配置与行业暴露</h2><span class="hint">整体偏积极</span></div>
+    <div class="two-col">
+
+      <!-- Donut -->
+      <div class="panel donut-card">
+        <div class="donut-wrap">
+          <svg width="180" height="180" viewBox="0 0 42 42">
+            <!-- track -->
+            <circle cx="21" cy="21" r="15.915" fill="none" stroke="#eef1f7" stroke-width="6"/>
+            <!-- 混合型 43.2% (005827 26.9 + 161005 16.3) -->
+            <circle cx="21" cy="21" r="15.915" fill="none" stroke="#3651c9" stroke-width="6"
+              stroke-dasharray="43.2 56.8" stroke-dashoffset="25"/>
+            <!-- 指数权益 33.1% (161725 18.1 + 000961 15.0) -->
+            <circle cx="21" cy="21" r="15.915" fill="none" stroke="#cf6a1f" stroke-width="6"
+              stroke-dasharray="33.1 66.9" stroke-dashoffset="-18.2"/>
+            <!-- QDII 13.1% -->
+            <circle cx="21" cy="21" r="15.915" fill="none" stroke="#1f7fc4" stroke-width="6"
+              stroke-dasharray="13.1 86.9" stroke-dashoffset="-51.3"/>
+            <!-- 债券型 10.6% -->
+            <circle cx="21" cy="21" r="15.915" fill="none" stroke="#2e8b50" stroke-width="6"
+              stroke-dasharray="10.6 89.4" stroke-dashoffset="-64.4"/>
+          </svg>
+          <div class="donut-center"><b>偏积极型</b><span>权益占比 ~89%</span></div>
+        </div>
+        <div class="legend">
+          <div class="legend-row"><span class="dot" style="background:#3651c9"></span><span class="lname">混合型</span><span class="lval">43.2%</span></div>
+          <div class="legend-row"><span class="dot" style="background:#cf6a1f"></span><span class="lname">指数型（权益）</span><span class="lval">33.1%</span></div>
+          <div class="legend-row"><span class="dot" style="background:#1f7fc4"></span><span class="lname">QDII（海外）</span><span class="lval">13.1%</span></div>
+          <div class="legend-row"><span class="dot" style="background:#2e8b50"></span><span class="lname">债券型</span><span class="lval">10.6%</span></div>
+        </div>
+      </div>
+
+      <!-- Industry exposure -->
+      <div class="panel expo-card">
+        <h3>行业 / 板块暴露</h3>
+        <div class="note">穿透持仓后估算的主要板块敞口</div>
+        <div class="expo-row">
+          <div class="expo-top"><span class="en">白酒 / 食品饮料</span><span class="ev" style="color:var(--warn)">≈ 35%</span></div>
+          <div class="expo-track"><i class="alert" style="width:35%"></i><span class="expo-thresh" style="left:20%"></span></div>
+          <div class="expo-warn-line">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d9822b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            超过建议上限（20%），集中度偏高
+          </div>
+        </div>
+        <div class="expo-row">
+          <div class="expo-top"><span class="en">海外科技（纳指）</span><span class="ev">13.1%</span></div>
+          <div class="expo-track"><i class="ok" style="width:13.1%"></i></div>
+        </div>
+        <div class="expo-row">
+          <div class="expo-top"><span class="en">A股宽基（沪深300）</span><span class="ev">15.0%</span></div>
+          <div class="expo-track"><i class="ok" style="width:15%"></i></div>
+        </div>
+        <div class="expo-row">
+          <div class="expo-top"><span class="en">利率 / 信用债</span><span class="ev">10.6%</span></div>
+          <div class="expo-track"><i class="ok" style="width:10.6%"></i></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== RISK ===== -->
+  <section class="section">
+    <div class="section-head"><span class="bar"></span><h2>风险体检</h2><span class="hint">风险等级 中高</span></div>
+    <div class="risk-grid">
+
+      <div class="gauge-card">
+        <div class="gtitle">年化波动率</div>
+        <svg class="gauge-svg" width="150" height="84" viewBox="0 0 150 84">
+          <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#eef1f7" stroke-width="11" stroke-linecap="round"/>
+          <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#d9822b" stroke-width="11" stroke-linecap="round"
+            stroke-dasharray="197.9" stroke-dashoffset="106.9"/>
+        </svg>
+        <div class="gauge-val" style="color:var(--warn)">18.5%</div>
+        <div class="gauge-sub">高于稳健组合（&lt;12%）</div>
+      </div>
+
+      <div class="gauge-card">
+        <div class="gtitle">最大回撤（2025年）</div>
+        <svg class="gauge-svg" width="150" height="84" viewBox="0 0 150 84">
+          <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#eef1f7" stroke-width="11" stroke-linecap="round"/>
+          <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#e0392b" stroke-width="11" stroke-linecap="round"
+            stroke-dasharray="197.9" stroke-dashoffset="89.0"/>
+        </svg>
+        <div class="gauge-val" style="color:var(--up)">-22.3%</div>
+        <div class="gauge-sub">峰值至谷底最大跌幅</div>
+      </div>
+
+      <div class="gauge-card">
+        <div class="gtitle">综合风险等级</div>
+        <svg class="gauge-svg" width="150" height="84" viewBox="0 0 150 84">
+          <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#eef1f7" stroke-width="11" stroke-linecap="round"/>
+          <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#d9822b" stroke-width="11" stroke-linecap="round"
+            stroke-dasharray="197.9" stroke-dashoffset="59.4"/>
+          <!-- needle -->
+        </svg>
+        <div class="gauge-val" style="color:var(--warn)">中高</div>
+        <div class="gauge-sub">R4 · 5 级中第 4 级</div>
+      </div>
+
+    </div>
+
+    <div class="warn-grid">
+      <div class="warn-card">
+        <div class="wh">
+          <span class="wi" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#d9822b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <b>集中度偏高</b><span class="tag">需关注</span>
+        </div>
+        <p>招商白酒与蓝筹精选均重仓白酒板块，合计白酒暴露约 <em>35%</em>，远超单一行业建议上限（20%）。行业过度集中会放大波动，一旦白酒回调，组合将明显承压。</p>
+      </div>
+      <div class="warn-card">
+        <div class="wh">
+          <span class="wi" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#d9822b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M7 16l4-5 3 3 5-7"/></svg></span>
+          <b>分散化不足</b><span class="tag">需关注</span>
+        </div>
+        <p>蓝筹精选混合的重仓股与中证白酒指数高度重叠，二者相关性高，<em>"分散持有≠分散风险"</em>。当前组合在权益端缺乏低相关资产对冲，回撤平滑能力不足。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ADVICE ===== -->
+  <section class="section">
+    <div class="section-head"><span class="bar"></span><h2>优化建议</h2><span class="hint">4 条可执行动作</span></div>
+    <div class="advice-grid">
+
+      <div class="advice">
+        <div class="step">01</div>
+        <div class="ah"><span class="ai" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2f5fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></span><b>降低白酒集中度</b></div>
+        <p>招商白酒当前亏损 <strong>-6.5%</strong>，且与蓝筹精选高度重叠。建议将白酒整体暴露<strong>减持至 10% 以内</strong>，约释放资金 <strong>¥25,000</strong>，用于补充低相关资产。</p>
+        <span class="chip">预计释放 ¥25,000</span>
+      </div>
+
+      <div class="advice">
+        <div class="step">02</div>
+        <div class="ah"><span class="ai" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2f5fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span><b>补充低相关资产</b></div>
+        <p>增配债券型基金或黄金 QDII，把<strong>债券占比从 10.6% 提升到约 20%</strong>。低相关资产能在权益回调时平滑组合波动，有效压低最大回撤。</p>
+        <span class="chip">债券 10.6% 提升至 20%</span>
+      </div>
+
+      <div class="advice">
+        <div class="step">03</div>
+        <div class="ah"><span class="ai" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2f5fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><b>海外配置可保留</b></div>
+        <p>广发纳斯达克100 收益亮眼 <strong>+31.5%</strong>，且与 A 股相关性较低，是有效的分散工具。建议<strong>维持 10–15% 海外仓位</strong>，不必因短期波动赎回。</p>
+        <span class="chip">维持 10–15%</span>
+      </div>
+
+      <div class="advice">
+        <div class="step">04</div>
+        <div class="ah"><span class="ai" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2f5fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 4v4h4"/></svg></span><b>定投再平衡</b></div>
+        <p>建议<strong>每季度检视一次</strong>组合。再平衡时优先用<strong>新增资金补低配资产</strong>，而非"赎回再买入"，可省下申赎费用、减少税费摩擦。</p>
+        <span class="chip">每季度 · 省申赎费</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="src">数据来源：盈米Skills · 基金组合诊断</div>
+    <div class="disc">基金有风险，投资需谨慎。本诊断基于历史数据测算，仅供参考，不构成投资建议。</div>
+  </footer>
+
+  <div class="replica-credit">
+    <span>Replicated by <a href="index.html">virusbee</a> · WorkBuddy Case 02 · 2026</span>
+    <a href="workbuddy_replica_01.html">← 复刻 01</a>
+  </div>
+
+</div>
+
+<!-- __i18n_runtime (方案A': 单文件中英切换, 响应 ?lang=en) -->
+<div class="site-actions">
+  <a class="back-link" href="index.html" aria-label="返回 virusbee 首页">← virusbee <span>首页</span></a>
+  <button id="__langToggle" type="button" aria-label="切换语言 / Toggle language">EN</button>
+</div>
+<script>
+(function(){
+  var DICT = {"基金组合健康诊断报告": "Fund Portfolio Health Check Report", "基金组合健康诊断": "Fund Portfolio Health Check", "Fund Portfolio Health Check · 报告日期 2026-06-16": "Fund Portfolio Health Check · Report Date 2026-06-16", "基于您当前持有的 6 只基金，对资产配置、风险水平与集中度进行全面体检，并给出可执行的优化建议。持有时长约 2 年。": "Based on the 6 funds you currently hold, this is a comprehensive check-up of your asset allocation, risk level and concentration, with actionable optimization recommendations. Holding period approximately 2 years.", "组合评分 良好": "Portfolio Score: Good", "结构合理，仍有优化空间": "Well structured, still room to improve", "总市值": "Total Market Value", "截至 2026-06-16": "As of 2026-06-16", "累计收益": "Cumulative Return", "+13.6% · 持有以来": "+13.6% · Since Inception", "持仓数量": "Number of Holdings", "只": "funds", "覆盖 4 类资产": "Across 4 asset classes", "风险等级": "Risk Level", "中高": "Medium-High", "年化波动率 18.5%": "Annualized Volatility 18.5%", "持仓明细": "Holdings Detail", "共 6 只 · 占比已按市值计算": "6 funds total · weights by market value", "基金 / 代码": "Fund / Code", "类型": "Type", "市值": "Market Value", "占比": "Weight", "持有收益率": "Holding Return", "易方达蓝筹精选混合": "E Fund Blue Chip Selected Mixed", "混合型": "Mixed", "招商中证白酒指数": "China Merchants CSI Baijiu Index", "指数型": "Index", "富国天惠成长混合": "Fullgoal Tianhui Growth Mixed", "天弘沪深300ETF联接": "Tianhong CSI 300 ETF Feeder", "广发纳斯达克100": "GF Nasdaq 100", "易方达中短债债券": "E Fund Short & Medium Term Bond", "债券型": "Bond", "合计": "Total", "资产配置与行业暴露": "Asset Allocation & Sector Exposure", "整体偏积极": "Overall aggressive tilt", "偏积极型": "Aggressive Tilt", "权益占比 ~89%": "Equity ~89%", "指数型（权益）": "Index (Equity)", "QDII（海外）": "QDII (Overseas)", "行业 / 板块暴露": "Industry / Sector Exposure", "穿透持仓后估算的主要板块敞口": "Main sector exposure estimated after looking through holdings", "白酒 / 食品饮料": "Baijiu / Food & Beverage", "超过建议上限（20%），集中度偏高": "Exceeds recommended cap (20%); concentration too high", "海外科技（纳指）": "Overseas Tech (Nasdaq)", "A股宽基（沪深300）": "A-share Broad Index (CSI 300)", "利率 / 信用债": "Rate / Credit Bonds", "风险体检": "Risk Check-up", "风险等级 中高": "Risk Level: Medium-High", "年化波动率": "Annualized Volatility", "高于稳健组合（<12%）": "Above a conservative portfolio (<12%)", "最大回撤（2025年）": "Max Drawdown (2025)", "峰值至谷底最大跌幅": "Largest peak-to-trough decline", "综合风险等级": "Overall Risk Level", "R4 · 5 级中第 4 级": "R4 · Level 4 of 5", "集中度偏高": "Concentration Too High", "需关注": "Attention Needed", "招商白酒与蓝筹精选均重仓白酒板块，合计白酒暴露约": "Both China Merchants Baijiu and Blue Chip Selected are heavily weighted in the baijiu sector, with combined baijiu exposure of about", "，远超单一行业建议上限（20%）。行业过度集中会放大波动，一旦白酒回调，组合将明显承压。": ", far above the recommended cap for a single industry (20%). Excessive industry concentration amplifies volatility—if baijiu pulls back, the portfolio will come under clear pressure.", "分散化不足": "Insufficient Diversification", "蓝筹精选混合的重仓股与中证白酒指数高度重叠，二者相关性高，": "The top holdings of Blue Chip Selected Mixed overlap heavily with the CSI Baijiu Index, and the two are highly correlated—", "\"分散持有≠分散风险\"": "\"holding many funds ≠ diversified risk.\"", "。当前组合在权益端缺乏低相关资产对冲，回撤平滑能力不足。": "On the equity side the portfolio lacks low-correlation assets to hedge, so its ability to smooth drawdowns is weak.", "优化建议": "Optimization Recommendations", "4 条可执行动作": "4 actionable steps", "降低白酒集中度": "Reduce Baijiu Concentration", "招商白酒当前亏损": "China Merchants Baijiu is currently down", "，且与蓝筹精选高度重叠。建议将白酒整体暴露": "and overlaps heavily with Blue Chip Selected. We recommend", "减持至 10% 以内": "trimming total baijiu exposure to under 10%", "，约释放资金": ", freeing up roughly", "，用于补充低相关资产。": "to add low-correlation assets.", "预计释放 ¥25,000": "Est. frees up ¥25,000", "补充低相关资产": "Add Low-Correlation Assets", "增配债券型基金或黄金 QDII，把": "Increase bond funds or a gold QDII to", "债券占比从 10.6% 提升到约 20%": "raise the bond weight from 10.6% to about 20%", "。低相关资产能在权益回调时平滑组合波动，有效压低最大回撤。": ". Low-correlation assets smooth portfolio volatility during equity pullbacks and effectively lower the max drawdown.", "债券 10.6% 提升至 20%": "Bond 10.6% → 20%", "海外配置可保留": "Keep Overseas Allocation", "广发纳斯达克100 收益亮眼": "GF Nasdaq 100 has delivered an impressive", "，且与 A 股相关性较低，是有效的分散工具。建议": "and has low correlation to A-shares, making it an effective diversifier. We recommend", "维持 10–15% 海外仓位": "maintaining a 10–15% overseas position", "，不必因短期波动赎回。": "and not redeeming due to short-term volatility.", "维持 10–15%": "Maintain 10–15%", "定投再平衡": "Regular Rebalancing", "建议": "We recommend", "每季度检视一次": "reviewing the portfolio quarterly", "组合。再平衡时优先用": ". When rebalancing, prefer", "新增资金补低配资产": "adding new money to underweight assets", "，而非\"赎回再买入\"，可省下申赎费用、减少税费摩擦。": "rather than \"redeem then rebuy\"—this saves subscription/redemption fees and reduces tax friction.", "每季度 · 省申赎费": "Quarterly · Saves fees", "数据来源：盈米Skills · 基金组合诊断": "Data source: Yingmi Skills · Fund Portfolio Diagnostics", "基金有风险，投资需谨慎。本诊断基于历史数据测算，仅供参考，不构成投资建议。": "Funds carry risk; invest with caution. This diagnostic is calculated from historical data, is for reference only, and does not constitute investment advice."};
+  DICT["首页"] = "home";
+  DICT["← 复刻 01"] = "← Replica 01";
+  var ATTRS = ["placeholder", "title", "alt", "value", "aria-label", "content"];
+  var SKIP = {SCRIPT:1,STYLE:1,NOSCRIPT:1};
+  var textRecs = [], attrRecs = [], ready = false;
+  function snapshot(){
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var n;
+    while((n = w.nextNode())){
+      if(n.parentNode && SKIP[n.parentNode.nodeName]) continue;
+      var raw = n.nodeValue, key = raw.trim();
+      if(key && DICT[key] !== undefined) textRecs.push([n, raw, key, DICT[key]]);
+    }
+    var all = document.body.querySelectorAll('*');
+    for(var i=0;i<all.length;i++){
+      var el = all[i];
+      for(var a=0;a<ATTRS.length;a++){
+        var at = ATTRS[a];
+        if(el.hasAttribute && el.hasAttribute(at)){
+          var v = el.getAttribute(at), k = (v||'').trim();
+          if(k && DICT[k] !== undefined) attrRecs.push([el, at, v, k, DICT[k]]);
+        }
+      }
+    }
+    ready = true;
+  }
+  function apply(lang){
+    if(!ready) snapshot();
+    var en = (lang === 'en');
+    textRecs.forEach(function(r){
+      var node=r[0], raw=r[1], zh=r[2], env=r[3];
+      node.nodeValue = en ? raw.replace(zh, env) : raw;
+    });
+    attrRecs.forEach(function(r){
+      var el=r[0], at=r[1], raw=r[2], zh=r[3], env=r[4];
+      el.setAttribute(at, en ? raw.replace(zh, env) : raw);
+    });
+    document.documentElement.setAttribute('lang', en ? 'en' : 'zh-CN');
+    document.title = en ? 'Fund Portfolio Health Check · virusbee replica' : '基金组合健康诊断 · virusbee 复刻';
+    var t = document.getElementById('__langToggle');
+    if(t) t.textContent = en ? '中' : 'EN';
+  }
+  function curLang(){
+    try{ return (new URLSearchParams(location.search).get('lang')==='en')?'en':'zh'; }
+    catch(e){ return 'zh'; }
+  }
+  function setLang(l){
+    apply(l);
+    try{ var u=new URL(location); u.searchParams.set('lang', l); history.replaceState(null,'',u); }catch(e){}
+  }
+  window.__setLang = setLang;
+  function init(){
+    var l = curLang();
+    apply(l);
+    var t = document.getElementById('__langToggle');
+    if(t) t.addEventListener('click', function(){ setLang(curLang()==='en'?'zh':'en'); });
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+
+<script>
+(function () {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Score ring: fill from empty to 72/100 */
+  const ring = document.querySelector('.score-ring circle:last-child');
+  if (ring && !reduce) {
+    const target = ring.getAttribute('stroke-dashoffset');
+    const total = parseFloat(ring.getAttribute('stroke-dasharray')) || 207.3;
+    ring.setAttribute('stroke-dashoffset', total);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        ring.setAttribute('stroke-dashoffset', target);
+      });
+    });
+  }
+
+  /* Risk gauges render at their final values so screenshots and print stay accurate. */
+})();
+</script>
+
+</body>
+</html>
