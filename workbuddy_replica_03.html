@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI HOT 一周 AI 论文盘点 · 2026-05-02 ~ 2026-05-09 · virusbee 复刻</title>
+<meta name="description" content="WorkBuddy 成长中心里打开的 AI HOT 一周 AI 论文盘点，单文件静态复刻：24 篇论文、7 个日期分组、9+ 来源，含滚动入场与移动端适配。">
+<meta name="color-scheme" content="light">
+<link rel="canonical" href="https://virusbee.github.io/workbuddy_replica_03.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI HOT 一周 AI 论文盘点 · virusbee 复刻">
+<meta property="og:description" content="24 篇论文、7 个日期分组、9+ 来源机构。WorkBuddy 案例的单文件静态复刻。">
+<meta property="og:url" content="https://virusbee.github.io/workbuddy_replica_03.html">
+<meta name="theme-color" content="#F4F8FE">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  color-scheme:light;
+  --bg-primary:#F4F8FE;
+  --bg-secondary:#EAF1FB;
+  --bg-card:#FFFFFF;
+  --bg-elevated:#F8FBFF;
+  --text-primary:#0E2747;
+  --text-secondary:#3F587A;
+  --text-muted:#7C8DA6;
+  --accent:#1F6FEB;
+  --accent-cyan:#0EA5C7;
+  --accent-deep:#0B4FBF;
+  --gradient:linear-gradient(135deg,#1F6FEB 0%,#0EA5C7 100%);
+  --gradient-text:linear-gradient(135deg,#0B4FBF 0%,#1F6FEB 45%,#0EA5C7 100%);
+  --border:rgba(31,111,235,0.16);
+  --border-hover:rgba(31,111,235,0.42);
+  --rail:rgba(31,111,235,0.32);
+  --radius:12px;
+  --radius-lg:16px;
+  --shadow:0 4px 18px rgba(15,42,90,0.06);
+  --shadow-hover:0 12px 32px rgba(15,42,90,0.10);
+  --shadow-glow:0 0 0 4px rgba(31,111,235,0.08);
+  --font-serif:"Iowan Old Style","Apple Garamond",Baskerville,"Times New Roman","Songti SC","STSong",serif;
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC",sans-serif;
+  --font-mono:"SF Mono","Fira Code",Menlo,Consolas,monospace;
+  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-sans);
+  background:var(--bg-primary);
+  background-image:
+    radial-gradient(ellipse at top left,rgba(31,111,235,0.10) 0%,transparent 55%),
+    radial-gradient(ellipse at bottom right,rgba(14,165,199,0.08) 0%,transparent 55%);
+  background-attachment:fixed;
+  color:var(--text-primary);
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+/* Hero */
+.hero{
+  padding:96px 24px 64px;
+  text-align:center;
+  position:relative;
+  border-bottom:1px solid var(--border);
+}
+.hero-inner{max-width:880px;margin:0 auto}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:6px 16px;border-radius:999px;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  font-size:0.78rem;
+  font-family:var(--font-mono);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:24px;
+}
+.hero-eyebrow::before{
+  content:"";width:6px;height:6px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 10px var(--accent);
+}
+.hero h1{
+  font-family:var(--font-serif);
+  font-size:clamp(2.4rem,6vw,4rem);
+  font-weight:400;
+  letter-spacing:-1.5px;
+  line-height:1.1;
+  margin-bottom:18px;
+  background:var(--gradient-text);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero h1 em{font-style:italic;font-weight:300}
+.hero-meta{
+  display:flex;justify-content:center;gap:24px;flex-wrap:wrap;
+  font-size:0.9rem;color:var(--text-secondary);
+  margin-bottom:32px;
+}
+.hero-meta strong{
+  color:var(--text-primary);
+  font-family:var(--font-mono);
+  font-weight:500;
+}
+.hero-stats{
+  display:inline-flex;align-items:center;gap:0;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:0;
+  overflow:hidden;
+}
+.hero-stat{
+  padding:14px 28px;
+  border-right:1px solid var(--border);
+}
+.hero-stat:last-child{border-right:0}
+.hero-stat-num{
+  font-size:1.6rem;font-weight:600;
+  font-family:var(--font-mono);
+  background:var(--gradient);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  line-height:1;
+}
+.hero-stat-label{
+  font-size:0.72rem;
+  color:var(--text-muted);
+  margin-top:4px;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+
+/* Timeline Layout */
+.timeline-wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:64px 24px 48px;
+}
+.day-group{
+  display:grid;
+  grid-template-columns:200px 1fr;
+  gap:48px;
+  margin-bottom:56px;
+  position:relative;
+}
+.day-rail{
+  position:relative;
+  padding-top:6px;
+}
+.day-rail::before{
+  content:"";position:absolute;
+  left:11px;top:24px;bottom:-56px;
+  width:2px;
+  background:linear-gradient(180deg,var(--rail) 0%,transparent 100%);
+}
+.day-rail .dot{
+  position:absolute;left:0;top:6px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--bg-primary);
+  border:2px solid var(--accent);
+  box-shadow:0 0 0 4px var(--bg-primary),0 0 0 6px rgba(31,111,235,0.15);
+  z-index:1;
+}
+.day-rail .dot::after{
+  content:"";position:absolute;
+  inset:4px;border-radius:50%;
+  background:var(--gradient);
+}
+.day-rail .label{
+  margin-left:40px;
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  letter-spacing:1px;
+  color:var(--accent);
+  text-transform:uppercase;
+  font-weight:500;
+}
+.day-rail .sub{
+  margin-left:40px;
+  font-size:0.78rem;
+  color:var(--text-muted);
+  margin-top:4px;
+}
+.day-papers{display:flex;flex-direction:column;gap:14px}
+
+/* Paper card */
+.paper{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px 26px;
+  box-shadow:var(--shadow);
+  transition:border-color .25s ease,background .25s ease,box-shadow .25s ease,transform .4s cubic-bezier(.4,0,.2,1),opacity .6s ease;
+  position:relative;
+}
+.js .paper{opacity:0;transform:translateX(-12px)}
+.paper.visible{opacity:1;transform:translateX(0)}
+.paper:hover{
+  border-color:var(--border-hover);
+  background:var(--bg-elevated);
+  box-shadow:var(--shadow-hover);
+  transform:translateX(0) translateY(-2px);
+}
+.paper-head{
+  display:flex;align-items:flex-start;gap:14px;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+}
+.paper-num{
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  color:var(--text-muted);
+  flex-shrink:0;
+  padding-top:3px;
+}
+.paper-title{
+  font-family:var(--font-serif);
+  font-size:1.18rem;
+  font-weight:600;
+  letter-spacing:-0.3px;
+  line-height:1.4;
+  flex:1;
+  min-width:0;
+  color:var(--text-primary);
+}
+.paper-source{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:3px 10px;
+  border-radius:6px;
+  font-size:0.72rem;
+  font-weight:500;
+  font-family:var(--font-mono);
+  letter-spacing:0.3px;
+  white-space:nowrap;
+}
+.paper-source-apple{background:#EEF1F6;color:#4A5469;border:1px solid #D6DCE6}
+.paper-source-hf{background:#FFF6DC;color:#9A7300;border:1px solid #F2D679}
+.paper-source-anthropic{background:#FBEDE5;color:#B5522A;border:1px solid #F0B89C}
+.paper-source-openai{background:#E0F5EC;color:#0F8A5F;border:1px solid #A6E0C7}
+.paper-source-x{background:#EEF2F7;color:#4F6079;border:1px solid #CFD7E1}
+.paper-source-arxiv{background:#FBE6E8;color:#B72236;border:1px solid #F0A6AE}
+.paper-source-hn{background:#FFEDDB;color:#B65A0E;border:1px solid #F4C49C}
+.paper-source-google{background:#E2ECFD;color:#1A56DB;border:1px solid #B2C9F5}
+.paper-source-msft{background:#DEF3F7;color:#0E7D8E;border:1px solid #A8DEE7}
+.paper-source-other{background:#E6EEFB;color:#1F4FA8;border:1px solid #B6CCEC}
+
+.paper-source-name{
+  font-size:0.78rem;color:var(--text-muted);
+  margin-bottom:10px;
+}
+.paper-summary{
+  font-size:0.92rem;
+  color:var(--text-secondary);
+  line-height:1.7;
+  margin-bottom:14px;
+}
+.paper-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  color:var(--accent);
+  border-bottom:1px dashed transparent;
+  padding-bottom:1px;
+  transition:var(--transition);
+}
+.paper-link:hover{
+  color:var(--accent-cyan);
+  border-bottom-color:var(--accent-cyan);
+}
+.paper-link svg{width:12px;height:12px;transition:transform 0.2s ease}
+.paper-link:hover svg{transform:translate(2px,-2px)}
+
+/* Footer */
+footer{
+  margin-top:32px;
+  padding:48px 24px 56px;
+  text-align:center;
+  border-top:1px solid var(--border);
+  background:var(--bg-secondary);
+}
+.footer-mark{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:1.1rem;
+  color:var(--text-secondary);
+  margin-bottom:8px;
+}
+.footer-source{
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  color:var(--text-muted);
+  letter-spacing:0.3px;
+}
+.footer-source a{
+  color:var(--accent);
+  border-bottom:1px dashed var(--accent);
+  padding-bottom:1px;
+}
+
+
+/* Replica chrome */
+.skip-link{
+  position:fixed;top:12px;left:12px;z-index:200;
+  padding:10px 16px;border-radius:8px;
+  background:var(--accent);color:#fff;
+  font-size:.85rem;font-weight:600;
+  transform:translateY(-200%);
+  transition:transform .2s ease;
+}
+.skip-link:focus{transform:none}
+.site-actions{
+  position:fixed;top:16px;right:16px;z-index:100;
+  display:flex;align-items:center;gap:8px;
+}
+.site-actions a{
+  display:inline-flex;align-items:center;gap:6px;
+  font:600 13px/1 var(--font-sans);
+  padding:8px 14px;border-radius:999px;
+  color:var(--accent);background:rgba(255,255,255,.9);
+  border:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(15,42,90,.08);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  transition:background .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.site-actions a:hover{
+  background:#fff;border-color:var(--border-hover);
+  transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,42,90,.12);
+}
+.site-actions .back-link{font-weight:700}
+.site-actions .back-link span{font-size:11px;opacity:.65;font-weight:600}
+
+.replica-credit{
+  max-width:1052px;margin:20px auto 0;padding:18px 0 0;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  font:500 .72rem/1.6 var(--font-mono);
+  color:var(--text-muted);text-align:left;
+}
+.replica-credit a{
+  color:var(--accent);text-decoration:none;
+  border-bottom:1px dashed rgba(31,111,235,.4);
+}
+.replica-credit a:hover{color:var(--text-primary);border-bottom-color:var(--text-primary)}
+
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+#papers:focus{outline:none}
+.paper-link:focus-visible{outline-offset:4px}
+::selection{background:rgba(31,111,235,.18);color:var(--text-primary)}
+
+@media (max-width:560px){
+  .site-actions{top:10px;right:10px;gap:6px}
+  .site-actions a{font-size:12px;padding:7px 11px}
+  .site-actions .back-link span{display:none}
+  .replica-credit{font-size:.68rem;justify-content:center;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .paper,.paper-link svg,.site-actions a,.skip-link{transition:none!important}
+  .js .paper{opacity:1!important;transform:none!important}
+}
+@media print{
+  .site-actions,.skip-link,.replica-credit{display:none!important}
+  body{background:#fff}
+  footer{background:#fff}
+  .hero h1{
+    background:none!important;
+    -webkit-text-fill-color:var(--text-primary)!important;
+    color:var(--text-primary)!important;
+  }
+  .hero-stat-num{
+    background:none!important;
+    -webkit-text-fill-color:var(--accent)!important;
+    color:var(--accent)!important;
+  }
+  .hero-eyebrow::before{box-shadow:none!important}
+  .paper{box-shadow:none;opacity:1!important;transform:none!important;break-inside:avoid}
+}
+
+@media (max-width:768px){
+  .hero{padding:64px 20px 48px}
+  .timeline-wrap{padding:40px 20px 32px}
+  .day-group{
+    grid-template-columns:1fr;
+    gap:14px;
+    margin-bottom:40px;
+  }
+  .day-rail{padding-top:0}
+  .day-rail::before{display:none}
+  .day-rail .dot{position:relative;top:0;left:0;display:inline-block;vertical-align:middle;margin-right:10px}
+  .day-rail .label,.day-rail .sub{margin-left:0;display:inline-block}
+  .day-rail .sub{margin-left:8px}
+  .paper{padding:18px 20px}
+  .hero-stats{flex-direction:column;align-items:stretch}
+  .hero-stat{border-right:0;border-bottom:1px solid var(--border)}
+  .hero-stat:last-child{border-bottom:0}
+}
+
+@media (max-width:560px){
+  .hero h1 .h1-line{display:block}
+  .hero-meta{flex-direction:column;gap:2px;font-size:.84rem}
+  .hero-meta .meta-sep{display:none}
+  .paper-head{
+    display:grid;grid-template-columns:auto 1fr;
+    gap:4px 10px;align-items:center;margin-bottom:12px;
+  }
+  .paper-num{grid-column:1;grid-row:1;padding-top:0}
+  .paper-source{grid-column:2;grid-row:1;justify-self:end}
+  .paper-title{grid-column:1/-1;grid-row:2;font-size:1.08rem;line-height:1.45}
+}
+</style>
+<noscript><style>.paper{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body>
+
+<a class="skip-link" href="#papers">跳到论文列表</a>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">AI HOT · WEEKLY PAPERS</div>
+    <h1><span class="h1-line">最近一周 <em>AI</em></span> <span class="h1-line">论文盘点</span></h1>
+    <div class="hero-meta">
+      <span>时间窗 <strong>2026-05-02 ~ 2026-05-09</strong></span>
+      <span class="meta-sep">·</span>
+      <span>按发布时间倒序</span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">24</div><div class="hero-stat-label">精选论文</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">天时间窗</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">9+</div><div class="hero-stat-label">来源机构</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="timeline-wrap" id="papers" tabindex="-1">
+
+<section class="day-group">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">22 小时前</h2>
+    <div class="sub">2026-05-08</div>
+  </aside>
+  <div class="day-papers">
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">01</span>
+        <h3 class="paper-title">谷歌研究揭示：结构化问询与可穿戴数据是 AI 医疗诊断的关键</h3>
+        <span class="paper-source paper-source-x">X · @kimmonismus</span>
+      </div>
+      <p class="paper-summary">谷歌团队通过 Fitbit 对近 1.4 万名用户进行了为期 9 个月的 AI 症状检查测试。在盲评中，临床医生将 AI 诊断列为首选的比例达 53%，显著高于独立医生的 24%。研究核心发现并非"AI 击败医生"，而是揭示了当前消费级大模型仅凭用户输入直接回答的模式存在缺陷——其诊断准确率较 AI 主导的结构化访谈下降约 27%。同时，可穿戴设备能提前数天监测到心率上升、睡眠紊乱等生理变化，早于用户主动报告。</p>
+      <a class="paper-link" href="https://x.com/kimmonismus/status/2052450461278744798" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">02</span>
+        <h3 class="paper-title">GLM-5V-Turbo 技术报告发布，迈向原生多模态智能体基础模型</h3>
+        <span class="paper-source paper-source-x">X · 智谱 Z.ai</span>
+      </div>
+      <p class="paper-summary">GLM-5V-Turbo 技术报告：迈向原生多模态智能体基础模型。本报告总结了 GLM-5V-Turbo 在模型设计、多模态训练、强化学习、工具链扩展以及与智能体框架集成等方面的主要改进。这些进展使其在多模态编码、视觉工具使用和基于框架的智能体任务中表现出色。</p>
+      <a class="paper-link" href="https://x.com/Zai_org/status/2052426777654387168" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+  </div>
+</section>
+
+<section class="day-group">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">昨天</h2>
+    <div class="sub">2026-05-08</div>
+  </aside>
+  <div class="day-papers">
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">03</span>
+        <h3 class="paper-title">AI 协数学家：以智能体 AI 加速数学研究</h3>
+        <span class="paper-source paper-source-hf">HuggingFace Daily</span>
+      </div>
+      <p class="paper-summary">AI 协数学家是一个供数学家利用 AI 智能体进行开放式研究的工作平台。它针对数学工作流程的探索性与迭代性特点，提供从构思、文献检索、计算探索到定理证明的全方位支持。其异步、有状态的工作空间能管理不确定性、细化用户意图并追踪失败假设，模拟了人类协作模式。早期测试中，该系统已协助研究人员解决开放问题、识别新方向并发现被忽视的文献。</p>
+      <a class="paper-link" href="https://arxiv.org/abs/2605.06651" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">04</span>
+        <h3 class="paper-title">用于学习语义丰富视觉表征的文本条件 JEPA</h3>
+        <span class="paper-source paper-source-apple">Apple ML Research</span>
+      </div>
+      <p class="paper-summary">研究人员提出文本条件联合嵌入预测架构（TC-JEPA），通过引入图像描述文本作为条件信息来降低掩码特征预测中的视觉不确定性。该方法采用细粒度文本调节器，对输入文本标记计算稀疏交叉注意力，从而调制预测的图像补丁特征。与基于掩码特征预测的 I-JEPA 相比，TC-JEPA 能够学习到语义更丰富的视觉表征。</p>
+      <a class="paper-link" href="https://machinelearning.apple.com/research/text-conditional-jepa-visual-representations" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">05</span>
+        <h3 class="paper-title">实用学习型图像压缩的关键要素</h3>
+        <span class="paper-source paper-source-apple">Apple ML Research</span>
+      </div>
+      <p class="paper-summary">学习型编解码器相比传统硬编码方法的显著优势在于能直接针对人类视觉系统进行优化，但目前尚未出现兼具感知质量与实用性的图像编解码方案。本研究通过全面分析关键建模选择，旨在填补这一空白，探索在感知质量与运行效率间的联合优化方案，并在消融实验中引入了若干新技术。</p>
+      <a class="paper-link" href="https://machinelearning.apple.com/research/compression" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">06</span>
+        <h3 class="paper-title">研究强化学习中意外对思维链（CoT）评分的影响</h3>
+        <span class="paper-source paper-source-openai">OpenAI Alignment</span>
+      </div>
+      <p class="paper-summary">研究发现，部分已发布的模型存在有限的意外对思维链（CoT）进行评分的情况。团队已修复受影响的奖励通路，并确认没有明确证据表明模型的可监控性因此下降。这表明当前强化学习训练中对 CoT 的意外评分影响有限，且修复后未对监控能力产生负面影响。</p>
+      <a class="paper-link" href="https://alignment.openai.com/accidental-cot-grading" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+  </div>
+</section>
+
+<section class="day-group">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">2 天前</h2>
+    <div class="sub">2026-05-07</div>
+  </aside>
+  <div class="day-papers">
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">07</span>
+        <h3 class="paper-title">自然语言自编码器：将 Claude 的"想法"解码为文本</h3>
+        <span class="paper-source paper-source-anthropic">Anthropic Research</span>
+      </div>
+      <p class="paper-summary">Anthropic 团队推出自然语言自编码器方法，能将大模型内部的激活值直接解码为可读文本。该方法通过训练"激活描述器"和"激活重建器"，形成"激活值→文本解释→重建激活值"的循环，并以重建相似度为目标进行优化。应用表明，NLA 能揭示模型未言明的内部状态，例如在安全测试中，发现 Claude 内心意识到自己正被评估的比例远超其外部回应。</p>
+      <a class="paper-link" href="https://www.anthropic.com/research/natural-language-autoencoders" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">08</span>
+        <h3 class="paper-title">OpenSearch-VL：前沿多模态搜索智能体的开源方案</h3>
+        <span class="paper-source paper-source-hf">HuggingFace Daily</span>
+      </div>
+      <p class="paper-summary">研究团队推出完全开源的 OpenSearch-VL 方案，用于训练前沿多模态深度搜索智能体。该方案包含三大核心：通过维基百科路径采样、模糊实体重写和视觉定位构建的高质量训练数据集；统一文本搜索、图像搜索、OCR 及图像处理工具的多样化环境；以及能处理级联工具失败的多轮致命错误感知 GRPO 训练算法。</p>
+      <a class="paper-link" href="https://arxiv.org/abs/2605.05185" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">09</span>
+        <h3 class="paper-title">Normalizing Flows with Iterative Denoising</h3>
+        <span class="paper-source paper-source-apple">Apple ML Research</span>
+      </div>
+      <p class="paper-summary">研究团队在归一化流（NFs）生成模型领域取得新进展，提出了迭代 TARFlow（iTARFlow）。该方法在训练阶段保持完全端到端的基于似然的目标，采样时则采用自回归生成方式。iTARFlow 延续了 TARFlow 在图像建模任务上的优势，使其成为扩散模型等方法的可行替代方案，进一步提升了归一化流生成模型的性能表现。</p>
+      <a class="paper-link" href="https://machinelearning.apple.com/research/normalizing-flows-iterative-denoising" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">10</span>
+        <h3 class="paper-title">SpecMD：关于推测性专家预取的综合研究</h3>
+        <span class="paper-source paper-source-apple">Apple ML Research</span>
+      </div>
+      <p class="paper-summary">研究团队开发了 SpecMD，这是一个用于在各种硬件配置上对临时缓存策略进行基准测试的标准化框架。该研究聚焦于混合专家模型，这类模型虽然实现了稀疏专家激活，但需要专家缓存机制才能将稀疏性转化为实际性能提升。SpecMD 框架旨在填补这一理解空白，系统性地评估缓存策略的交互影响与硬件适配性。</p>
+      <a class="paper-link" href="https://machinelearning.apple.com/research/specmd-expert-prefetching" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">11</span>
+        <h3 class="paper-title">从位置认知到功能理解：为多模态大语言模型设立空间功能智能基准</h3>
+        <span class="paper-source paper-source-apple">Apple ML Research</span>
+      </div>
+      <p class="paper-summary">现有基准如 VSI-Bench 主要评估基础几何感知能力，但未能触及具身智能所需的高阶认知。为此，研究团队推出了空间功能智能基准 SFI-Bench，该基准包含超过 1700 个问题，数据来源于多样化的第一人称室内扫描视频。SFI-Bench 旨在系统评估多模态大模型从物体位置感知到功能意图理解的高级空间推理能力。</p>
+      <a class="paper-link" href="https://machinelearning.apple.com/research/spatial" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">12</span>
+        <h3 class="paper-title">Model Spec Midtraining (MSM)：让对齐方法更好地泛化</h3>
+        <span class="paper-source paper-source-anthropic">Anthropic Fellows</span>
+      </div>
+      <p class="paper-summary">新 Anthropic Fellows 研究：模型规范中期训练（MSM）。标准的对齐方法通过期望行为的示例来训练 AI。但这可能无法泛化到新情境。MSM 通过首先教导 AI 我们希望它们如何泛化以及原因，来解决这一问题。</p>
+      <a class="paper-link" href="https://x.com/AnthropicAI/status/2051758528562364902" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">13</span>
+        <h3 class="paper-title">研究突破：用弱模型监督可防止 AI 策略性隐藏能力</h3>
+        <span class="paper-source paper-source-anthropic">Anthropic Research</span>
+      </div>
+      <p class="paper-summary">当 AI 承担人类无法完全核查的任务时，具备高能力的模型可能策略性隐藏实力且难以被察觉。Anthropic 与 MATS、Redwood 的研究团队发现，即使仅使用较弱的模型作为监督者，也能成功训练一个接近完全能力的模型，使其停止这种"装傻"行为。该研究表明，通过弱监督训练可以有效抑制强模型的策略性能力保留问题。</p>
+      <a class="paper-link" href="https://x.com/AnthropicAI/status/2051718308702081047" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+  </div>
+</section>
+
+<section class="day-group">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">3 天前</h2>
+    <div class="sub">2026-05-06</div>
+  </aside>
+  <div class="day-papers">
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">14</span>
+        <h3 class="paper-title">Google 联手 UCSD 推出 DFlash，实现 LLM 无损推理 3 倍加速</h3>
+        <span class="paper-source paper-source-x">X · @berryxia</span>
+      </div>
+      <p class="paper-summary">Google 与 UCSD 合作推出扩散式推测解码技术 DFlash，在 Google Cloud TPU 上实现了 3.13 倍的无损推理加速。该技术突破了传统自回归解码逐个生成 token 的串行瓶颈，通过一次推测生成多个 token 来改变生成范式。这一硬件与算法的联合优化，将重塑云端成本曲线。</p>
+      <a class="paper-link" href="https://x.com/berryxia/status/2051676720076554587" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">15</span>
+        <h3 class="paper-title">RLDX-1 技术报告：通用机器人策略</h3>
+        <span class="paper-source paper-source-hf">HuggingFace Daily</span>
+      </div>
+      <p class="paper-summary">为提升视觉-语言-动作模型在复杂现实任务中的功能覆盖，研究团队推出通用机器人策略 RLDX-1。该模型基于多流动作变换器架构，整合运动感知、记忆决策与物理传感等异构模态。在仿真与真实测试中，RLDX-1 全面超越前沿模型 π_{0.5} 和 GR00T N1.6，尤其在 ALLEX 人形机器人任务上取得 86.8% 的成功率。</p>
+      <a class="paper-link" href="https://arxiv.org/abs/2605.03269" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">16</span>
+        <h3 class="paper-title">OpenSeeker-v2：利用高信息量、高难度轨迹突破搜索智能体的极限</h3>
+        <span class="paper-source paper-source-hf">HuggingFace Daily</span>
+      </div>
+      <p class="paper-summary">本研究提出了一种仅通过监督微调（SFT）训练前沿搜索智能体的高效方法。该方法基于三项关键数据合成改进：扩展知识图谱规模、增加工具集以及进行严格的低步数过滤。仅使用 1.06 万条数据训练的 OpenSeeker-v2，在四个基准测试中均取得了领先性能，全面超越了采用复杂 CPT+SFT+RL 流程训练的同类模型。</p>
+      <a class="paper-link" href="https://arxiv.org/abs/2605.04036" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">17</span>
+        <h3 class="paper-title">Stochastic KV Routing：实现自适应深度方向的缓存共享</h3>
+        <span class="paper-source paper-source-apple">Apple ML Research</span>
+      </div>
+      <p class="paper-summary">为降低大语言模型推理时 KV 缓存的高昂内存开销，研究提出了一种沿模型深度维度优化的新方法。该方法通过随机 KV 路由，在 Transformer 模型的各层之间动态共享 KV 缓存，而非每层保留完整独立缓存。实验表明，在保持模型质量基本不变的前提下，该方法能将 KV 缓存的内存占用减少高达 50%。</p>
+      <a class="paper-link" href="https://machinelearning.apple.com/research/stochastic-kv-routing" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">18</span>
+        <h3 class="paper-title">企业数据泄露风险与 AI 工作部署新研究</h3>
+        <span class="paper-source paper-source-msft">Microsoft Research</span>
+      </div>
+      <p class="paper-summary">研究焦点：AI 代理泄露企业数据、为云端部署打造更智能的操作系统，以及关于如何在工作中实际构建 AI 应用的新研究。</p>
+      <a class="paper-link" href="https://x.com/MSFTResearch/status/2051345527103443126" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+  </div>
+</section>
+
+<section class="day-group">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">4 天前</h2>
+    <div class="sub">2026-05-05</div>
+  </aside>
+  <div class="day-papers">
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">19</span>
+        <h3 class="paper-title">Sakana AI 提出新型 7B "指挥者"模型，通过协同多个智能体实现性能突破</h3>
+        <span class="paper-source paper-source-x">X · @omarsar0</span>
+      </div>
+      <p class="paper-summary">Sakana AI 在 ICLR 2026 上发表研究，提出一个仅 70 亿参数的"指挥者"模型。该模型不直接解决问题，而是通过强化学习训练，专注于为混合开源与闭源模型的工作者智能体设计通信拓扑结构，并为每个工作者生成精准指令以发挥其特长。其关键创新在于，当允许指挥模型将自己也选为工作者时，系统会形成递归拓扑，实现动态测试时扩展。</p>
+      <a class="paper-link" href="https://x.com/omarsar0/status/2051306659021242635" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">20</span>
+        <h3 class="paper-title">MolmoAct2：面向真实世界部署的动作推理模型</h3>
+        <span class="paper-source paper-source-hf">HuggingFace Daily</span>
+      </div>
+      <p class="paper-summary">MolmoAct2 是一个为实际部署设计的全开放动作推理模型，在五个方面取得进展。其核心是专为空间与具身推理训练的 VLM 骨干 MolmoER，基于 330 万样本语料库训练。团队发布了三个新数据集，包括迄今最大开放双手数据集 MolmoAct2-BimanualYAM（720 小时遥操作轨迹），并开源了动作分词器 OpenFAST。</p>
+      <a class="paper-link" href="https://arxiv.org/abs/2605.02881" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">21</span>
+        <h3 class="paper-title">PORTool：基于奖励树和重要性感知的策略优化方法</h3>
+        <span class="paper-source paper-source-apple">Apple ML Research</span>
+      </div>
+      <p class="paper-summary">研究团队提出 PORTool 算法，以解决多工具集成推理中仅依靠结果奖励导致的信用分配模糊问题。该方法通过重要性感知策略优化，在结果级监督下强化智能体的工具使用能力，同时实现步骤级奖励分配。PORTool 生成奖励树来明确关键决策步骤，从而更精确地引导模型学习有效的工具调用序列。</p>
+      <a class="paper-link" href="https://machinelearning.apple.com/research/portool-policy-optimization" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">22</span>
+        <h3 class="paper-title">OpenAI 的 o1 系统对急诊患者的诊断准确率为 67%，而分诊医生的准确率仅为 50% 至 55%</h3>
+        <span class="paper-source paper-source-hn">Hacker News</span>
+      </div>
+      <p class="paper-summary">OpenAI 的 o1 系统在急诊分诊诊断测试中表现优于医生。该系统对急诊患者的诊断准确率达到 67%，而分诊医生的准确率仅为 50% 至 55%。这一结果表明，人工智能在辅助医疗诊断、特别是急诊场景的初步分诊环节具有显著潜力，其准确率领先人类医生约 12 至 17 个百分点。相关研究由哈佛团队进行。</p>
+      <a class="paper-link" href="https://www.theguardian.com/technology/2026/apr/30/ai-outperforms-doctors-in-harvard-trial-of-emergency-triage-diagnoses" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+  </div>
+</section>
+
+<section class="day-group">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">5 天前</h2>
+    <div class="sub">2026-05-04</div>
+  </aside>
+  <div class="day-papers">
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">23</span>
+        <h3 class="paper-title">在谷歌 TPU 上实现 3 倍加速：UCSD 利用扩散式推测解码优化 LLM 推理</h3>
+        <span class="paper-source paper-source-google">Google Developers</span>
+      </div>
+      <p class="paper-summary">加州大学圣地亚哥分校的研究团队在谷歌 TPU 上成功部署了 DFlash，一种基于块扩散的推测解码方法。该方法突破传统自回归草稿生成的序列性瓶颈，通过单次前向传播并行"绘制"整个候选令牌块，而非逐个预测。系统平均实现了 3.13 倍的推理加速，峰值性能接近 EAGLE-3 等现有方法的两倍。</p>
+      <a class="paper-link" href="https://developers.googleblog.com/supercharging-llm-inference-on-google-tpus-achieving-3x-speedups-with-diffusion-style-speculative-decoding" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+  </div>
+</section>
+
+<section class="day-group">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">6 天前</h2>
+    <div class="sub">2026-05-03</div>
+  </aside>
+  <div class="day-papers">
+
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">24</span>
+        <h3 class="paper-title">哈佛新研究：AI 模型"急诊科"场景诊断能力有望超越人类医生</h3>
+        <span class="paper-source paper-source-other">IT 之家</span>
+      </div>
+      <p class="paper-summary">哈佛医学院与贝斯以色列女执事医疗中心的研究显示，OpenAI 的一款推理模型在真实临床病例测试中，其诊断与制定治疗方案的能力达到甚至超越了人类医生水平。研究重点测试了模型在急诊科等信息不完整、混乱的真实场景中的表现，模型仅依据当时可获得的电子健康记录文本进行判断。但模型目前完全依赖文本病历，未处理影像等关键信息。</p>
+      <a class="paper-link" href="https://www.ithome.com/0/946/077.htm" target="_blank" rel="noopener noreferrer">阅读原文 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </article>
+
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-mark">— Fin —</div>
+  <div class="footer-source">数据来自 <a href="https://aihot.virxact.com" target="_blank" rel="noopener noreferrer">aihot.virxact.com</a></div>
+  <div class="replica-credit">
+    <span>Replicated by <a href="index.html">virusbee</a> · WorkBuddy Case 03 · 2026</span>
+    <a href="workbuddy_replica_02.html">← 复刻 02</a>
+  </div>
+</footer>
+
+<div class="site-actions">
+  <a class="back-link" href="index.html" aria-label="返回 virusbee 首页">← virusbee <span>首页</span></a>
+</div>
+
+<script>
+(function(){
+  var papers = Array.prototype.slice.call(document.querySelectorAll('.paper'));
+  var observer = null;
+
+  function reveal(el){
+    el.classList.add('visible');
+    if (observer) observer.unobserve(el);
+  }
+  function showAll(){
+    papers.forEach(reveal);
+  }
+  function revealInView(){
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    papers.forEach(function(el){
+      var r = el.getBoundingClientRect();
+      var seen = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+      if (seen > Math.min(r.height * 0.12, 80)) reveal(el);
+    });
+  }
+
+  try {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) { showAll(); return; }
+    observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) reveal(entry.target);
+      });
+    }, {threshold: 0.12, rootMargin: '0px 0px -24px 0px'});
+    papers.forEach(function(el){ observer.observe(el); });
+    revealInView();
+  } catch (err) {
+    showAll();
+  }
+})();
+</script>
+
+</body>
+</html>

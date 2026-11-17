@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我如何复刻 AI HOT 一周 AI 论文盘点 — virusbee</title>
+<meta name="description" content="从 WorkBuddy 成长中心里展开的 iframe，到可独立访问的单文件页面：24 篇论文、7 个日期分组、移动端修复、滚动入场与打印验收。">
+<link rel="canonical" href="https://virusbee.github.io/posts/how-i-replicated-aihot-weekly.html">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我如何复刻 AI HOT 一周 AI 论文盘点 — virusbee">
+<meta property="og:description" content="24 篇论文、7 个日期分组、9+ 来源：一次以内容完整性、动效降级和移动端重排为重点的复刻记录。">
+<meta property="og:url" content="https://virusbee.github.io/posts/how-i-replicated-aihot-weekly.html">
+<meta name="theme-color" content="#f4f8fe">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  color-scheme:light;
+  --bg-primary:#F4F8FE;
+  --bg-secondary:#EAF1FB;
+  --bg-card:#FFFFFF;
+  --bg-elevated:#F8FBFF;
+  --text-primary:#0E2747;
+  --text-secondary:#3F587A;
+  --text-muted:#7C8DA6;
+  --accent:#1F6FEB;
+  --accent-cyan:#0EA5C7;
+  --accent-deep:#0B4FBF;
+  --gradient:linear-gradient(135deg,#1F6FEB 0%,#0EA5C7 100%);
+  --gradient-text:linear-gradient(135deg,#0B4FBF 0%,#1F6FEB 45%,#0EA5C7 100%);
+  --border:rgba(31,111,235,0.16);
+  --border-hover:rgba(31,111,235,0.42);
+  --rail:rgba(31,111,235,0.32);
+  --radius:12px;
+  --radius-lg:16px;
+  --shadow:0 4px 18px rgba(15,42,90,0.06);
+  --shadow-hover:0 12px 32px rgba(15,42,90,0.10);
+  --shadow-glow:0 0 0 4px rgba(31,111,235,0.08);
+  --font-serif:"Iowan Old Style","Apple Garamond",Baskerville,"Times New Roman","Songti SC","STSong",serif;
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC",sans-serif;
+  --font-mono:"SF Mono","Fira Code",Menlo,Consolas,monospace;
+  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-sans);
+  background:var(--bg-primary);
+  background-image:
+    radial-gradient(ellipse at top left,rgba(31,111,235,0.10) 0%,transparent 55%),
+    radial-gradient(ellipse at bottom right,rgba(14,165,199,0.08) 0%,transparent 55%);
+  background-attachment:fixed;
+  color:var(--text-primary);
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+/* Hero */
+.hero{
+  padding:96px 24px 64px;
+  text-align:center;
+  position:relative;
+  border-bottom:1px solid var(--border);
+}
+.hero-inner{max-width:880px;margin:0 auto}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:6px 16px;border-radius:999px;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  font-size:0.78rem;
+  font-family:var(--font-mono);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:24px;
+}
+.hero-eyebrow::before{
+  content:"";width:6px;height:6px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 10px var(--accent);
+}
+.hero h1{
+  font-family:var(--font-serif);
+  font-size:clamp(2.4rem,6vw,4rem);
+  font-weight:400;
+  letter-spacing:-1.5px;
+  line-height:1.1;
+  margin-bottom:18px;
+  background:var(--gradient-text);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero h1 em{font-style:italic;font-weight:300}
+.hero-meta{
+  display:flex;justify-content:center;gap:24px;flex-wrap:wrap;
+  font-size:0.9rem;color:var(--text-secondary);
+  margin-bottom:32px;
+}
+.hero-meta strong{
+  color:var(--text-primary);
+  font-family:var(--font-mono);
+  font-weight:500;
+}
+.hero-stats{
+  display:inline-flex;align-items:center;gap:0;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:0;
+  overflow:hidden;
+}
+.hero-stat{
+  padding:14px 28px;
+  border-right:1px solid var(--border);
+}
+.hero-stat:last-child{border-right:0}
+.hero-stat-num{
+  font-size:1.6rem;font-weight:600;
+  font-family:var(--font-mono);
+  background:var(--gradient);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  line-height:1;
+}
+.hero-stat-label{
+  font-size:0.72rem;
+  color:var(--text-muted);
+  margin-top:4px;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+
+/* Timeline Layout */
+.timeline-wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:64px 24px 48px;
+}
+.day-group{
+  display:grid;
+  grid-template-columns:200px 1fr;
+  gap:48px;
+  margin-bottom:56px;
+  position:relative;
+}
+.day-rail{
+  position:relative;
+  padding-top:6px;
+}
+.day-rail::before{
+  content:"";position:absolute;
+  left:11px;top:24px;bottom:-56px;
+  width:2px;
+  background:linear-gradient(180deg,var(--rail) 0%,transparent 100%);
+}
+.day-rail .dot{
+  position:absolute;left:0;top:6px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--bg-primary);
+  border:2px solid var(--accent);
+  box-shadow:0 0 0 4px var(--bg-primary),0 0 0 6px rgba(31,111,235,0.15);
+  z-index:1;
+}
+.day-rail .dot::after{
+  content:"";position:absolute;
+  inset:4px;border-radius:50%;
+  background:var(--gradient);
+}
+.day-rail .label{
+  margin-left:40px;
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  letter-spacing:1px;
+  color:var(--accent);
+  text-transform:uppercase;
+  font-weight:500;
+}
+.day-rail .sub{
+  margin-left:40px;
+  font-size:0.78rem;
+  color:var(--text-muted);
+  margin-top:4px;
+}
+.day-papers{display:flex;flex-direction:column;gap:14px}
+
+/* Paper card */
+.paper{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px 26px;
+  box-shadow:var(--shadow);
+  transition:border-color .25s ease,background .25s ease,box-shadow .25s ease,transform .4s cubic-bezier(.4,0,.2,1),opacity .6s ease;
+  position:relative;
+}
+.js .paper{opacity:0;transform:translateX(-12px)}
+.paper.visible{opacity:1;transform:translateX(0)}
+.paper:hover{
+  border-color:var(--border-hover);
+  background:var(--bg-elevated);
+  box-shadow:var(--shadow-hover);
+  transform:translateX(0) translateY(-2px);
+}
+.paper-head{
+  display:flex;align-items:flex-start;gap:14px;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+}
+.paper-num{
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  color:var(--text-muted);
+  flex-shrink:0;
+  padding-top:3px;
+}
+.paper-title{
+  font-family:var(--font-serif);
+  font-size:1.18rem;
+  font-weight:600;
+  letter-spacing:-0.3px;
+  line-height:1.4;
+  flex:1;
+  min-width:0;
+  color:var(--text-primary);
+}
+.paper-source{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:3px 10px;
+  border-radius:6px;
+  font-size:0.72rem;
+  font-weight:500;
+  font-family:var(--font-mono);
+  letter-spacing:0.3px;
+  white-space:nowrap;
+}
+.paper-source-apple{background:#EEF1F6;color:#4A5469;border:1px solid #D6DCE6}
+.paper-source-hf{background:#FFF6DC;color:#9A7300;border:1px solid #F2D679}
+.paper-source-anthropic{background:#FBEDE5;color:#B5522A;border:1px solid #F0B89C}
+.paper-source-openai{background:#E0F5EC;color:#0F8A5F;border:1px solid #A6E0C7}
+.paper-source-x{background:#EEF2F7;color:#4F6079;border:1px solid #CFD7E1}
+.paper-source-arxiv{background:#FBE6E8;color:#B72236;border:1px solid #F0A6AE}
+.paper-source-hn{background:#FFEDDB;color:#B65A0E;border:1px solid #F4C49C}
+.paper-source-google{background:#E2ECFD;color:#1A56DB;border:1px solid #B2C9F5}
+.paper-source-msft{background:#DEF3F7;color:#0E7D8E;border:1px solid #A8DEE7}
+.paper-source-other{background:#E6EEFB;color:#1F4FA8;border:1px solid #B6CCEC}
+
+.paper-source-name{
+  font-size:0.78rem;color:var(--text-muted);
+  margin-bottom:10px;
+}
+.paper-summary{
+  font-size:0.92rem;
+  color:var(--text-secondary);
+  line-height:1.7;
+  margin-bottom:14px;
+}
+.paper-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  color:var(--accent);
+  border-bottom:1px dashed transparent;
+  padding-bottom:1px;
+  transition:var(--transition);
+}
+.paper-link:hover{
+  color:var(--accent-cyan);
+  border-bottom-color:var(--accent-cyan);
+}
+.paper-link svg{width:12px;height:12px;transition:transform 0.2s ease}
+.paper-link:hover svg{transform:translate(2px,-2px)}
+
+/* Footer */
+footer{
+  margin-top:32px;
+  padding:48px 24px 56px;
+  text-align:center;
+  border-top:1px solid var(--border);
+  background:var(--bg-secondary);
+}
+.footer-mark{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:1.1rem;
+  color:var(--text-secondary);
+  margin-bottom:8px;
+}
+.footer-source{
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  color:var(--text-muted);
+  letter-spacing:0.3px;
+}
+.footer-source a{
+  color:var(--accent);
+  border-bottom:1px dashed var(--accent);
+  padding-bottom:1px;
+}
+
+
+/* Replica chrome */
+.skip-link{
+  position:fixed;top:12px;left:12px;z-index:200;
+  padding:10px 16px;border-radius:8px;
+  background:var(--accent);color:#fff;
+  font-size:.85rem;font-weight:600;
+  transform:translateY(-200%);
+  transition:transform .2s ease;
+}
+.skip-link:focus{transform:none}
+.site-actions{
+  position:fixed;top:16px;right:16px;z-index:100;
+  display:flex;align-items:center;gap:8px;
+}
+.site-actions a{
+  display:inline-flex;align-items:center;gap:6px;
+  font:600 13px/1 var(--font-sans);
+  padding:8px 14px;border-radius:999px;
+  color:var(--accent);background:rgba(255,255,255,.9);
+  border:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(15,42,90,.08);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  transition:background .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.site-actions a:hover{
+  background:#fff;border-color:var(--border-hover);
+  transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,42,90,.12);
+}
+.site-actions .back-link{font-weight:700}
+.site-actions .back-link span{font-size:11px;opacity:.65;font-weight:600}
+
+.replica-credit{
+  max-width:1052px;margin:20px auto 0;padding:18px 0 0;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  font:500 .72rem/1.6 var(--font-mono);
+  color:var(--text-muted);text-align:left;
+}
+.replica-credit a{
+  color:var(--accent);text-decoration:none;
+  border-bottom:1px dashed rgba(31,111,235,.4);
+}
+.replica-credit a:hover{color:var(--text-primary);border-bottom-color:var(--text-primary)}
+
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+#papers:focus{outline:none}
+.paper-link:focus-visible{outline-offset:4px}
+::selection{background:rgba(31,111,235,.18);color:var(--text-primary)}
+
+@media (max-width:560px){
+  .site-actions{top:10px;right:10px;gap:6px}
+  .site-actions a{font-size:12px;padding:7px 11px}
+  .site-actions .back-link span{display:none}
+  .replica-credit{font-size:.68rem;justify-content:center;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .paper,.paper-link svg,.site-actions a,.skip-link{transition:none!important}
+  .js .paper{opacity:1!important;transform:none!important}
+}
+@media print{
+  .site-actions,.skip-link,.replica-credit{display:none!important}
+  body{background:#fff}
+  footer{background:#fff}
+  .hero h1{
+    background:none!important;
+    -webkit-text-fill-color:var(--text-primary)!important;
+    color:var(--text-primary)!important;
+  }
+  .hero-stat-num{
+    background:none!important;
+    -webkit-text-fill-color:var(--accent)!important;
+    color:var(--accent)!important;
+  }
+  .hero-eyebrow::before{box-shadow:none!important}
+  .paper{box-shadow:none;opacity:1!important;transform:none!important;break-inside:avoid}
+}
+
+@media (max-width:768px){
+  .hero{padding:64px 20px 48px}
+  .timeline-wrap{padding:40px 20px 32px}
+  .day-group{
+    grid-template-columns:1fr;
+    gap:14px;
+    margin-bottom:40px;
+  }
+  .day-rail{padding-top:0}
+  .day-rail::before{display:none}
+  .day-rail .dot{position:relative;top:0;left:0;display:inline-block;vertical-align:middle;margin-right:10px}
+  .day-rail .label,.day-rail .sub{margin-left:0;display:inline-block}
+  .day-rail .sub{margin-left:8px}
+  .paper{padding:18px 20px}
+  .hero-stats{flex-direction:column;align-items:stretch}
+  .hero-stat{border-right:0;border-bottom:1px solid var(--border)}
+  .hero-stat:last-child{border-bottom:0}
+}
+
+@media (max-width:560px){
+  .hero h1 .h1-line{display:block}
+  .hero-meta{flex-direction:column;gap:2px;font-size:.84rem}
+  .hero-meta .meta-sep{display:none}
+  .paper-head{
+    display:grid;grid-template-columns:auto 1fr;
+    gap:4px 10px;align-items:center;margin-bottom:12px;
+  }
+  .paper-num{grid-column:1;grid-row:1;padding-top:0}
+  .paper-source{grid-column:2;grid-row:1;justify-self:end}
+  .paper-title{grid-column:1/-1;grid-row:2;font-size:1.08rem;line-height:1.45}
+}
+</style>
+<style>
+/* ===== Article prose ===== */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.paper{padding:24px 28px}
+.paper-title{font-size:1.34rem}
+.paper-body{min-width:0}
+.paper-body p{font-size:0.94rem;line-height:1.85;color:var(--text-secondary);margin-top:12px}
+.paper-body .lede{font-size:1.04rem;line-height:1.82;color:var(--text-primary);margin-top:0;letter-spacing:-0.1px}
+.paper-body strong{color:var(--text-primary);font-weight:600}
+.paper-body a{color:var(--accent);border-bottom:1px dashed rgba(31,111,235,.42);transition:color .2s ease,border-color .2s ease}
+.paper-body a:hover{color:var(--accent-cyan);border-bottom-color:var(--accent-cyan)}
+.paper-body code{
+  font-family:var(--font-mono);font-size:.84em;
+  color:var(--accent-deep);background:var(--bg-secondary);border:1px solid var(--border);
+  padding:.1em .36em;border-radius:5px;overflow-wrap:anywhere;
+}
+.callout{
+  margin:18px 0 4px;padding:14px 16px 14px 17px;
+  background:var(--bg-elevated);
+  border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;
+}
+.callout-label{
+  font-family:var(--font-mono);
+  font-size:.66rem;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--accent);margin-bottom:5px;
+}
+.callout p{font-size:.86rem;line-height:1.75;color:var(--text-secondary);margin:0}
+.score-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:16px}
+.score-line .pill{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.72rem;font-weight:500;font-family:var(--font-mono);
+  color:var(--text-secondary);
+  background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:3px 9px;
+}
+.score-line .pill b{color:var(--accent);font-weight:600}
+
+/* ===== Code ===== */
+.code{margin:16px 0;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.code-head{
+  display:flex;align-items:center;gap:7px;padding:8px 13px;
+  background:rgba(255,255,255,.52);border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.3px;color:var(--text-muted);
+}
+.code-head .dots{display:flex;gap:4px;margin-right:2px}
+.code-head .dots i{width:6px;height:6px;border-radius:50%;background:#C8D6EE;display:block}
+.code pre{
+  padding:14px 16px;overflow-x:auto;
+  font-family:var(--font-mono);font-size:.74rem;line-height:1.75;color:#31405A;
+  white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.code .c{color:var(--text-muted)}
+.code .k{color:var(--accent-deep)}
+.code .s{color:#0F8A5F}
+.code pre code{background:none;border:0;padding:0;border-radius:0;color:inherit;font-size:inherit}
+
+/* ===== Tables ===== */
+.table-card{
+  border:1px solid var(--border);border-radius:10px;
+  overflow-x:auto;overflow-y:hidden;margin:16px 0;background:var(--bg-card);
+}
+.table{width:100%;border-collapse:collapse}
+.table thead th{
+  padding:10px 13px;background:var(--bg-secondary);border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:.66rem;font-weight:500;letter-spacing:.5px;
+  color:var(--text-muted);text-align:left;white-space:nowrap;text-transform:uppercase;
+}
+.table tbody td{
+  padding:11px 13px;border-bottom:1px solid var(--border);
+  font-size:.82rem;line-height:1.6;color:var(--text-secondary);vertical-align:top;
+}
+.table tbody tr:last-child td{border-bottom:0}
+.table tbody tr:hover{background:var(--bg-elevated)}
+.table tbody td:first-child{font-weight:600;color:var(--text-primary);white-space:nowrap}
+.table .done{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--font-mono);font-size:.68rem;font-weight:500;color:#0F8A5F;
+  background:#E0F5EC;border:1px solid #A6E0C7;border-radius:5px;padding:2px 7px;white-space:nowrap;
+}
+.table .done::before{content:"";width:5px;height:5px;border-radius:50%;background:#0F8A5F}
+
+/* ===== Token grid ===== */
+.token-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:16px 0}
+.token{
+  display:flex;align-items:center;gap:10px;min-width:0;
+  padding:10px 12px;background:var(--bg-elevated);
+  border:1px solid var(--border);border-radius:8px;
+}
+.token .sw{width:28px;height:28px;border-radius:6px;border:1px solid rgba(20,30,55,.1);flex-shrink:0}
+.token b{display:block;font-size:.74rem;line-height:1.35;color:var(--text-primary);font-weight:600}
+.token code{
+  display:block;font-size:.64rem;background:none;border:0;padding:0;
+  color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* ===== Donut ===== */
+.alloc-card{
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  margin:16px 0;padding:20px 22px;
+  background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;
+}
+.donut{
+  position:relative;width:156px;height:156px;border-radius:50%;flex-shrink:0;margin:0 auto;
+  background:conic-gradient(#1F6FEB 0 25%,#2F7FF0 25% 55%,#0EA5C7 55% 75%,#C79A3B 75% 100%);
+}
+.donut::after{content:"";position:absolute;inset:25px;border-radius:50%;background:var(--bg-card);box-shadow:inset 0 1px 4px rgba(20,30,55,.04)}
+.donut-center{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.donut-center b{font-size:1rem;font-weight:600;font-family:var(--font-mono);line-height:1.2}
+.donut-center span{font-size:.65rem;color:var(--text-muted);margin-top:2px}
+.legend{flex:1;min-width:190px;display:flex;flex-direction:column;gap:9px}
+.legend-row{display:flex;align-items:center;gap:9px;font-size:.8rem}
+.legend-row .dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.legend-row .lname{flex:1;color:var(--text-secondary)}
+.legend-row .lval{font-family:var(--font-mono);font-weight:500;color:var(--text-primary)}
+.alloc-note{width:100%;font-size:.74rem;line-height:1.65;color:var(--text-muted);border-top:1px solid var(--border);padding-top:11px;margin-top:2px}
+
+/* ===== Checklist ===== */
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
+.check{
+  display:flex;align-items:flex-start;gap:8px;
+  background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:10px 12px;
+  font-size:.8rem;line-height:1.55;color:var(--text-secondary);
+}
+.check svg{flex-shrink:0;margin-top:2px}
+.check b{color:var(--text-primary);font-weight:600}
+
+/* ===== Gauges ===== */
+.risk-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+.gauge-card{
+  background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;
+  padding:17px 15px 15px;text-align:center;
+}
+.gauge-card .gtitle{font-size:.75rem;color:var(--text-secondary);margin-bottom:9px}
+.gauge-svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.gauge-val{font-size:1.3rem;font-weight:600;font-family:var(--font-mono);line-height:1.2;margin-top:-5px}
+.gauge-sub{font-size:.67rem;line-height:1.5;color:var(--text-muted);margin-top:2px}
+
+/* ===== Warnings / advice ===== */
+.warn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.warn-card{
+  background:var(--bg-elevated);border:1px solid var(--border);border-left:3px solid #B65A0E;
+  border-radius:10px;padding:15px 16px;
+}
+.warn-card .wh{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.warn-card .wi{width:26px;height:26px;border-radius:7px;background:#FFEDDB;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.warn-card .wh b{font-size:.84rem;font-weight:600}
+.warn-card .wh .tag{margin-left:auto;font-family:var(--font-mono);font-size:.62rem;font-weight:500;color:#0F8A5F;background:#E0F5EC;border:1px solid #A6E0C7;border-radius:5px;padding:2px 6px;white-space:nowrap}
+.warn-card p{font-size:.78rem;line-height:1.72;color:var(--text-secondary);margin:0}
+.warn-card p em{font-style:normal;color:#B65A0E;font-weight:600}
+
+.advice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.advice{
+  position:relative;overflow:hidden;background:var(--bg-elevated);
+  border:1px solid var(--border);border-radius:10px;padding:16px 17px;
+}
+.advice .step{
+  position:absolute;right:12px;top:8px;font-family:var(--font-mono);font-size:2.4rem;line-height:1;
+  font-weight:500;color:rgba(31,111,235,.10);
+}
+.advice .ah{display:flex;align-items:center;gap:9px;margin-bottom:8px;position:relative;z-index:1}
+.advice .ai{width:30px;height:30px;border-radius:8px;background:rgba(31,111,235,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.advice .ah b{font-size:.84rem;font-weight:600}
+.advice p{font-size:.78rem;line-height:1.72;color:var(--text-secondary);margin:0;position:relative;z-index:1}
+.advice .chip{
+  display:inline-block;margin-top:10px;padding:2px 8px;border-radius:5px;
+  font-family:var(--font-mono);font-size:.65rem;font-weight:500;color:#0F8A5F;background:#E0F5EC;
+  border:1px solid #A6E0C7;position:relative;z-index:1;
+}
+
+/* ===== CTA ===== */
+.cta-card{
+  margin-top:22px;padding:21px 23px;border-radius:10px;
+  background:var(--gradient);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  box-shadow:0 10px 26px rgba(31,111,235,.18);
+}
+.cta-card h3{font-family:var(--font-serif);font-size:1.12rem;font-weight:600}
+.cta-card p{font-size:.8rem;line-height:1.6;color:rgba(255,255,255,.82);margin:4px 0 0}
+.cta-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font-family:var(--font-sans);font-size:.78rem;font-weight:600;line-height:1;
+  padding:9px 14px;border-radius:999px;border:1px solid transparent;cursor:pointer;white-space:nowrap;
+  transition:background .2s ease,border-color .2s ease,color .2s ease,transform .2s ease;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-white{background:#fff;border-color:#fff;color:var(--accent)}
+.btn-white:hover{background:var(--bg-secondary)}
+.btn-clear{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.38);color:#fff}
+.btn-clear:hover{background:rgba(255,255,255,.18)}
+.paper-body .btn{border-bottom:0}
+.paper-body .btn-white{color:var(--accent)}
+.paper-body .btn-white:hover{color:var(--accent)}
+.paper-body .btn-clear{color:#fff}
+.paper-body .btn-clear:hover{color:#fff}
+
+/* ===== Article chrome ===== */
+.site-actions button{
+  display:inline-flex;align-items:center;gap:6px;
+  font:600 13px/1 var(--font-sans);
+  padding:8px 14px;border-radius:999px;
+  color:var(--accent);background:rgba(255,255,255,.9);
+  border:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(15,42,90,.08);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  cursor:pointer;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.site-actions button:hover{
+  background:#fff;border-color:var(--border-hover);
+  transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,42,90,.12);
+}
+#content:focus{outline:none}
+
+/* ===== Article responsive ===== */
+@media (max-width:768px){
+  .risk-grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .table-card{overflow:visible;border:0;border-radius:0;background:transparent}
+  .data-table,.data-table tbody{display:block;min-width:0}
+  .data-table thead{display:none}
+  .data-table tbody tr{
+    display:block;padding:12px 14px;margin-bottom:9px;
+    background:var(--bg-elevated);border:1px solid var(--border);border-radius:9px;
+  }
+  .data-table tbody tr:last-child{margin-bottom:0}
+  .data-table tbody tr:hover{background:var(--bg-elevated)}
+  .data-table tbody td{
+    display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;
+    padding:4px 0;border:0;text-align:left;font-size:.79rem;
+  }
+  .data-table tbody td::before{
+    content:attr(data-label);padding-top:2px;
+    font-family:var(--font-mono);font-size:.64rem;font-weight:500;color:var(--text-muted);
+  }
+  .data-table tbody td:first-child{
+    display:block;font-size:.88rem;padding:0 0 6px;
+    border-bottom:1px dashed var(--border);margin-bottom:5px;white-space:normal;
+  }
+  .data-table tbody td:first-child::before{display:none}
+  .data-table tbody td:last-child{padding-bottom:0}
+  .token-grid{grid-template-columns:1fr 1fr}
+  .check-grid,.warn-grid,.advice-grid{grid-template-columns:1fr}
+  .code pre{font-size:.7rem}
+  .table .done{font-size:.64rem}
+}
+@media (max-width:560px){
+  .hero h1{font-size:clamp(1.85rem,8vw,2.35rem);letter-spacing:-1px}
+  .paper{padding:18px 20px}
+  .paper-title{font-size:1.16rem;line-height:1.4}
+  .paper-source{white-space:normal;text-align:right;justify-self:end}
+  .paper-body p{font-size:.9rem}
+  .paper-body .lede{font-size:.98rem}
+  .alloc-card{padding:17px 16px;gap:18px}
+  .donut{width:142px;height:142px}
+  .donut::after{inset:23px}
+  .legend{min-width:0;width:100%}
+  .cta-card{padding:19px 20px}
+  .cta-actions{width:100%}
+  .cta-actions .btn{flex:1;justify-content:center}
+  .site-actions button{font-size:12px;padding:7px 11px}
+}
+@media (max-width:380px){
+  .hero h1{font-size:1.7rem;letter-spacing:-.5px}
+  .token-grid{grid-template-columns:1fr}
+  .paper{padding:16px 18px}
+  .paper-title{font-size:1.08rem}
+  .paper-source{font-size:.64rem;padding:2px 7px}
+  .code pre{font-size:.66rem}
+  .site-actions button{font-size:11px;padding:6px 9px}
+}
+@media print{
+  .cta-actions{display:none!important}
+  .code,.table-card,.callout,.advice,.warn-card,.gauge-card,.alloc-card,.cta-card{break-inside:avoid}
+  .cta-card{background:#F4F8FE!important;color:var(--text-primary);border:1px solid var(--border);box-shadow:none}
+  .cta-card p{color:var(--text-secondary)}
+  .paper{break-inside:auto}
+  .timeline-wrap{max-width:none;padding:24px 0}
+  .day-group{display:block;margin-bottom:28px}
+  .day-rail{display:none}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#content">跳到正文</a>
+
+<div class="site-actions">
+  <a class="back-link" href="../index.html">← virusbee <span>首页</span></a>
+  <a href="../workbuddy_replica_03.html" target="_blank" rel="noopener noreferrer">demo ↗</a>
+  <button type="button" id="printBtn">打印 / PDF</button>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Build Log · 003</div>
+    <h1><span class="h1-line">我如何复刻 <em>AI HOT</em></span> <span class="h1-line">一周 AI 论文盘点</span></h1>
+    <div class="hero-meta">
+      <span>复刻对象 <strong>WorkBuddy Case 03</strong></span>
+      <span class="meta-sep">·</span>
+      <span>发布 <strong>2026-11-17</strong></span>
+      <span class="meta-sep">·</span>
+      <span>单文件 <strong>36.8 KB</strong></span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">24</div><div class="hero-stat-label">篇论文</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">个日期分组</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">9+</div><div class="hero-stat-label">来源机构</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="timeline-wrap" id="content" tabindex="-1">
+
+<section class="day-group">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">SECTION 00</h2>
+    <div class="sub">摘要</div>
+  </aside>
+  <div class="day-papers">
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">00</span>
+        <h3 class="paper-title">先读结论</h3>
+        <span class="paper-source paper-source-google">Build Log 003</span>
+      </div>
+      <div class="paper-body">
+<p class="lede">这篇的起点和上一篇一样，也是一个 iframe。但难点不在 iframe，而在内容密度：24 篇论文、7 个日期分组，每篇都有来源徽章和原文链接。任何一处省略，都会让「一周盘点」失去意义。</p>
+      <p>我给自己定的验收标准有四条：桌面端看起来像原页面；移动端比原页面更成立；无 JavaScript 也能读到全部内容；打印出来不出现莫名其妙的色块。听起来是四件事，其实是同一件事——把内容从装饰里解耦出来。</p>
+      <div class="callout">
+        <div class="callout-label">TL;DR</div>
+        <p>先确认正文在哪个 document 里；用清单守住 24/24 的完整性；把动效做成可关闭的增强；最后拿原页面的移动端缺陷逐项对照。复刻不是照抄，而是重新负责。</p>
+      </div>
+      <div class="score-line" aria-label="评分构成">
+        <span class="pill">结构 <b>24 / 25</b></span>
+        <span class="pill">数据 <b>25 / 25</b></span>
+        <span class="pill">交互 <b>23 / 25</b></span>
+        <span class="pill">响应式 <b>23 / 25</b></span>
+      </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="day-group" id="iframe">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">SECTION 01</h2>
+    <div class="sub">iframe 真身</div>
+  </aside>
+  <div class="day-papers">
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">01</span>
+        <h3 class="paper-title">先找到 iframe 真身</h3>
+        <span class="paper-source paper-source-google">顶层 URL ≠ 正文 URL</span>
+      </div>
+      <div class="paper-body">
+<p>顶层页面是 WorkBuddy 的成长中心。和基金报告那次一样，直接看 body 只能看到外围界面，真正的盘点内容在一个独立子页面里：</p>
+        <div class="code">
+          <div class="code-head"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>case 03 / iframe src</div>
+          <pre><code>https://acc-1258344699.cos.ap-guangzhou.myqcloud.com/
+workbuddy/playbook/cases/aihot-weekly-papers/output.html</code></pre>
+        </div>
+        <p>把子页面保存下来，得到 <strong>676 行、36,771 字节</strong>的单文件源码。样式和脚本都内联，没有外部依赖——这既是好消息，也意味着所有布局问题都得在这一份文件里解决。</p>
+        <p>原页面的标题是「AI HOT — 一周 AI 论文盘点 · 2026-05-02 ~ 2026-05-09」。我先记下这个日期区间，因为它决定了后面所有分组的顺序：盘点可以重排视觉，但不能打乱时间。</p>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="day-group" id="papers">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">SECTION 02</h2>
+    <div class="sub">24 篇论文</div>
+  </aside>
+  <div class="day-papers">
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">02</span>
+        <h3 class="paper-title">24 篇，一篇都不能少</h3>
+        <span class="paper-source paper-source-openai">完整性优先于视觉</span>
+      </div>
+      <div class="paper-body">
+<p>这类页面最容易被低估的工作，是「确认没有漏」。截图看起来差不多，不代表标题、摘要和链接都对。我把原页面里的条目逐条列成清单，再用脚本从 DOM 里取数比对：</p>
+        <div class="table-card">
+          <table class="table data-table">
+            <caption class="sr-only">论文内容完整性校验</caption>
+            <thead><tr><th scope="col">校验项</th><th scope="col">校验方式</th><th scope="col">结果</th></tr></thead>
+            <tbody>
+              <tr><td>论文标题</td><td data-label="校验方式">与原文逐条比对</td><td data-label="结果"><span class="done">24 / 24</span></td></tr>
+              <tr><td>摘要正文</td><td data-label="校验方式">DOM 文本比对，不做改写</td><td data-label="结果"><span class="done">24 / 24</span></td></tr>
+              <tr><td>来源徽章</td><td data-label="校验方式">数量与文字逐一核对</td><td data-label="结果"><span class="done">24 / 24</span></td></tr>
+              <tr><td>原文链接</td><td data-label="校验方式">href 逐条比对，外链可点</td><td data-label="结果"><span class="done">24 / 24</span></td></tr>
+              <tr><td>日期分组</td><td data-label="校验方式">分组标题与顺序核对</td><td data-label="结果"><span class="done">7 / 7</span></td></tr>
+              <tr><td>分组数量</td><td data-label="校验方式">2 + 4 + 7 + 5 + 4 + 1 + 1</td><td data-label="结果"><span class="done">= 24</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>分组数量这一行看起来很笨，但它是最有效的自检：7 个日期组加起来的条目数必须等于 24。只要有一个分组少了一篇，这里就会露馅。</p>
+        <div class="check-grid">
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>标题完整</b>中英文与符号原样保留</span></div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>摘要不改写</b>只做排版，不做摘要</span></div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>链接可点</b>全部指向原文，新窗口打开</span></div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>时间顺序</b>7 个日期组保持原顺序</span></div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>来源保留</b>9+ 个徽章没有合并</span></div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>日期区间</b>标题里的时间范围不变</span></div>
+        </div>
+        <p>外链统一加 <code>target="_blank"</code> 和 <code>rel="noopener noreferrer"</code>。摘要保持原文，不做二次概括——这是对原作者的尊重，也让「盘点」真的可以当作索引来用。</p>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="day-group" id="tokens">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">SECTION 03</h2>
+    <div class="sub">颜色与字体</div>
+  </aside>
+  <div class="day-papers">
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">03</span>
+        <h3 class="paper-title">从原页面提取设计 Token</h3>
+        <span class="paper-source paper-source-x">先定颜色，再写组件</span>
+      </div>
+      <div class="paper-body">
+<p>原页面的视觉语言很统一：浅蓝底、亮蓝主色、青色点缀，标题用衬线体，正文用系统无衬线。复刻时我没有直接抄样式，而是先抽出 6 个 Token，再用它们拼组件。</p>
+        <div class="token-grid" aria-label="设计 Token">
+          <div class="token"><span class="sw" style="background:#F4F8FE" aria-hidden="true"></span><div><b>页面底色</b><code>#F4F8FE</code></div></div>
+          <div class="token"><span class="sw" style="background:#1F6FEB" aria-hidden="true"></span><div><b>主蓝</b><code>#1F6FEB</code></div></div>
+          <div class="token"><span class="sw" style="background:#0EA5C7" aria-hidden="true"></span><div><b>青色点缀</b><code>#0EA5C7</code></div></div>
+          <div class="token"><span class="sw" style="background:#0E2747" aria-hidden="true"></span><div><b>标题墨蓝</b><code>#0E2747</code></div></div>
+          <div class="token"><span class="sw" style="background:#3F587A" aria-hidden="true"></span><div><b>正文灰蓝</b><code>#3F587A</code></div></div>
+          <div class="token"><span class="sw" style="background:#E3EAF5" aria-hidden="true"></span><div><b>分隔线</b><code>#E3EAF5</code></div></div>
+        </div>
+        <div class="code">
+          <div class="code-head"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>tokens / css</div>
+          <pre><code><span class="k">:root</span>{
+  <span class="k">--bg</span>: <span class="s">#F4F8FE</span>;
+  <span class="k">--brand</span>: <span class="s">#1F6FEB</span>;
+  <span class="k">--brand-3</span>: <span class="s">#0EA5C7</span>;
+  <span class="k">--ink</span>: <span class="s">#0E2747</span>;
+  <span class="k">--line</span>: <span class="s">#E3EAF5</span>;
+}</code></pre>
+        </div>
+        <p>组件最后只留下三种：论文卡片、来源徽章、日期时间线。时间线是整页的骨架——日期在左，论文在右，圆点把同一天串起来。把这三个单元做稳，24 篇内容只是重复填充。</p>
+        <p>Hero 标题特意保留了衬线字体：<code>"Iowan Old Style" → Baskerville → "Songti SC"</code>。它和正文的无衬线形成对比，也让「一周论文盘点」更像一份可以慢慢读的编辑稿，而不是信息流。</p>
+        <div class="alloc-card">
+          <div class="donut" role="img" aria-label="时间分配：结构拆解 25%，视觉复刻 30%，动效与降级 20%，验收修复 25%">
+            <div class="donut-center"><b>100%</b><span>时间分配</span></div>
+          </div>
+          <div class="legend">
+            <div class="legend-row"><span class="dot" style="background:#1f6feb"></span><span class="lname">结构拆解</span><span class="lval">25%</span></div>
+            <div class="legend-row"><span class="dot" style="background:#2f7ff0"></span><span class="lname">视觉复刻</span><span class="lval">30%</span></div>
+            <div class="legend-row"><span class="dot" style="background:#0ea5c7"></span><span class="lname">动效与降级</span><span class="lval">20%</span></div>
+            <div class="legend-row"><span class="dot" style="background:#c79a3b"></span><span class="lname">验收修复</span><span class="lval">25%</span></div>
+            <div class="alloc-note">真正花时间的不是调蓝色，而是逐条确认 24 篇内容，再在窄屏和打印稿里把原页面没处理好的细节补上。</div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="day-group" id="motion">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">SECTION 04</h2>
+    <div class="sub">滚动入场</div>
+  </aside>
+  <div class="day-papers">
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">04</span>
+        <h3 class="paper-title">入场动效必须能降级</h3>
+        <span class="paper-source paper-source-hf">默认可见，增强才隐藏</span>
+      </div>
+      <div class="paper-body">
+<p>时间线很适合做滚动入场：卡片从下方浮起，圆点依次亮起。但这类动画有一个前提容易被忽略——它只能建立在「内容本来就在」的基础上。第一版里，我把 <code>opacity: 0</code> 写进了默认样式，结果无头截图和打印预览直接丢内容。</p>
+        <div class="warn-grid">
+          <div class="warn-card">
+            <div class="wh"><span class="wi" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a8641a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><b>首屏曾被动画藏起来</b><span class="tag">已修复</span></div>
+            <p>早期版本以 <em>opacity: 0</em> 作为初始值，截图、打印和低性能设备都可能看到空白。现在页面先加 <code>.js</code>，隐藏只在 <code>.js</code> 下生效；减弱动效与 <code>&lt;noscript&gt;</code> 都会把卡片恢复为可见。</p>
+          </div>
+          <div class="warn-card">
+            <div class="wh"><span class="wi" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a8641a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M7 16l4-5 3 3 5-7"/></svg></span><b>打印时渐变标题变蓝块</b><span class="tag">已修复</span></div>
+            <p>原页面用 <code>background-clip: text</code> 做渐变标题，打印时文字颜色丢失，只剩一个蓝色矩形。打印样式里恢复纯色文字，并关掉装饰背景。</p>
+          </div>
+        </div>
+        <div class="code">
+          <div class="code-head"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>papers / progressive enhancement</div>
+          <pre><code><span class="c">/* 默认：内容始终可见 */</span>
+<span class="k">.paper</span>{opacity:1;transform:none}
+
+<span class="c">/* 只有 JS 可用时才允许隐藏 */</span>
+<span class="k">.js .paper</span>{opacity:0;transform:translateX(-12px)}
+<span class="k">.js .paper.visible</span>{opacity:1;transform:translateX(0)}
+
+<span class="k">@media</span>(prefers-reduced-motion:reduce){
+  <span class="k">.js .paper</span>{opacity:1!important;transform:none!important}
+}</code></pre>
+        </div>
+        <div class="risk-grid">
+          <div class="gauge-card">
+            <div class="gtitle">首屏可见</div>
+            <svg class="gauge-svg" width="150" height="84" viewBox="0 0 150 84" role="img" aria-label="首屏内容可见 100%">
+              <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#eef1f7" stroke-width="11" stroke-linecap="round"/>
+              <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#1f6feb" stroke-width="11" stroke-linecap="round" stroke-dasharray="197.9" stroke-dashoffset="0"/>
+            </svg>
+            <div class="gauge-val" style="color:var(--brand)">100%</div>
+            <div class="gauge-sub">不依赖动画才显示</div>
+          </div>
+          <div class="gauge-card">
+            <div class="gtitle">无 JS 可读</div>
+            <svg class="gauge-svg" width="150" height="84" viewBox="0 0 150 84" role="img" aria-label="无 JavaScript 时内容可读 100%">
+              <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#eef1f7" stroke-width="11" stroke-linecap="round"/>
+              <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#157a43" stroke-width="11" stroke-linecap="round" stroke-dasharray="197.9" stroke-dashoffset="0"/>
+            </svg>
+            <div class="gauge-val" style="color:var(--down)">100%</div>
+            <div class="gauge-sub">24 篇内容照常阅读</div>
+          </div>
+          <div class="gauge-card">
+            <div class="gtitle">降级路径</div>
+            <svg class="gauge-svg" width="150" height="84" viewBox="0 0 150 84" role="img" aria-label="动效降级路径完整 100%">
+              <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#eef1f7" stroke-width="11" stroke-linecap="round"/>
+              <path d="M12 78 A63 63 0 0 1 138 78" fill="none" stroke="#0ea5c7" stroke-width="11" stroke-linecap="round" stroke-dasharray="197.9" stroke-dashoffset="0"/>
+            </svg>
+            <div class="gauge-val" style="color:var(--brand-3)">3 层</div>
+            <div class="gauge-sub">无 JS / 减弱动效 / 打印</div>
+          </div>
+        </div>
+        <p>修复后的分工很明确：时间线负责节奏，卡片负责信息，动效只负责「出现得顺一点」。任何一层失效，内容都必须还在。</p>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="day-group" id="mobile">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">SECTION 05</h2>
+    <div class="sub">窄屏修复</div>
+  </aside>
+  <div class="day-papers">
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">05</span>
+        <h3 class="paper-title">原页面留下的移动端 bug</h3>
+        <span class="paper-source paper-source-hn">响应式不是等比缩小</span>
+      </div>
+      <div class="paper-body">
+<p>这次复刻有一个额外任务：原页面在桌面端是成立的，但窄屏下有几处明显的破绽。我把它们当成需求的一部分，而不是「照抄就算完成」。</p>
+        <div class="table-card">
+          <table class="table data-table bug-table">
+            <caption class="sr-only">移动端问题与修复</caption>
+            <thead><tr><th scope="col">问题</th><th scope="col">根因</th><th scope="col">修复</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>时间线圆点被拉成椭圆</td>
+                <td data-label="根因">移动端把圆点改成 <code>position: static</code> 后，<code>::after</code> 的绝对定位改以 <code>.day-rail</code> 为包含块</td>
+                <td data-label="修复">恢复 <code>position: relative; top: 0; left: 0</code></td>
+              </tr>
+              <tr>
+                <td>卡片标题被来源徽章挤压</td>
+                <td data-label="根因">标题缺少 <code>min-width: 0</code>，徽章又不换行</td>
+                <td data-label="修复">标题允许收缩换行，徽章移到独立一行</td>
+              </tr>
+              <tr>
+                <td>Hero 末字单独换行</td>
+                <td data-label="根因">衬线字体在窄屏下字符更宽，断行点落在最后一个字前</td>
+                <td data-label="修复">收紧字号 clamp，调整标题宽度与断行位置</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code">
+          <div class="code-head"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>timeline dot / mobile fix</div>
+          <pre><code><span class="c">/* 修复前：圆点脱离子元素，::after 以 .day-rail 为包含块 */</span>
+<span class="k">@media</span>(max-width:768px){
+  <span class="k">.day-rail .dot</span>{position:static}
+}
+
+<span class="c">/* 修复后：保留定位上下文 */</span>
+<span class="k">@media</span>(max-width:768px){
+  <span class="k">.day-rail .dot</span>{position:relative;top:0;left:0}
+}</code></pre>
+        </div>
+        <p>第一个问题最典型：<code>position: static</code> 本身没有错，错的是它悄悄改变了后代绝对定位的参照物。圆点里的 <code>::after</code> 用 <code>inset: 4px</code> 画内圈，包含块一变，内圈就跟着整条时间线一起拉伸。</p>
+        <p>修复只改了两行 CSS，但前提是愿意打开开发者工具，顺着 computed style 找到真正的包含块。如果只对着截图调，很容易误以为是圆角或宽高写错了。</p>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="day-group" id="viewports">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">SECTION 06</h2>
+    <div class="sub">验收</div>
+  </aside>
+  <div class="day-papers">
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">06</span>
+        <h3 class="paper-title">六档视口与打印验收</h3>
+        <span class="paper-source paper-source-msft">scrollWidth 比肉眼可靠</span>
+      </div>
+      <div class="paper-body">
+<p>验收不是把浏览器窗口拖窄一点看看。我先用固定宽度的 iframe 逐个加载复刻页，读取 <code>scrollWidth</code> 和 <code>clientWidth</code>，再记录整页高度。六档视口的结果如下：</p>
+        <div class="table-card">
+          <table class="table data-table">
+            <caption class="sr-only">六档视口验收结果</caption>
+            <thead><tr><th scope="col">视口</th><th scope="col">页面高度</th><th scope="col">布局变化</th><th scope="col">结果</th></tr></thead>
+            <tbody>
+              <tr><td>1440px</td><td data-label="页面高度">约 6,430px</td><td data-label="布局变化">桌面布局，日期时间线在左</td><td data-label="结果"><span class="done">无溢出</span></td></tr>
+              <tr><td>768px</td><td data-label="页面高度">—</td><td data-label="布局变化">单栏，日期组改为上下排列</td><td data-label="结果"><span class="done">完整可见</span></td></tr>
+              <tr><td>683px</td><td data-label="页面高度">—</td><td data-label="布局变化">移动布局，日期徽章置顶</td><td data-label="结果"><span class="done">无溢出</span></td></tr>
+              <tr><td>560px</td><td data-label="页面高度">—</td><td data-label="布局变化">卡片单列，来源徽章换行</td><td data-label="结果"><span class="done">无溢出</span></td></tr>
+              <tr><td>375px</td><td data-label="页面高度">约 10,367px</td><td data-label="布局变化">手机布局，圆点恢复正常</td><td data-label="结果"><span class="done">无横向滚动</span></td></tr>
+              <tr><td>320px</td><td data-label="页面高度">约 11,562px</td><td data-label="布局变化">最窄验收，标题断行调整</td><td data-label="结果"><span class="done">无横向滚动</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>页面高度从 1440px 的约 <strong>6,430px</strong> 增长到 375px 的约 <strong>10,367px</strong>、320px 的约 <strong>11,562px</strong>，这是正常的内容重排，不是问题。真正要盯住的是横向：每一档都必须满足 <code>scrollWidth ≤ clientWidth</code>。</p>
+        <p>打印是另一套视口。复刻页与文章页都按「能读」验收，文章页这边尤其要检查：</p>
+        <div class="check-grid">
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>隐藏顶栏与目录</b>只保留正文与页脚</span></div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>标题恢复纯色</b>不再出现渐变蓝块</span></div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>卡片避免跨页</b><code>break-inside: avoid</code></span></div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#157a43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>链接与来源可读</b>页脚署名保留</span></div>
+        </div>
+        <p>打印稿里最容易被忽略的是颜色：屏幕上的渐变文字依赖背景裁剪，打印机不认这套。把这些效果在 <code>@media print</code> 里主动关掉，比事后解释「打印出来本来就会这样」要负责得多。</p>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="day-group" id="review">
+  <aside class="day-rail">
+    <span class="dot" aria-hidden="true"></span>
+    <h2 class="label">SECTION 07</h2>
+    <div class="sub">复盘</div>
+  </aside>
+  <div class="day-papers">
+    <article class="paper">
+      <div class="paper-head">
+        <span class="paper-num">07</span>
+        <h3 class="paper-title">复盘：复刻是重新负责</h3>
+        <span class="paper-source paper-source-anthropic">4 条可复用经验</span>
+      </div>
+      <div class="paper-body">
+<p>如果只记一件事：复刻不是把页面抄一遍，而是把原页面的每个决定重新验证一遍。哪些该保留，哪些是妥协，哪些其实是 bug——这三件事必须分开看。</p>
+        <div class="advice-grid">
+          <div class="advice">
+            <div class="step">01</div>
+            <div class="ah"><span class="ai" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span><b>先确认正文在哪</b></div>
+            <p>顶层页面只是壳，内容在 iframe 里。先看 frames，再保存真实源码，比对着截图猜结构快得多。</p>
+            <span class="chip">iframe src 才是起点</span>
+          </div>
+          <div class="advice">
+            <div class="step">02</div>
+            <div class="ah"><span class="ai" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M7 16l4-5 3 3 5-7"/></svg></span><b>完整性靠清单</b></div>
+            <p>24 篇标题、摘要、来源、链接，逐项核对。视觉可以重画，内容不能凭印象补。</p>
+            <span class="chip">24 / 24 全部保留</span>
+          </div>
+          <div class="advice">
+            <div class="step">03</div>
+            <div class="ah"><span class="ai" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 8h14"/><path d="M7 16h10"/></svg></span><b>默认可见，增强才隐藏</b></div>
+            <p>无 JS、减弱动效、打印，三种场景都不该看到空白。动效只能建立在内容已经存在的前提上。</p>
+            <span class="chip">3 层降级路径</span>
+          </div>
+          <div class="advice">
+            <div class="step">04</div>
+            <div class="ah"><span class="ai" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 18v3"/></svg></span><b>用真实视口验收</b></div>
+            <p>1440、768、683、560、375、320，再加一份打印稿。横向溢出和包含块问题，只有窄屏才会暴露。</p>
+            <span class="chip">6 档视口 + 打印</span>
+          </div>
+        </div>
+
+        <div class="cta-card">
+          <div>
+            <h3>复刻页面已就绪</h3>
+            <p>24 篇论文、7 个日期分组和全部原文链接，都在一个 HTML 文件里。</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn btn-white" href="../workbuddy_replica_03.html" target="_blank" rel="noopener noreferrer">打开 demo ↗</a>
+            <a class="btn btn-clear" href="../index.html">返回 index</a>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-mark">— Fin —</div>
+  <div class="footer-source">数据来自 <a href="../workbuddy_replica_03.html" target="_blank" rel="noopener noreferrer">WorkBuddy Case 03 · AI HOT Weekly Papers</a></div>
+  <div class="replica-credit">
+    <span>Written by <a href="../index.html">virusbee</a> · Build Log 003 · 2026</span>
+    <span><a href="../index.html">← index</a> · <a href="../workbuddy_replica_03.html">demo ↗</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var papers = Array.prototype.slice.call(document.querySelectorAll('.paper'));
+  var observer = null;
+
+  function reveal(el){
+    el.classList.add('visible');
+    if (observer) observer.unobserve(el);
+  }
+  function showAll(){
+    papers.forEach(reveal);
+  }
+  function revealInView(){
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    papers.forEach(function(el){
+      var r = el.getBoundingClientRect();
+      var seen = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+      if (seen > Math.min(r.height * 0.12, 80)) reveal(el);
+    });
+  }
+
+  try {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) { showAll(); }
+    else {
+      observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting) reveal(entry.target);
+        });
+      }, {threshold: 0.12, rootMargin: '0px 0px -24px 0px'});
+      papers.forEach(function(el){ observer.observe(el); });
+      revealInView();
+    }
+  } catch (err) {
+    showAll();
+  }
+})();
+
+(function(){
+  var printBtn = document.getElementById('printBtn');
+  if (printBtn) printBtn.addEventListener('click', function(){ window.print(); });
+})();
+</script>
+</body>
+</html>
