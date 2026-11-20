@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Flow Field · virusbee 复刻</title>
+<meta name="description" content="WorkBuddy Case 05 复刻：Perlin noise 流场生成艺术。5000 颗粒子、8 色日落色板、可复现 Seed，支持暂停、高清 PNG 导出与减弱动效。">
+<link rel="canonical" href="https://virusbee.github.io/replicas/workbuddy_replica_05.html">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flow Field · virusbee 复刻">
+<meta property="og:description" content="5000 颗粒子穿过 Perlin noise 流场，用极慢的淡出叠出长曝光般的轨迹。">
+<meta property="og:url" content="https://virusbee.github.io/replicas/workbuddy_replica_05.html">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="color-scheme" content="dark">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;
+  --ink:rgba(255,255,255,.9);
+  --ink-2:rgba(255,255,255,.62);
+  --muted:rgba(255,255,255,.38);
+  --line:rgba(255,255,255,.1);
+  --line-2:rgba(255,255,255,.16);
+  --mono:"SF Mono","Fira Code",Menlo,Consolas,"DejaVu Sans Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC",sans-serif;
+  --ui:10;
+}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior:none;
+}
+canvas{
+  display:block;position:fixed;inset:0;
+  width:100%;height:100%;
+  background:var(--bg);
+  touch-action:none;
+}
+.vignette{
+  position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at center,transparent 58%,rgba(10,10,10,.46) 100%);
+}
+.title{
+  position:fixed;z-index:var(--ui);top:24px;left:24px;
+  pointer-events:none;
+}
+.title h1{
+  font-size:18px;font-weight:600;letter-spacing:-.3px;line-height:1.2;
+  color:rgba(255,255,255,.9);
+}
+.title p{
+  margin-top:4px;font-size:12px;line-height:1.4;
+  color:rgba(255,255,255,.35);
+}
+.info-panel{
+  position:fixed;z-index:var(--ui);top:24px;right:24px;
+  min-width:196px;
+  background:rgba(10,10,10,.72);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px 20px;
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+.info-panel h2{
+  color:rgba(255,255,255,.5);
+  font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:1.5px;
+  margin-bottom:10px;
+}
+.info-row{
+  display:flex;justify-content:space-between;align-items:center;gap:18px;
+  padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);
+}
+.info-row:last-child{border-bottom:none;padding-bottom:0}
+.info-label{color:rgba(255,255,255,.4);font-size:12px;line-height:1.4}
+.info-value{
+  color:rgba(255,255,255,.9);font-size:13px;font-weight:600;line-height:1.4;
+  font-family:var(--mono);letter-spacing:.02em;
+  background:none;border:0;padding:0;
+  font-variant-numeric:tabular-nums;
+}
+.seed-btn{
+  cursor:pointer;position:relative;
+  border-bottom:1px dotted transparent;
+  transition:color .18s ease,border-color .18s ease;
+}
+.seed-btn:hover{color:#fff;border-bottom-color:rgba(255,255,255,.4)}
+.seed-btn::after{
+  content:"copy";display:inline-block;margin-left:6px;
+  font-family:var(--mono);font-size:8px;font-weight:400;letter-spacing:.08em;
+  color:rgba(255,255,255,.24);text-transform:uppercase;
+  opacity:0;transition:opacity .18s ease;
+}
+.seed-btn:hover::after,.seed-btn:focus-visible::after{opacity:1}
+.controls{
+  position:fixed;z-index:var(--ui);left:50%;bottom:24px;
+  transform:translateX(-50%);
+  display:flex;gap:12px;
+}
+.btn{
+  min-height:44px;
+  padding:12px 24px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.85);
+  border-radius:8px;
+  font-size:14px;font-weight:500;line-height:1.2;
+  font-family:var(--sans);
+  cursor:pointer;
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  transition:background .2s ease,border-color .2s ease,transform .2s ease,color .2s ease;
+  white-space:nowrap;
+}
+.btn:hover{
+  background:rgba(255,255,255,.15);
+  border-color:rgba(255,255,255,.3);
+  color:#fff;
+  transform:translateY(-1px);
+}
+.btn:active{transform:none}
+.btn[data-primary="true"]{background:rgba(255,255,255,.13)}
+.site-chip{
+  position:fixed;z-index:var(--ui);left:24px;bottom:28px;
+  display:flex;align-items:center;gap:9px;
+  padding:7px 11px;border-radius:999px;
+  background:rgba(10,10,10,.58);
+  border:1px solid rgba(255,255,255,.09);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  font-family:var(--mono);font-size:10px;letter-spacing:.02em;
+  color:rgba(255,255,255,.42);
+  white-space:nowrap;
+}
+.site-chip .tag{
+  display:inline-grid;place-items:center;min-width:21px;height:16px;padding:0 5px;
+  border-radius:999px;background:rgba(255,255,255,.09);
+  color:rgba(255,255,255,.72);font-size:8px;font-weight:700;letter-spacing:.08em;
+}
+.site-chip .brand{color:rgba(255,255,255,.66)}
+.site-chip .sep{width:1px;height:10px;background:rgba(255,255,255,.16)}
+.site-chip a{color:inherit;text-decoration:none;border-bottom:1px solid transparent;transition:color .16s ease,border-color .16s ease}
+.site-chip a:hover{color:#fff;border-bottom-color:currentColor}
+.toast{
+  position:fixed;z-index:calc(var(--ui) + 2);left:50%;bottom:84px;
+  transform:translate(-50%,8px);
+  padding:8px 12px;border-radius:999px;
+  background:rgba(20,20,20,.92);border:1px solid rgba(255,255,255,.14);
+  color:rgba(255,255,255,.8);font-family:var(--mono);font-size:11px;line-height:1.2;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s ease,transform .22s ease;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  max-width:calc(100vw - 32px);text-align:center;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.skip-link{
+  position:fixed;z-index:calc(var(--ui) + 5);left:16px;top:-64px;
+  padding:9px 13px;border-radius:8px;
+  background:#f2f2f2;color:#111;
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  text-decoration:none;
+  transition:top .18s ease;
+}
+.skip-link:focus{top:12px}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+:focus-visible{outline:2px solid rgba(255,255,255,.8);outline-offset:3px;border-radius:5px}
+.controls .btn:focus-visible{outline-offset:4px}
+@media(max-width:860px){
+  .site-chip{
+    left:50%;bottom:calc(84px + env(safe-area-inset-bottom));
+    transform:translateX(-50%);
+    background:rgba(10,10,10,.5);
+  }
+  .toast{bottom:calc(124px + env(safe-area-inset-bottom))}
+}
+@media(max-width:560px){
+  .title{top:16px;left:16px}
+  .title h1{font-size:17px}
+  .title p{font-size:11px}
+  .info-panel{
+    top:70px;left:16px;right:16px;min-width:0;
+    padding:9px 12px;border-radius:10px;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:0 10px;
+  }
+  .info-panel h2{
+    position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;
+  }
+  .info-row{
+    display:block;padding:0;border:0;min-width:0;
+  }
+  .info-row + .info-row{
+    padding-left:10px;border-left:1px solid rgba(255,255,255,.08);
+  }
+  .info-label{display:block;font-size:9px;letter-spacing:.04em;text-transform:uppercase;line-height:1.4}
+  .info-value{display:block;font-size:12px;line-height:1.5;margin-top:1px}
+  .seed-btn::after{display:none}
+  .controls{left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));transform:none;gap:7px}
+  .btn{flex:1;min-height:44px;padding:11px 8px;font-size:12px;border-radius:9px}
+  .site-chip{
+    left:50%;bottom:calc(70px + env(safe-area-inset-bottom));
+    transform:translateX(-50%);
+    padding:5px 9px;font-size:9px;gap:7px;
+    background:rgba(10,10,10,.5);
+  }
+  .site-chip .brand{display:none}
+  .site-chip .sep:first-of-type{display:none}
+  .site-chip .tag{height:15px;min-width:19px;font-size:7px}
+  .toast{bottom:calc(112px + env(safe-area-inset-bottom));font-size:10px}
+}
+@media(max-width:380px){
+  .btn{font-size:11px;letter-spacing:-.01em;padding-left:6px;padding-right:6px}
+  .controls{gap:6px}
+}
+@media(max-height:460px){
+  .title p{display:none}
+  .info-panel{top:14px;right:14px;left:auto;width:196px;display:block}
+  .info-panel h2{position:static;width:auto;height:auto;clip:auto;margin-bottom:6px}
+  .info-row{display:flex;padding:4px 0}
+  .info-row + .info-row{padding-left:0;border-left:0}
+  .info-label{display:inline;font-size:10px;text-transform:none}
+  .info-value{display:inline;font-size:11px;margin:0}
+  .controls{bottom:12px}
+  .site-chip{display:none}
+  .toast{bottom:66px}
+}
+@media(max-width:560px) and (max-height:460px){
+  .info-panel{
+    top:54px;left:12px;right:12px;width:auto;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:0 8px;
+    padding:6px 10px;border-radius:9px;
+  }
+  .info-panel h2{position:absolute;width:1px;height:1px;clip:rect(0,0,0,0);overflow:hidden}
+  .info-row{display:block;padding:0}
+  .info-row + .info-row{padding-left:8px;border-left:1px solid rgba(255,255,255,.08)}
+  .info-label{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.04em}
+  .info-value{display:block;font-size:10px;margin-top:1px}
+  .controls{bottom:calc(8px + env(safe-area-inset-bottom))}
+  .toast{bottom:calc(60px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+  }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#regenerate">Skip to controls</a>
+<canvas id="canvas" role="img" aria-label="Perlin noise flow field artwork"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+
+<header class="title">
+  <h1>Flow Field</h1>
+  <p>Perlin noise generative art</p>
+</header>
+
+<aside class="info-panel" aria-label="Artwork parameters">
+  <h2>Parameters</h2>
+  <div class="info-row">
+    <span class="info-label">Seed</span>
+    <button class="info-value seed-btn" id="seed-value" type="button" title="Copy a link to this seed" aria-label="Copy a link to this seed">—</button>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Particles</span>
+    <span class="info-value" id="particle-count">5000</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">FPS</span>
+    <span class="info-value" id="fps-value">—</span>
+  </div>
+</aside>
+
+<div class="controls" id="controls" role="group" aria-label="Artwork controls">
+  <button class="btn" id="regenerate" type="button" data-primary="true">Regenerate</button>
+  <button class="btn" id="toggle" type="button">Pause</button>
+  <button class="btn" id="save" type="button">Save as PNG</button>
+</div>
+
+<div class="site-chip" aria-label="Site information">
+  <span class="tag">05</span>
+  <span class="brand">virusbee</span>
+  <span class="sep"></span>
+  <a href="../index.html">← 首页</a>
+  <span class="sep"></span>
+  <a href="../posts/how-i-replicated-canvas-generative-art.html">复刻笔记 ↗</a>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<p class="sr-only" id="announcer" aria-live="polite"></p>
+
+<script>
+(function(){
+  'use strict';
+
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const seedEl = document.getElementById('seed-value');
+  const fpsEl = document.getElementById('fps-value');
+  const toggleBtn = document.getElementById('toggle');
+  const toastEl = document.getElementById('toast');
+  const announcer = document.getElementById('announcer');
+
+  const PARTICLE_COUNT = 5000;
+  const NOISE_SCALE = 0.003;
+  const SPEED = 2;
+  const BG = '#0a0a0a';
+  const MAX_SEED = 99998;
+
+  const palette = [
+    [255, 107, 107],
+    [255, 159, 67],
+    [255, 71, 133],
+    [238, 90, 188],
+    [155, 89, 255],
+    [75, 0, 130],
+    [255, 195, 113],
+    [255, 134, 96]
+  ];
+
+  class PerlinNoise {
+    constructor(seed){
+      this.perm = this.generatePermutation(seed);
+    }
+    generatePermutation(seed){
+      const p = [];
+      for (let i = 0; i < 256; i++) p[i] = i;
+      const rng = this.seededRandom(seed);
+      for (let i = 255; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        const t = p[i]; p[i] = p[j]; p[j] = t;
+      }
+      return p.concat(p);
+    }
+    seededRandom(seed){
+      let s = seed;
+      return function(){
+        s = (s * 1664525 + 1013904223) & 0xFFFFFFFF;
+        return (s >>> 0) / 4294967296;
+      };
+    }
+    fade(t){ return t * t * t * (t * (t * 6 - 15) + 10); }
+    lerp(a, b, t){ return a + t * (b - a); }
+    grad(hash, x, y){
+      const h = hash & 7;
+      const u = h < 4 ? x : y;
+      const v = h < 4 ? y : x;
+      return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+    }
+    noise2D(x, y){
+      const X = Math.floor(x) & 255;
+      const Y = Math.floor(y) & 255;
+      const xf = x - Math.floor(x);
+      const yf = y - Math.floor(y);
+      const u = this.fade(xf);
+      const v = this.fade(yf);
+      const aa = this.perm[this.perm[X] + Y];
+      const ab = this.perm[this.perm[X] + Y + 1];
+      const ba = this.perm[this.perm[X + 1] + Y];
+      const bb = this.perm[this.perm[X + 1] + Y + 1];
+      return this.lerp(
+        this.lerp(this.grad(aa, xf, yf), this.grad(ba, xf - 1, yf), u),
+        this.lerp(this.grad(ab, xf, yf - 1), this.grad(bb, xf - 1, yf - 1), u),
+        v
+      );
+    }
+  }
+
+  let width = 0;
+  let height = 0;
+  let dpr = 1;
+  let noise = null;
+  let seed = 0;
+  let particleRng = Math.random;
+  let particles = [];
+  let frameCount = 0;
+  let playing = true;
+  let rafId = 0;
+  let lastTime = 0;
+  let fpsSamples = [];
+  let toastTimer = 0;
+  let resizeTimer = 0;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function mulberry32(a){
+    return function(){
+      a |= 0;
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  class Particle {
+    constructor(){
+      this.reset();
+      this.colorIndex = Math.floor(particleRng() * palette.length);
+    }
+    reset(){
+      this.x = particleRng() * width;
+      this.y = particleRng() * height;
+      this.prevX = this.x;
+      this.prevY = this.y;
+      this.speed = SPEED * (0.5 + particleRng());
+      this.life = 0;
+      this.maxLife = 400 + particleRng() * 500;
+    }
+    update(){
+      this.prevX = this.x;
+      this.prevY = this.y;
+      const angle = noise.noise2D(
+        this.x * NOISE_SCALE,
+        this.y * NOISE_SCALE + frameCount * 0.0003
+      ) * Math.PI * 4;
+      this.x += Math.cos(angle) * this.speed;
+      this.y += Math.sin(angle) * this.speed;
+      this.life++;
+      if (this.x < 0 || this.x > width || this.y < 0 || this.y > height || this.life > this.maxLife) {
+        this.reset();
+        this.colorIndex = Math.floor(particleRng() * palette.length);
+      }
+    }
+    draw(){
+      const c = palette[this.colorIndex];
+      const lifeRatio = this.life / this.maxLife;
+      const alpha = Math.sin(lifeRatio * Math.PI) * 0.9;
+      ctx.beginPath();
+      ctx.moveTo(this.prevX, this.prevY);
+      ctx.lineTo(this.x, this.y);
+      ctx.strokeStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha.toFixed(3) + ')';
+      ctx.stroke();
+    }
+  }
+
+  function parseSeed(){
+    const raw = new URLSearchParams(location.search).get('seed');
+    if (raw !== null && /^\d{1,5}$/.test(raw)) {
+      const n = Number(raw);
+      if (n >= 0 && n <= MAX_SEED) return n;
+    }
+    return Math.floor(Math.random() * (MAX_SEED + 1));
+  }
+
+  function randomSeed(exclude){
+    let next = Math.floor(Math.random() * (MAX_SEED + 1));
+    if (exclude !== undefined && next === exclude) {
+      next = (next + 1 + Math.floor(Math.random() * MAX_SEED)) % (MAX_SEED + 1);
+    }
+    return next;
+  }
+
+  function updateCanvasLabel(){
+    const mode = playing ? 'animated' : 'paused';
+    canvas.setAttribute('aria-label',
+      'Perlin noise flow field artwork, seed ' + seed + ', 5000 particles, ' + mode + '.');
+  }
+
+  function setSeedUI(){
+    seedEl.textContent = String(seed);
+    seedEl.setAttribute('aria-label', 'Seed ' + seed + '. Copy a link to this seed.');
+    updateCanvasLabel();
+  }
+
+  function syncUrl(){
+    try {
+      const url = new URL(location.href);
+      url.searchParams.set('seed', seed);
+      history.replaceState(null, '', url.pathname + url.search + url.hash);
+    } catch (err) { /* file:// may reject replaceState */ }
+  }
+
+  function configureCanvas(){
+    const nextW = Math.max(1, window.innerWidth);
+    const nextH = Math.max(1, window.innerHeight);
+    const nextDpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (nextW === width && nextH === height && nextDpr === dpr) return false;
+
+    let snapshot = null;
+    if (width && height && canvas.width && canvas.height) {
+      snapshot = document.createElement('canvas');
+      snapshot.width = canvas.width;
+      snapshot.height = canvas.height;
+      snapshot.getContext('2d').drawImage(canvas, 0, 0);
+    }
+
+    const oldW = width;
+    const oldH = height;
+
+    width = nextW;
+    height = nextH;
+    dpr = nextDpr;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.lineWidth = 1.8;
+    ctx.lineCap = 'round';
+
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, width, height);
+
+    if (snapshot && oldW && oldH) {
+      ctx.drawImage(snapshot, 0, 0, snapshot.width, snapshot.height, 0, 0, width, height);
+      const sx = width / oldW;
+      const sy = height / oldH;
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x *= sx; p.y *= sy;
+        p.prevX *= sx; p.prevY *= sy;
+      }
+    }
+    return true;
+  }
+
+  function resetField(nextSeed){
+    seed = nextSeed;
+    noise = new PerlinNoise(seed);
+    // The original seeded only the noise permutation; particle placement and
+    // colours still used Math.random(). Seed both streams so a shared link
+    // actually reproduces the same starting piece on the same viewport.
+    particleRng = mulberry32((seed ^ 0x9E3779B9) >>> 0);
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+    frameCount = 0;
+    fpsSamples = [];
+    lastTime = 0;
+    fpsEl.textContent = '—';
+    setSeedUI();
+    syncUrl();
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  function updateFps(now){
+    if (!lastTime) { lastTime = now; return; }
+    const delta = now - lastTime;
+    lastTime = now;
+    if (delta <= 4 || delta > 250) return;
+    fpsSamples.push(1000 / delta);
+    if (fpsSamples.length > 45) fpsSamples.shift();
+    if (frameCount % 12 === 0 && fpsSamples.length > 4) {
+      let sum = 0;
+      for (let i = 0; i < fpsSamples.length; i++) sum += fpsSamples[i];
+      fpsEl.textContent = String(Math.round(sum / fpsSamples.length));
+    }
+  }
+
+  function drawFrame(){
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.0015)';
+    ctx.fillRect(0, 0, width, height);
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.update();
+      p.draw();
+    }
+    frameCount++;
+  }
+
+  function animate(now){
+    if (!playing) return;
+    rafId = requestAnimationFrame(animate);
+    drawFrame();
+    updateFps(now);
+  }
+
+  function renderStill(){
+    // Accumulate a short, real simulation instead of drawing one long
+    // polyline per particle: it keeps the same soft bands as the live piece.
+    // Only used when motion is reduced, or when regenerating while paused.
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, width, height);
+    const frames = (width * height * dpr * dpr > 3000000) ? 56 : 80;
+    for (let i = 0; i < frames; i++) drawFrame();
+    ctx.lineWidth = 1.8;
+    fpsEl.textContent = '—';
+    updateCanvasLabel();
+  }
+
+  function pause(announce){
+    if (!playing) return;
+    playing = false;
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+    lastTime = 0;
+    fpsEl.textContent = '—';
+    toggleBtn.textContent = 'Resume';
+    toggleBtn.setAttribute('aria-label', 'Resume animation');
+    updateCanvasLabel();
+    if (announce !== false) announceStatus('Animation paused.');
+  }
+
+  function play(announce){
+    if (playing) return;
+    playing = true;
+    toggleBtn.textContent = 'Pause';
+    toggleBtn.setAttribute('aria-label', 'Pause animation');
+    fpsSamples = [];
+    lastTime = 0;
+    updateCanvasLabel();
+    if (announce !== false) announceStatus('Animation resumed.');
+    rafId = requestAnimationFrame(animate);
+  }
+
+  function announceStatus(text){
+    announcer.textContent = '';
+    requestAnimationFrame(function(){ announcer.textContent = text; });
+  }
+
+  function showToast(text){
+    toastEl.textContent = text;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2100);
+  }
+
+  function regenerate(specificSeed){
+    const nextSeed = specificSeed !== undefined ? specificSeed : randomSeed(seed);
+    resetField(nextSeed);
+    if (playing) {
+      lastTime = 0;
+    } else {
+      renderStill();
+    }
+    announceStatus('New artwork generated. Seed ' + seed + '.');
+    showToast('Seed ' + seed);
+  }
+
+  function copySeedLink(){
+    const url = new URL(location.href);
+    url.searchParams.set('seed', seed);
+    const text = url.toString();
+    const done = function(){
+      showToast('Seed link copied · ' + seed);
+      announceStatus('Seed link copied to clipboard.');
+    };
+    const fallback = function(){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      ta.style.pointerEvents = 'none';
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+      ta.remove();
+      if (ok) done();
+      else {
+        showToast('Seed ' + seed + ' · copy unavailable');
+        announceStatus('Clipboard unavailable. Seed is ' + seed + '.');
+      }
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  function savePng(){
+    let href;
+    try {
+      href = canvas.toDataURL('image/png');
+    } catch (err) {
+      showToast('PNG export unavailable');
+      return;
+    }
+    const a = document.createElement('a');
+    a.download = 'flowfield-' + seed + '.png';
+    a.href = href;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    showToast('PNG saved · ' + canvas.width + ' × ' + canvas.height);
+    announceStatus('PNG saved at ' + canvas.width + ' by ' + canvas.height + ' pixels.');
+  }
+
+  function handleResize(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){
+      configureCanvas();
+    }, 140);
+  }
+
+  document.getElementById('regenerate').addEventListener('click', function(){ regenerate(); });
+  toggleBtn.addEventListener('click', function(){ playing ? pause(true) : play(true); });
+  document.getElementById('save').addEventListener('click', savePng);
+  seedEl.addEventListener('click', copySeedLink);
+
+  document.addEventListener('keydown', function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+    const tag = (e.target && e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+    const key = (e.key || '').toLowerCase();
+    const isSpace = e.code === 'Space' || key === ' ' || key === 'spacebar';
+    if (isSpace && (tag === 'button' || tag === 'a')) return;
+    if (e.code === 'KeyR' || key === 'r') { e.preventDefault(); regenerate(); }
+    else if (e.code === 'KeyP' || key === 'p' || isSpace) {
+      e.preventDefault();
+      playing ? pause(true) : play(true);
+    } else if (e.code === 'KeyS' || key === 's') {
+      e.preventDefault();
+      savePng();
+    }
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) {
+      if (playing) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+        lastTime = 0;
+      }
+    } else if (playing && !rafId) {
+      lastTime = 0;
+      rafId = requestAnimationFrame(animate);
+    }
+  });
+
+  if (typeof reduceMotion.addEventListener === 'function') {
+    reduceMotion.addEventListener('change', function(e){
+      if (e.matches && playing) pause(false);
+    });
+  }
+
+  window.addEventListener('resize', handleResize, { passive: true });
+  window.addEventListener('orientationchange', handleResize, { passive: true });
+
+  configureCanvas();
+  resetField(parseSeed());
+  document.getElementById('particle-count').textContent = String(PARTICLE_COUNT);
+
+  if (reduceMotion.matches) {
+    playing = false;
+    toggleBtn.textContent = 'Play';
+    toggleBtn.setAttribute('aria-label', 'Play animation');
+    renderStill();
+    updateCanvasLabel();
+  } else {
+    rafId = requestAnimationFrame(animate);
+  }
+})();
+</script>
+</body>
+</html>
