@@ -1,0 +1,54 @@
+/* 内容可见性：默认可见，JS 主动授权后才隐藏。
+   不要在 CSS 里写 .js .reveal{opacity:0}：主脚本一旦报错，正文会永久空白。 */
+
+.js-reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--dur-reveal, .48s) var(--ease-out, ease),
+              transform var(--dur-reveal, .48s) var(--ease-out, ease);
+}
+
+.js-reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* 错峰：由 JS 设置 --reveal-delay，或在同一容器上用 nth-child 控制 */
+.js-reveal { transition-delay: var(--reveal-delay, 0ms); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+@media print {
+  .js-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* 使用方式：
+   1. HTML 默认不隐藏，所有内容直接可读。
+   2. JS 选中需要动画的元素后加 .js-reveal：
+        const els = [...document.querySelectorAll('[data-reveal]')];
+        els.forEach(el => el.classList.add('js-reveal'));
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (!e.isIntersecting) return;
+            e.target.classList.add('visible');
+            io.unobserve(e.target);
+          });
+        }, { rootMargin: '0px 0px -10% 0px' });
+        els.forEach(el => io.observe(el));
+   3. 加载后兜底，防止观察器未执行：
+        addEventListener('load', () => setTimeout(() => {
+          document.querySelectorAll('.js-reveal:not(.visible)')
+            .forEach(el => el.classList.add('visible'));
+        }, 2500));
+*/

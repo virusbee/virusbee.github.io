@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}} · Build Log {{ID}}</title>
+<meta name="description" content="{{SUMMARY}}">
+<style>
+  /* 从 assets/tokens.css 复制 :root / .theme-light 变量，或改成站内已有的 Token。 */
+  :root{--bg:#F4F8FE;--surface:#fff;--ink:#0E2747;--ink-2:#3C5B64;--muted:#6D8A92;--line:#E3EAF5;--brand:#1F6FEB;--brand-2:#0EA5C7;--radius:12px;--font-sans:-apple-system,"PingFang SC",sans-serif;--font-mono:"SF Mono",Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--font-sans)}
+  a{color:var(--brand);text-underline-offset:3px}
+  .skip-link{position:fixed;top:8px;left:8px;padding:10px 14px;background:var(--ink);color:#fff;transform:translateY(-160%)}
+  .skip-link:focus{transform:none}
+  .site-header{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;gap:16px;padding:14px 24px;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .brand{font-family:var(--font-mono);font-weight:700;text-decoration:none;color:var(--ink)}
+  main{max-width:860px;margin:0 auto;padding:32px 20px 72px}
+  .hero{padding:40px 0 28px;border-bottom:1px solid var(--line)}
+  .eyebrow,.meta,.toc,.source{font-family:var(--font-mono);font-size:13px;color:var(--muted)}
+  h1{font-size:clamp(30px,6vw,54px);line-height:1.12;letter-spacing:-.02em;margin:12px 0 16px;text-wrap:balance;overflow-wrap:anywhere}
+  h2{font-size:clamp(22px,3.6vw,30px);line-height:1.3;margin:56px 0 12px;text-wrap:balance}
+  h3{font-size:19px;margin:28px 0 8px}
+  p,li{color:var(--ink-2)}
+  .lede{font-size:19px;color:var(--ink)}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
+  .btn{display:inline-flex;align-items:center;min-height:44px;padding:10px 16px;border:1px solid var(--line);border-radius:999px;text-decoration:none;background:var(--surface)}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .toc{margin:24px 0 0;padding:16px 18px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+  .toc ol{margin:8px 0 0;padding-left:22px}
+  section{scroll-margin-top:84px}
+  .table-wrap{overflow-x:auto;margin:18px 0}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:10px 12px;border:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:var(--surface);font-family:var(--font-mono);font-size:12px}
+  pre{overflow:auto;padding:16px;border:1px solid var(--line);border-radius:var(--radius);background:#0E1728;color:#E8F0FF;font:13px/1.7 var(--font-mono)}
+  code{font-family:var(--font-mono);font-size:.92em}
+  figure{margin:24px 0}
+  figure img{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:var(--radius)}
+  figcaption{font-size:13px;color:var(--muted);margin-top:8px}
+  .cta{margin:56px 0 0;padding:24px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+  footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+  @media (max-width:560px){main{padding:20px 16px 56px}.site-header{padding:12px 16px}.actions .btn{width:100%;justify-content:center}}
+  @media print{.site-header,.toc,.cta,.skip-link{display:none!important}body{background:#fff}main{max-width:none;padding:0}a{color:inherit}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">跳到正文</a>
+
+<header class="site-header">
+  <a class="brand" href="../index.html">virusbee / build log</a>
+  <a href="../index.html">全部日志</a>
+</header>
+
+<main id="main">
+  <article>
+    <header class="hero">
+      <div class="eyebrow">Build Log · {{ID}}</div>
+      <h1>我如何复刻 {{TITLE}}</h1>
+      <p class="lede">{{SUMMARY}}</p>
+      <p class="meta">{{DATE}} · 复刻对象 {{SOURCE}} · 页面 {{SIZE}}</p>
+      <div class="actions">
+        <a class="btn primary" href="{{DEMO_URL}}">打开复刻页</a>
+        <a class="btn" href="{{SOURCE_URL}}" target="_blank" rel="noopener noreferrer">原始页面</a>
+      </div>
+      <nav class="toc" aria-label="跳读">
+        <strong>跳读</strong>
+        <ol>
+          <li><a href="#tldr">先读结论</a></li>
+          <li><a href="#source">拿到真身</a></li>
+          <li><a href="#structure">拆结构</a></li>
+          <li><a href="#tokens">设计与 Token</a></li>
+          <li><a href="#hard">核心难点</a></li>
+          <li><a href="#fixes">工程修复</a></li>
+          <li><a href="#acceptance">验收</a></li>
+          <li><a href="#review">复盘</a></li>
+        </ol>
+      </nav>
+    </header>
+
+    <section id="tldr">
+      <h2>01 先读结论</h2>
+      <p>{{TLDR}}</p>
+    </section>
+
+    <section id="source">
+      <h2>02 拿到真身</h2>
+      <p>{{SOURCE_NOTES}}</p>
+    </section>
+
+    <section id="structure">
+      <h2>03 拆结构</h2>
+      <p>{{STRUCTURE}}</p>
+    </section>
+
+    <section id="tokens">
+      <h2>04 设计与 Token</h2>
+      <p>{{TOKENS}}</p>
+    </section>
+
+    <section id="hard">
+      <h2>05 核心难点</h2>
+      <p>{{HARD_PROBLEM}}</p>
+    </section>
+
+    <section id="fixes">
+      <h2>06 工程修复</h2>
+      <p>{{FIXES}}</p>
+    </section>
+
+    <section id="acceptance">
+      <h2>07 验收</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>视口</th><th>横向溢出</th><th>结论</th></tr></thead>
+          <tbody>
+            <tr><td>1440 × 900</td><td>无</td><td>通过</td></tr>
+            <tr><td>1024 × 768</td><td>无</td><td>通过</td></tr>
+            <tr><td>768 × 900</td><td>无</td><td>通过</td></tr>
+            <tr><td>656 × 900</td><td>无</td><td>通过</td></tr>
+            <tr><td>560 × 800</td><td>无</td><td>通过</td></tr>
+            <tr><td>375 × 812</td><td>无</td><td>通过</td></tr>
+            <tr><td>320 × 700</td><td>无</td><td>通过</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="review">
+      <h2>08 复盘</h2>
+      <p>{{REVIEW}}</p>
+    </section>
+
+    <aside class="cta">
+      <h2>复刻页面已就绪</h2>
+      <p><a class="btn primary" href="{{DEMO_URL}}">打开 {{TITLE}}</a></p>
+    </aside>
+
+    <footer>
+      <p class="source">原始页面：<a href="{{SOURCE_URL}}" target="_blank" rel="noopener noreferrer">{{SOURCE}}</a> · 更新于 {{DATE}}</p>
+      <p>本页为学习与研究用途的界面复刻，不构成任何投资、旅行或其他专业建议；原页面内容、数据与商标归各自作者所有。</p>
+    </footer>
+  </article>
+</main>
+
+<script>
+  // 内容默认可见；JS 跑通后才加 .js-reveal，避免脚本报错导致正文空白。
+  const els = [...document.querySelectorAll('[data-reveal]')];
+  if (els.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    els.forEach((el, i) => {
+      el.classList.add('js-reveal');
+      el.style.setProperty('--reveal-delay', `${Math.min(i, 12) * 28}ms`);
+    });
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    els.forEach(el => io.observe(el));
+    addEventListener('load', () => setTimeout(() => {
+      document.querySelectorAll('.js-reveal:not(.visible)').forEach(el => el.classList.add('visible'));
+    }, 2500));
+  }
+</script>
+</body>
+</html>

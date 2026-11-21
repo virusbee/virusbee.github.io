@@ -1,0 +1,85 @@
+{
+  "site": {
+    "name": "virusbee.github.io",
+    "logCount": 5,
+    "categories": 1,
+    "latestDate": "2026-11-20"
+  },
+  "cases": [
+    {
+      "id": "01",
+      "slug": "aihot-openai",
+      "title": "AI HOT OpenAI 7 天动态追踪",
+      "date": "2026-11-11",
+      "replica": "replicas/replica_01.html",
+      "post": "posts/how-i-replicated-aihot-openai.html",
+      "original": {
+        "bytes": null,
+        "lines": null,
+        "note": "按视觉语言重建，无单一 iframe 源"
+      },
+      "scale": "27 条动态 · 5 个分类 · 4 张 KPI",
+      "summary": "把 AI HOT 的深色终端氛围翻译成可复用 Token，再用数字滚动与滚动入场组织 27 条动态、5 个分类与 4 张 KPI。"
+    },
+    {
+      "id": "02",
+      "slug": "fund-report",
+      "title": "基金健康诊断报告",
+      "date": "2026-11-16",
+      "replica": "replicas/replica_02.html",
+      "post": "posts/how-i-replicated-fund-report.html",
+      "original": {
+        "bytes": 38293,
+        "lines": 588,
+        "note": "WorkBuddy 成长中心 iframe 子页面"
+      },
+      "scale": "5 个模块 · 6 只基金 · ¥320,000 · 双语",
+      "summary": "先锁 6 只基金的合计、占比与涨跌，再处理 375px 下五列表格的字段保留与打印。"
+    },
+    {
+      "id": "03",
+      "slug": "aihot-weekly",
+      "title": "AI HOT 一周论文盘点",
+      "date": "2026-11-17",
+      "replica": "replicas/replica_03.html",
+      "post": "posts/how-i-replicated-aihot-weekly.html",
+      "original": {
+        "bytes": 36771,
+        "lines": 676,
+        "note": "WorkBuddy 成长中心 iframe 子页面"
+      },
+      "scale": "24 篇论文 · 7 个日期组 · 9+ 来源",
+      "summary": "用清单保证 24/24 一篇不漏，再让时间线在无 JS、减弱动效和打印下都能读。"
+    },
+    {
+      "id": "04",
+      "slug": "hangzhou-nature-map",
+      "title": "杭州三日自然山水游",
+      "date": "2026-11-19",
+      "replica": "replicas/replica_04.html",
+      "post": "posts/how-i-replicated-hangzhou-nature-map.html",
+      "original": {
+        "bytes": 183032,
+        "lines": 2300,
+        "note": "约 2,300 行；含轨迹与底图数据"
+      },
+      "scale": "3 个日程 · 12 站 · 9 段轨迹 · 55 km",
+      "summary": "把增量轨迹解码、离线底图与站点放到同一套投影里，再用终点误差验收。"
+    },
+    {
+      "id": "05",
+      "slug": "canvas-generative-art",
+      "title": "Flow Field 流场生成艺术",
+      "date": "2026-11-20",
+      "replica": "replicas/replica_05.html",
+      "post": "posts/how-i-replicated-canvas-generative-art.html",
+      "original": {
+        "bytes": 11063,
+        "lines": 370,
+        "note": "5000 粒子 · Perlin 噪声"
+      },
+      "scale": "5000 粒子 · 8 色 · 0.0015 淡出",
+      "summary": "拆开 5000 颗粒子穿过 Perlin 噪声场的逻辑，把“显示 Seed”修成真正可复现的 Seed 链接。"
+    }
+  ]
+}
