@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>我如何复刻 WorkBuddy 灵感社区 — virusbee</title>
-<meta name="description" content="一次对 WorkBuddy 视觉语言的完整拆解：从结构、设计 Token、终端氛围，到数字滚动与滚动入场动效。文末附可运行的复刻 Demo。">
-<link rel="canonical" href="https://virusbee.github.io/posts/how-i-replicated-workbuddy.html">
+<title>我如何复刻 AI HOT OpenAI 7 天动态追踪 — virusbee</title>
+<meta name="description" content="一次对 AI HOT 深色终端视觉语言的完整拆解：从 27 条动态、5 个分类与 4 张 KPI 出发，提取结构、设计 Token、终端氛围，以及数字滚动与滚动入场动效。文末附可运行的复刻 Demo。">
+<link rel="canonical" href="https://virusbee.github.io/posts/how-i-replicated-aihot-openai.html">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
-<meta property="og:title" content="我如何复刻 WorkBuddy 灵感社区 — virusbee">
-<meta property="og:description" content="从结构、设计 Token、终端氛围，到数字滚动与滚动入场动效，完整记录一次 1:1 复刻。">
-<meta property="og:url" content="https://virusbee.github.io/posts/how-i-replicated-workbuddy.html">
+<meta property="og:title" content="我如何复刻 AI HOT OpenAI 7 天动态追踪 — virusbee">
+<meta property="og:description" content="从 27 条动态、5 个分类与 4 张 KPI 出发，完整记录一次 AI HOT 深色终端风格的 1:1 复刻。">
+<meta property="og:url" content="https://virusbee.github.io/posts/how-i-replicated-aihot-openai.html">
 <meta name="theme-color" content="#0F1115">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -344,10 +344,10 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
 <div class="terminal-bar">
   <div class="terminal-inner">
     <div class="lights" aria-hidden="true"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-    <div class="prompt">$ cat posts/<strong>how-i-replicated-workbuddy.md</strong></div>
+    <div class="prompt">$ cat posts/<strong>how-i-replicated-aihot-openai.md</strong></div>
     <nav class="nav" aria-label="页面导航">
       <a href="../index.html">← index</a>
-      <a href="../replicas/workbuddy_replica_01.html" target="_blank" rel="noopener noreferrer">demo ↗</a>
+      <a href="../replicas/replica_01.html" target="_blank" rel="noopener noreferrer">demo ↗</a>
     </nav>
   </div>
   <div class="progress-track" aria-hidden="true"><span id="readingProgress"></span></div>
@@ -356,8 +356,8 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
 <header class="article-hero">
   <div class="article-hero-inner">
     <div class="eyebrow">Build Log · 001 · 2026-11-11</div>
-    <h1>我如何复刻 <span>WorkBuddy</span> 灵感社区</h1>
-    <p class="article-desc">一次对 WorkBuddy 视觉语言的完整拆解：如何从页面里提取结构、颜色与节奏，再把它变成可运行的 HTML / CSS / JS。文末附复刻 Demo。</p>
+    <h1>我如何复刻 <span>AI HOT</span> OpenAI 7 天动态追踪</h1>
+    <p class="article-desc">一次对 AI HOT 深色终端视觉语言的完整拆解：从 27 条动态、5 个分类与 4 张 KPI 出发，把结构、颜色与节奏变成可运行的 HTML / CSS / JS。文末附复刻 Demo。</p>
     <div class="article-meta">
       <span class="time">2026-11-11</span>
       <span class="source">virusbee · Build Log</span>
@@ -383,15 +383,15 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
     <a href="#responsive"><span>05</span>响应式</a>
     <a href="#single-file"><span>06</span>单文件取舍</a>
     <a href="#review"><span>07</span>复盘</a>
-    <a class="toc-demo" href="../replicas/workbuddy_replica_01.html" target="_blank" rel="noopener noreferrer">
+    <a class="toc-demo" href="../replicas/replica_01.html" target="_blank" rel="noopener noreferrer">
       Live demo
       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
     </a>
   </aside>
 
   <article class="article-body">
-    <p class="lede">做这个主页时，我想找一种既能保持开发者气质、又不会让内容显得冷冰冰的视觉语言。最后我选了 WorkBuddy 灵感社区的深色终端风：固定顶栏像终端窗口，主视觉用网格与光晕铺底，内容以情报卡片的方式排列。</p>
-    <p>这个仓库里的 <a href="../replicas/workbuddy_replica_01.html"><code>replicas/workbuddy_replica_01.html</code></a> 就是那次复刻的结果——一份包含全部样式与交互的单文件页面。下面是我拆解和实现它的过程。当然本页面的风格也是据此实现的。</p>
+    <p class="lede">做这个主页时，我想找一种既能保持开发者气质、又不会让内容显得冷冰冰的视觉语言。最后我选了 AI HOT 的深色终端风：固定顶栏像终端窗口，主视觉用网格与光晕铺底，27 条动态、5 个分类以情报卡片的方式排列，顶部再用 4 张 KPI 把规模说清楚。</p>
+    <p>这个仓库里的 <a href="../replicas/replica_01.html"><code>replicas/replica_01.html</code></a> 就是那次复刻的结果——一份包含全部样式与交互的单文件页面。下面是我拆解和实现它的过程。当然本页面的风格也是据此实现的。</p>
 
     <div class="callout">
       <div class="callout-label">TL;DR</div>
@@ -431,7 +431,7 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
 
     <section id="tokens" class="reveal">
       <h2><span class="h-index">02</span>把视觉语言翻译成 Token</h2>
-      <p>WorkBuddy 的深色不是纯黑，而是带一点蓝的深灰；高亮也不是常见的蓝紫，而是偏青的薄荷绿。把这类观察写成变量，页面才不会在迭代中走样。</p>
+      <p>AI HOT 的深色不是纯黑，而是带一点蓝的深灰；高亮也不是常见的蓝紫，而是偏青的薄荷绿。把这类观察写成变量，页面才不会在迭代中走样。</p>
 
       <div class="table-scroll">
         <div class="token-table" role="table" aria-label="设计 Token 与用途">
@@ -625,10 +625,10 @@ footer a{color:var(--accent);border-bottom:1px dashed var(--accent)}
       <div class="demo-card">
         <div>
           <div class="kpi-label">Live Demo</div>
-          <h3>WorkBuddy 风格复刻</h3>
+          <h3>AI HOT 风格复刻</h3>
           <p>单文件 HTML / CSS / JS，可直接查看源码。</p>
         </div>
-        <a class="cta" href="../replicas/workbuddy_replica_01.html" target="_blank" rel="noopener noreferrer">
+        <a class="cta" href="../replicas/replica_01.html" target="_blank" rel="noopener noreferrer">
           打开 demo
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
         </a>
