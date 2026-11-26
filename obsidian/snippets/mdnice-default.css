@@ -1,0 +1,756 @@
+/* ==========================================================================
+   墨滴 mdnice ·「自定义主题1」  →  Obsidian 阅读视图 / 实时预览
+   --------------------------------------------------------------------------
+   数据来源：editor.mdnice.com 编辑器里应用「主题 → 我的 → 自定义主题1」
+   （themeId 2397）后，直接从渲染容器 #nice 上取回的**生效样式表**
+   （16922 字符，已含基底主题 + 自定义覆盖的合并结果），再用无头 Chrome
+   把同一份 HTML 渲染成参考页，逐项比对计算样式与块级位置。
+
+   主题的实际特征（不是猜测，全部实测）：
+     纸面 #FFF / 正文 #000 16px / 行高 1.8（28.8px）
+     标题 24 / 22 / 20 / 18 / 16 / 14，行高 1.5（墨滴原文 700，本片段降到 500）
+     段落 padding 8px 0（所以段间 16px，段前段后都不塌陷）
+     H2 上边距 90px（自定义主题的签名）、H3 下边距 0
+     列表每层 25px，圆点全为实心 disc，条目间距 5px
+     引用 3px 左条 rgba(0,0,0,.4) + 5% 黑底 + 内边距 10/20
+     表格 1px rgba(204,204,204,.4)、表头 #F0F0F0、偶数行 #F8F8F8（单线网格）
+     行内代码 14px #FC5FA2（自定义主题改的粉色）底 rgba(27,31,35,.05)
+     代码块 Atom One Dark #282C34 + 顶部三个 macOS 窗口点 + 5px 圆角 + 投影
+     H1–H6 无任何下划线/色块装饰，全部是「纯文字」标题（原文 700，本片段 500）
+     字体 Optima + 苹方/雅黑，页面级 -webkit-font-smoothing: antialiased
+     （墨滴页面 body 上就有这条，所以笔画比 Obsidian 默认渲染细约 15%）
+
+   v1.2 · 2026-11-24  标题字重可调（默认 500）、字号写死、标题补抗锯齿
+   v1.1 · 2026-11-24  表格改单线网格；补 antialiased 与可变字重
+   ========================================================================== */
+
+
+/* ==========================================================================
+   0. 设计变量
+   选择器带上 .theme-dark / .theme-light，是为了压过主题在 `.theme-dark`
+   上重新定义的 --h*-size / --code-* 等变量（0,1,1 > 0,1,0）。
+   ========================================================================== */
+
+body,
+body.theme-light,
+body.theme-dark {
+  /* 字体：mdnice 用 Optima（macOS）+ 微软雅黑（Windows）+ 苹方 */
+  --mdnice-font: Optima, "Microsoft YaHei", "PingFang SC", serif;
+  --mdnice-mono: Consolas, Monaco, Menlo, "Source Code Pro", "Courier New", monospace;
+
+  /* 字重：墨滴页面的 body 上就有 -webkit-font-smoothing: antialiased（CDP 实测
+     计算样式确认），渲染出来是灰度抗锯齿，笔画比 Obsidian 默认的次像素渲染
+     更细一档。400 = 常规；想要更细就改成 300（苹方/雅黑细体）。 */
+  --mdnice-font-weight: 400;
+
+  /* 标题字重：墨滴原文是 bold（700），按「更纤细」的要求降到 500（苹方 Medium）。
+     注意 Chrome 里 600 会直接落到 Bold 字面（实测 700 与 600 渲染墨量完全相同），
+     所以 500 才是真正的下一档；想要更细可以写 400，想还原墨滴原样就写 700。 */
+  --mdnice-heading-weight: 500;
+
+  /* 文字与纸面 */
+  --mdnice-text: #000000;
+  --mdnice-link: #1E6BB8;
+
+  /* 引用 */
+  --mdnice-quote-bar: rgba(0, 0, 0, 0.4);
+  --mdnice-quote-bg: rgba(0, 0, 0, 0.05);
+  --mdnice-quote-text: #000000;
+
+  /* 分隔线 */
+  --mdnice-rule: #000000;
+
+  /* 表格 */
+  --mdnice-table-border: rgba(204, 204, 204, 0.4);
+  --mdnice-table-head-bg: #F0F0F0;
+  --mdnice-table-row-even: #F8F8F8;
+  --mdnice-table-row-odd: transparent;   /* 墨滴写的是 #FFF，这里用 transparent 以适配非纯白主题 */
+
+  /* 代码 */
+  --mdnice-inline-code: #FC5FA2;
+  --mdnice-inline-code-bg: rgba(27, 31, 35, 0.05);
+  --mdnice-code-bg: #282C34;
+  --mdnice-code-text: #ABB2BF;
+  --mdnice-code-size: 12px;
+  --mdnice-code-line: 26px;
+
+  /* 代码块左上角三个「窗口点」，原主题是一张 450×130 的 SVG，按 40px 宽铺 */
+  --mdnice-dots: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='450' height='130'><ellipse cx='65' cy='65' rx='50' ry='52' stroke='%23DC3C36' stroke-width='2' fill='%23ED6C60'/><ellipse cx='225' cy='65' rx='50' ry='52' stroke='%23DA9721' stroke-width='2' fill='%23F7C151'/><ellipse cx='385' cy='65' rx='50' ry='52' stroke='%231BA125' stroke-width='2' fill='%2364C856'/></svg>");
+
+  /* ---- Obsidian 自身的标题变量：阅读视图与实时预览共用同一套 ---- */
+  --h1-size: 24px;  --h1-weight: var(--mdnice-heading-weight);  --h1-line-height: 1.5;  --h1-color: var(--mdnice-text);
+  --h2-size: 22px;  --h2-weight: var(--mdnice-heading-weight);  --h2-line-height: 1.5;  --h2-color: var(--mdnice-text);
+  --h3-size: 20px;  --h3-weight: var(--mdnice-heading-weight);  --h3-line-height: 1.5;  --h3-color: var(--mdnice-text);
+  --h4-size: 18px;  --h4-weight: var(--mdnice-heading-weight);  --h4-line-height: 1.5;  --h4-color: var(--mdnice-text);
+  --h5-size: 16px;  --h5-weight: var(--mdnice-heading-weight);  --h5-line-height: 1.5;  --h5-color: var(--mdnice-text);
+  --h6-size: 14px;  --h6-weight: var(--mdnice-heading-weight);  --h6-line-height: 1.5;  --h6-color: var(--mdnice-text);
+
+  /* 让 Obsidian 自己的「标题与前块间距」退回 30px（H2 的 90px 单独写死） */
+  --heading-spacing: 30px;
+
+  /* 列表：每层 25px，标记颜色跟随正文 */
+  --list-indent: 25px;
+  --list-indent-editing: 25px;
+  --list-indent-source: 25px;
+  --list-marker-color: var(--mdnice-text);
+  --list-marker-color-collapsed: var(--mdnice-text);
+  --list-spacing: 0;
+
+  /* 引用 / 代码 / 表格的 Obsidian 变量（实时预览靠它们上色） */
+  --blockquote-border-thickness: 3px;
+  --blockquote-border-color: var(--mdnice-quote-bar);
+  --blockquote-background-color: var(--mdnice-quote-bg);
+  --blockquote-color: var(--mdnice-quote-text);
+  --blockquote-font-style: normal;
+  --blockquote-style: normal;
+
+  --code-background: var(--mdnice-code-bg);
+  --code-normal: var(--mdnice-code-text);
+  --code-size: var(--mdnice-code-size);
+  --code-radius: 5px;
+  --code-border-width: 0;
+  --code-white-space: pre;
+  --code-tab-size: 4;
+
+  --link-color: var(--mdnice-link);
+  --link-color-hover: var(--mdnice-link);
+  --link-external-color: var(--mdnice-link);
+  --link-external-color-hover: var(--mdnice-link);
+  --link-decoration: none;
+  --link-decoration-hover: none;
+  --link-external-decoration: none;
+  --link-external-decoration-hover: none;
+
+  --table-border-color: var(--mdnice-table-border);
+  --table-border-width: 1px;
+  --table-header-weight: 700;
+  --table-header-background: var(--mdnice-table-head-bg);
+  --table-background: transparent;
+  --table-column-min-width: 85px;
+  --table-line-height: 1.5;
+  --hr-color: var(--mdnice-rule);
+  --hr-thickness: 1px;
+
+  /* 任务清单（mdnice 本身不支持，按主题色补一套） */
+  --checkbox-size: 15px;
+  --checkbox-radius: 3px;
+  --checkbox-color: var(--mdnice-link);
+  --checkbox-color-hover: var(--mdnice-link);
+  --checkbox-border-color: rgba(0, 0, 0, 0.4);
+  --checkbox-border-color-hover: var(--mdnice-link);
+  --checkbox-marker-color: #FFFFFF;
+}
+
+/* 暗色：几何完全不动，只换色，免得在暗色库里被白纸闪到 */
+body.theme-dark {
+  --mdnice-text: #E6E6E6;
+  --mdnice-link: #7FB3E8;
+  --mdnice-quote-bar: rgba(255, 255, 255, 0.45);
+  --mdnice-quote-bg: rgba(255, 255, 255, 0.06);
+  --mdnice-quote-text: #E6E6E6;
+  --mdnice-rule: #E6E6E6;
+  --mdnice-table-border: rgba(255, 255, 255, 0.22);
+  --mdnice-table-head-bg: #2C2C2C;
+  --mdnice-table-row-even: #242424;
+  --mdnice-table-row-odd: transparent;
+  --mdnice-inline-code: #FF8FC0;
+  --mdnice-inline-code-bg: rgba(255, 255, 255, 0.09);
+  --checkbox-border-color: rgba(255, 255, 255, 0.4);
+}
+
+
+/* ==========================================================================
+   1. 正文：字体、字号、行高
+   ========================================================================== */
+
+.markdown-rendered,
+.markdown-source-view.mod-cm6,
+.markdown-source-view.mod-cm6 .cm-content {
+  font-family: var(--mdnice-font);
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--mdnice-text);
+  /* 这两行是「纤细感」的来源：墨滴页面用灰度抗锯齿，Obsidian 默认次像素渲染
+     会把同一套字体画粗一档（实测同段文字墨量 5748 → 4899，约 −15%）。 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: var(--mdnice-font-weight);
+}
+
+/* 段落：mdnice 用 padding 8px 0 + margin 0，段间 16px 且永不塌陷 */
+.markdown-rendered p {
+  margin-block: 0;
+  padding-block: 8px;
+  line-height: 1.8;
+  color: var(--mdnice-text);
+}
+
+/* 首/末元素不要多出来的空白（#nice 的 margin 会塌陷出去，Obsidian 不会） */
+.markdown-rendered > :first-child {
+  margin-top: 0;
+}
+
+.markdown-rendered > :last-child {
+  margin-bottom: 0;
+}
+
+
+/* ==========================================================================
+   2. 标题
+   六个级别：24 / 22 / 20 / 18 / 16 / 14，行高 1.5，无边框、无色块、无前缀装饰。
+   上/下边距：H1/H2/H4/H5/H6 = 30 / 15，H3 = 30 / 0
+   字重走 --mdnice-heading-weight（默认 500，墨滴原文是 700）；
+   字号在这里直接写死，不依赖主题是否覆盖了 --h*-size。
+   ========================================================================== */
+
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3,
+.markdown-rendered h4,
+.markdown-rendered h5,
+.markdown-rendered h6 {
+  margin-block: 30px 15px;
+  padding: 0;
+  border: 0;
+  font-weight: var(--mdnice-heading-weight);
+  line-height: 1.5;
+  color: var(--mdnice-text);
+  /* 标题也走灰度抗锯齿，跟正文一致（墨滴页面是页面级设置，标题继承） */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 字号逐级钉死（社区主题用更高优先级改 --h*-size 时也不会跑偏） */
+.markdown-rendered h1 { font-size: 24px; }
+.markdown-rendered h2 { font-size: 22px; }
+.markdown-rendered h3 { font-size: 20px; }
+.markdown-rendered h4 { font-size: 18px; }
+.markdown-rendered h5 { font-size: 16px; }
+.markdown-rendered h6 { font-size: 14px; }
+
+.markdown-rendered h3 {
+  margin-block: 30px 0;
+}
+
+/* H2 的 90px 上边距是这个自定义主题最显眼的特征，单独钉死 */
+.markdown-rendered h2 {
+  margin-block: 90px 15px;
+}
+
+/* 标题紧跟段落时，Obsidian 会用 --heading-spacing 再压一次，这里统一归位 */
+.markdown-rendered :is(p, pre, table, ul, ol) + :is(h1, h2, h4, h5, h6) {
+  margin-block-start: 30px;
+}
+
+.markdown-rendered :is(p, pre, table, ul, ol) + h3 {
+  margin-block-start: 30px;
+}
+
+.markdown-rendered :is(p, pre, table, ul, ol) + h2 {
+  margin-block-start: 90px;
+}
+
+/* 列表内部的标题：Obsidian 默认把它们的外边距清零，这里恢复成 30/15 */
+.markdown-rendered li :is(h1, h2, h3, h4, h5, h6) {
+  margin-block: 30px 15px;
+}
+
+
+/* ==========================================================================
+   3. 列表
+   ul/ol 每层 padding 25px；条目本身没有内边距，靠 5px 外边距形成 5px 行距；
+   所有层级的无序符号都是实心圆（mdnice 把 list-style 统一成 disc）。
+   ========================================================================== */
+
+.markdown-rendered ul,
+.markdown-rendered ol {
+  padding-inline-start: 25px;
+  line-height: 1.8;
+}
+
+.markdown-rendered ul {
+  list-style-type: disc;
+  margin-block: -5px 8px;
+}
+
+.markdown-rendered ol {
+  list-style-type: decimal;
+  margin-block: -10px 8px;
+}
+
+/* 嵌套层级：mdnice 的 #nice ul / #nice ol 对所有层级生效，覆盖 Obsidian 的 0 边距 */
+.markdown-rendered ul ul,
+.markdown-rendered ol ul,
+.markdown-rendered ul ul ul,
+.markdown-rendered ol ul ul {
+  list-style-type: disc;
+  margin-block: -5px 8px;
+}
+
+.markdown-rendered ul ol,
+.markdown-rendered ol ol {
+  list-style-type: decimal;
+  margin-block: -10px 8px;
+}
+
+.markdown-rendered ul > li,
+.markdown-rendered ol > li {
+  margin-inline-start: 0;
+  margin-block: 5px 0;
+  padding-block: 0;
+  line-height: 1.8;
+}
+
+/* 嵌套条目也不要 Obsidian 那 25px 的额外缩进——缩进全部由 ul/ol 的 padding 负责 */
+.markdown-rendered ul ul > li,
+.markdown-rendered ul ol > li,
+.markdown-rendered ol ul > li,
+.markdown-rendered ol ol > li {
+  margin-inline-start: 0;
+}
+
+/* 松散列表里的 <p> 不要再叠 8px 内边距 */
+.markdown-rendered li > p {
+  margin-block: 0;
+  padding-block: 0;
+}
+
+.markdown-rendered ul > li::marker,
+.markdown-rendered ol > li::marker {
+  color: var(--mdnice-text);
+}
+
+/* 任务清单：去点号后条目仍与正文左对齐 */
+.markdown-rendered ul > li.task-list-item {
+  margin-inline-start: 0;
+}
+
+.markdown-rendered .task-list-item-checkbox {
+  position: relative;
+  top: 0.05em;
+}
+
+
+/* ==========================================================================
+   4. 引用
+   左 3px 半透明黑条 + 5% 黑底 + 10/20 内边距，内部段落自己带 8px 上下内边距。
+   ========================================================================== */
+
+.markdown-rendered blockquote {
+  margin-block: 20px;
+  padding: 10px 10px 10px 20px;
+  border: 0;
+  border-inline-start: 3px solid var(--mdnice-quote-bar);
+  border-radius: 0;
+  background-color: var(--mdnice-quote-bg);
+  color: var(--mdnice-quote-text);
+  font-style: normal;
+}
+
+.markdown-rendered blockquote p {
+  margin-block: 0;
+  padding-block: 8px;
+  line-height: 1.8;
+  color: var(--mdnice-quote-text);
+}
+
+/* 引用里首尾段落的 8px 内边距会顶出 18px，mdnice 也是这样，这里保持一致不额外修正 */
+
+
+/* ==========================================================================
+   5. 表格
+   1px 浅灰网格、表头 #F0F0F0、偶数行 #F8F8F8、单元格 5px 10px、最小列宽 85px
+
+   注：墨滴编辑器里这张表是 border-collapse: separate + border-spacing: 2px，
+   每格自带 1px 边，于是相邻两格之间是「双线 + 2px 白缝」，斑马纹也被竖缝
+   切成一段一段——看起来像表格碎成了一个个小盒子。这里改成单线网格：
+   collapse（相邻边框合并成 1px）+ 斑马纹挂在 tr 上（整行一条，不被竖缝切断），
+   单元格内容垂直居中（墨滴 td 是 middle，Obsidian 默认 top）。
+   若要 100% 还原编辑器里的双线效果，把 collapse/spacing 两行换成注释里的写法，
+   并把下方 2 条 tr 背景规则改回挂 td。
+   ========================================================================== */
+
+.markdown-rendered table {
+  margin-block: 0;
+  border-collapse: collapse;
+  /* 还原墨滴原始外观：border-collapse: separate; border-spacing: 2px; */
+  border-spacing: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  word-break: normal;
+}
+
+.markdown-rendered th,
+.markdown-rendered td {
+  padding: 5px 10px;
+  border: 1px solid var(--mdnice-table-border);
+  min-width: 85px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--mdnice-text);
+  vertical-align: middle;
+  background: transparent;
+}
+
+.markdown-rendered th {
+  background-color: var(--mdnice-table-head-bg);
+  font-weight: 700;
+  color: var(--mdnice-text);
+}
+
+/* 斑马纹挂在 tr 上（网格合并后整行一条，不会被竖缝切断） */
+.markdown-rendered tbody tr:nth-child(2n + 1) {
+  background-color: var(--mdnice-table-row-odd);
+}
+
+.markdown-rendered tbody tr:nth-child(2n) {
+  background-color: var(--mdnice-table-row-even);
+}
+
+/* Obsidian 会给表格外层加滚动容器，圆角与间距保持 0 */
+.markdown-rendered .table-wrapper,
+.markdown-rendered table {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+
+/* ==========================================================================
+   6. 代码
+   行内：14px 等宽、粉色 #FC5FA2、5% 黑底、4px 圆角、padding 2px 4px
+   代码块：#282C34 + 顶部 30px 的「窗口点」条 + 5px 圆角 + 投影
+   ========================================================================== */
+
+.markdown-rendered :not(pre) > code {
+  font-family: var(--mdnice-mono);
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--mdnice-inline-code);
+  background-color: var(--mdnice-inline-code-bg);
+  padding: 2px 4px;
+  margin: 0 2px;
+  border: 0;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.markdown-rendered pre {
+  position: relative;
+  margin-block: 10px;
+  padding: 0;
+  min-height: 0;
+  border: 0;
+  border-radius: 5px;
+  background-color: var(--mdnice-code-bg);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  white-space: pre;
+}
+
+/* 顶部 30px 的窗口点条：高 30、下边距 −7，正好让代码区上沿落在 23px 处 */
+.markdown-rendered pre::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 30px;
+  margin-bottom: -7px;
+  border-radius: 5px;
+  background: var(--mdnice-dots) 10px 10px / 40px auto no-repeat var(--mdnice-code-bg);
+}
+
+.markdown-rendered pre > code {
+  display: block;
+  padding: 15px 16px 16px;
+  border: 0;
+  border-radius: 5px;
+  background-color: var(--mdnice-code-bg);
+  font-family: var(--mdnice-mono);
+  font-size: var(--mdnice-code-size);
+  line-height: var(--mdnice-code-line);
+  color: var(--mdnice-code-text);
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 4;
+}
+
+.markdown-rendered pre > code span {
+  line-height: var(--mdnice-code-line);
+}
+
+/* 语法高亮：Atom One Dark（hljs 调色板） */
+.markdown-rendered pre .token.comment,
+.markdown-rendered pre .token.prolog,
+.markdown-rendered pre .token.doctype,
+.markdown-rendered pre .token.cdata { color: #5C6370; font-style: italic; }
+.markdown-rendered pre .token.keyword,
+.markdown-rendered pre .token.formula { color: #C678DD; }
+.markdown-rendered pre .token.string,
+.markdown-rendered pre .token.regex,
+.markdown-rendered pre .token.addition,
+.markdown-rendered pre .token.attribute { color: #98C379; }
+.markdown-rendered pre .token.number,
+.markdown-rendered pre .token.type,
+.markdown-rendered pre .token.attr-value,
+.markdown-rendered pre .token.variable { color: #D19A66; }
+.markdown-rendered pre .token.function,
+.markdown-rendered pre .token.title,
+.markdown-rendered pre .token.symbol,
+.markdown-rendered pre .token.bullet { color: #61AEEE; }
+.markdown-rendered pre .token.builtin,
+.markdown-rendered pre .token.class-name { color: #E6C07B; }
+.markdown-rendered pre .token.tag,
+.markdown-rendered pre .token.selector,
+.markdown-rendered pre .token.deletion { color: #E06C75; }
+.markdown-rendered pre .token.operator,
+.markdown-rendered pre .token.punctuation { color: #ABB2BF; }
+.markdown-rendered pre .token.important,
+.markdown-rendered pre .token.bold { font-weight: 700; }
+.markdown-rendered pre .token.italic { font-style: italic; }
+
+
+/* ==========================================================================
+   7. 链接 / 分割线 / 图片
+   ========================================================================== */
+
+.markdown-rendered a,
+.markdown-rendered a.external-link {
+  color: var(--mdnice-link);
+  font-weight: 700;
+  text-decoration: none;
+  background-image: none;
+  padding: 0;
+}
+
+.markdown-rendered a:hover {
+  text-decoration: none;
+  color: var(--mdnice-link);
+}
+
+/* 外链图标去掉：mdnice 里链接就是纯文字 */
+.markdown-rendered a.external-link::after {
+  content: none;
+  display: none;
+}
+
+.markdown-rendered hr {
+  margin: 10px 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--mdnice-rule);
+  height: 1px;
+  background: transparent;
+}
+
+.markdown-rendered img {
+  display: block;
+  margin: 10px auto;
+  max-width: 100%;
+  border-radius: 0;
+}
+
+/* 只有一张图的段落：去掉段落自身的 8px 上下内边距，
+   间距交给 img 的 10px 外边距（对应墨滴 figure 的 margin: 10px 0） */
+.markdown-rendered p:has(> img:only-child) {
+  padding-block: 0;
+}
+
+/* 图片描述（Obsidian 没有 figcaption，这句给 HTML 里的 figure 用） */
+.markdown-rendered figcaption {
+  margin-top: 5px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #888888;
+  text-align: center;
+}
+
+
+/* ==========================================================================
+   8. 加粗 / 斜体 / 删除线
+   ========================================================================== */
+
+.markdown-rendered strong {
+  color: var(--mdnice-text);
+  font-weight: 700;
+}
+
+.markdown-rendered em {
+  color: var(--mdnice-text);
+  font-style: italic;
+}
+
+.markdown-rendered del {
+  color: var(--mdnice-text);
+  text-decoration: line-through;
+}
+
+
+/* ==========================================================================
+   9. 实时预览（Live Preview）
+   Obsidian 的 .cm-line 被核心样式限制成 margin:0，只能用 padding 模拟外边距。
+   ========================================================================== */
+
+/* 正文行高 */
+.markdown-source-view.mod-cm6 .cm-line {
+  line-height: 1.8;
+}
+
+/* 标题：字号/颜色由 --h*-* 变量带出来，字重再显式写一遍
+   （防止社区主题用更高优先级覆盖 --h*-weight），这里只补上「段前距」 */
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header,
+.markdown-source-view.mod-cm6 .cm-line[class*="HyperMD-header-"],
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header .cm-header {
+  font-weight: var(--mdnice-heading-weight);
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header {
+  padding-top: 30px;
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-2 {
+  padding-top: 90px;
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-1,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-3,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-4,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-5,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-6 {
+  padding-top: 30px;
+}
+
+/* 引用：背景与左边框由 --blockquote-* 变量绘制 */
+.markdown-source-view.mod-cm6 .HyperMD-quote {
+  background-color: var(--mdnice-quote-bg);
+  color: var(--mdnice-quote-text);
+  font-style: normal;
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-quote .cm-quote {
+  color: var(--mdnice-quote-text);
+}
+
+/* 列表：缩进与符号颜色已由 --list-indent / --list-marker-color 统一控制 */
+
+/* 行内代码 */
+.markdown-source-view.mod-cm6 .cm-inline-code,
+.markdown-source-view.mod-cm6 span.cm-inline-code {
+  font-family: var(--mdnice-mono);
+  font-size: 14px;
+  color: var(--mdnice-inline-code);
+  background-color: var(--mdnice-inline-code-bg);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+/* 代码块：深底 + 等宽 12px / 26px 行高，首行补出窗口点区域 */
+.markdown-source-view.mod-cm6 .HyperMD-codeblock {
+  font-family: var(--mdnice-mono);
+  font-size: var(--mdnice-code-size);
+  line-height: var(--mdnice-code-line);
+  color: var(--mdnice-code-text);
+  background-color: var(--mdnice-code-bg);
+  border-radius: 0;
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock {
+  padding-inline-start: 16px;
+  padding-inline-end: 16px;
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-codeblock-begin {
+  padding-top: 38px;              /* 30px 点条 + 15px 内边距 − 7px 负边距 */
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background-image: var(--mdnice-dots);
+  background-repeat: no-repeat;
+  background-position: 10px 10px;
+  background-size: 40px auto;
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-codeblock-end {
+  padding-bottom: 16px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+/* 代码块内的语法色：Obsidian 用 cm-* 类 */
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-comment { color: #5C6370; font-style: italic; }
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-keyword { color: #C678DD; }
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-string { color: #98C379; }
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-number { color: #D19A66; }
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-def,
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-variable-2 { color: #61AEEE; }
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-variable { color: #E06C75; }
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-operator,
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-bracket,
+.markdown-source-view.mod-cm6 .HyperMD-codeblock .cm-punctuation { color: #ABB2BF; }
+
+/* 链接 */
+.markdown-source-view.mod-cm6 .cm-link,
+.markdown-source-view.mod-cm6 .cm-url,
+.markdown-source-view.mod-cm6 .cm-hmd-internal-link {
+  color: var(--mdnice-link);
+  text-decoration: none;
+}
+
+/* 分割线 */
+.markdown-source-view.mod-cm6 .hr hr {
+  border: 0;
+  border-top: 1px solid var(--mdnice-rule);
+  height: 1px;
+  margin: 10px 0;
+}
+
+/* 表格（实时预览用的是 widget，不在 .markdown-rendered 里） */
+.markdown-source-view.mod-cm6 .cm-table-widget table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget th,
+.markdown-source-view.mod-cm6 .cm-table-widget td {
+  padding: 5px 10px;
+  border: 1px solid var(--mdnice-table-border);
+  min-width: 85px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--mdnice-text);
+  vertical-align: middle;
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget th {
+  background-color: var(--mdnice-table-head-bg);
+  font-weight: 700;
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget tbody tr:nth-child(2n + 1) {
+  background-color: var(--mdnice-table-row-odd);
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget tbody tr:nth-child(2n) {
+  background-color: var(--mdnice-table-row-even);
+}
+
+/* 图片 */
+.markdown-source-view.mod-cm6 .cm-content img {
+  display: block;
+  margin: 10px auto;
+  border-radius: 0;
+}
+
+
+/* ==========================================================================
+   10. 可选：手机宽度（墨滴的原生版心是 375px）
+   想让库里的文章「和手机端一模一样」，把下面两段的注释去掉即可。
+   默认不启用，跟随 Obsidian 自己的「缩减栏宽」设置。
+   ========================================================================== */
+
+/*
+.markdown-preview-view.is-readable-line-width .markdown-preview-sizer {
+  max-width: 375px;
+}
+
+.markdown-source-view.mod-cm6.is-readable-line-width .cm-sizer {
+  max-width: 375px;
+}
+*/

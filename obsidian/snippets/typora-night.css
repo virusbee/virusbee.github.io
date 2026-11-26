@@ -1,0 +1,950 @@
+/* ==========================================================================
+   Typora · Night 主题  →  Obsidian 阅读视图 / 实时预览
+
+   用法：把本文件放进 库目录/.obsidian/snippets/ ，
+   然后在 设置 → 外观 → CSS 代码片段 里打开它。
+
+   1:1 复刻自 Typora 1.x 内置主题 night.css（本机路径：
+   ~/Library/Application Support/abnerworks.Typora/themes/night.css），
+   加上其引用的 night/codeblock.dark.css 的代码高亮配色。
+
+   Night 是一套暗色主题，所以本片段不区分 Obsidian 的浅色/暗色模式，
+   两种模式下都渲染成 Night 的深色纸面（#363B40）。若只想在暗色模式生效，
+   把第 2 节的背景规则改成只在 .theme-dark 下应用即可。
+
+   核心数字（均为 Typora 实际计算值，非估算）：
+     纸面 / 正文     #363B40 / #b8bfc6 16px
+     版心            914px（#write 自身宽度，Night 没有左右内边距）
+     行高            26px（1.625）
+     段落间距        24px（1.5rem），段前为 0
+     标题            40 / 26.08 / 18.72 / 17.92 / 15.52 / 14.88px
+                     行高 44 / 30 / 24 / 22 / 20 / 16px
+                     颜色 #DEDEDE，H4/H6 为纯白
+                     H1 字重 400 + 字距 -1.5px，H2/H3/H5 字重 700 + 字距 -1px（H2/H3）
+                     H1 上 80px（2em）、下 24px；H2–H6 上 0、下 24px（H6 为 12px）
+     列表            每层缩进 30px；标记颜色随正文
+                     一级实心 5px / 二级空心 6px / 三级方块 5px；有序各层均为 1.
+     引用            左 2px #474d54，左内边距 30px，左外边距 30px
+                     上 35px、下 30px，文字 #9DA2A6
+     表格            1px #474d54 网格，单元格 5px 10px，无表头底色
+                     注意：Typora 基础样式把表头的下边框设为 0，此处照搬
+     行内代码        14px，底 rgba(0,0,0,.05)，内边距 2px 5px，无圆角无边框
+     代码块          14.4px，底 #333，内边距 10px 10px 10px 30px，无圆角无边框
+     分割线          2px #474d54，上下 24px
+     链接            #e0e0e0，带下划线，悬停变白
+     任务清单        14×14 方框 1px #b8bfc6 / 底 #363B40，勾选显示 √
+
+   字体：Night 不自带字体，正文用 Helvetica Neue，标题用 Lucida Grande，
+   代码用 Monaco——都是 macOS 自带，因此本片段不需要内嵌字体文件。
+   汉字按 Typora 的回落顺序走 PingFang SC / 微软雅黑。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 设计变量
+   选择器带上 .theme-dark / .theme-light，是为了压过 Obsidian 自带主题与
+   社区主题在 .theme-dark 上重新定义的 --code-* 等变量（0,1,1 > 0,1,0）。
+   -------------------------------------------------------------------------- */
+body,
+body.theme-dark,
+body.theme-light {
+  /* 字体 */
+  --typora-font: "Helvetica Neue", Helvetica, Arial, "Segoe UI Emoji", "SF Pro",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --typora-font-heading: "Lucida Grande", "Corbel", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --typora-font-mono: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono",
+    "PingFang SC", monospace;
+
+  /* 字号与节奏 */
+  --typora-body-size: 16px;
+  --typora-line-height: 1.625;   /* 26px */
+  --typora-line-px: 26px;        /* 行内的 code/kbd 要按 26px 绝对行高，
+                                    Obsidian 默认按 1.625×自身字号算，会把行盒压矮 */
+  --typora-content-width: 914px;
+  --typora-block-gap: 24px;      /* 1.5rem，所有块级元素的下外边距 */
+  --typora-list-indent: 30px;    /* 1.875rem */
+  --typora-code-gap: 20px;
+
+  /* 纸面与文字 */
+  --typora-bg: #363b40;
+  --typora-text: #b8bfc6;
+  --typora-text-muted: #9da2a6;
+  --typora-heading: #dedede;
+  --typora-heading-bright: #ffffff;
+
+  --typora-link: #e0e0e0;
+  --typora-link-hover: #ffffff;
+
+  --typora-border: #474d54;      /* 表格、引用、分割线共用 */
+  --typora-quote-text: #9da2a6;
+
+  --typora-code-bg: #333333;
+  --typora-inline-code-bg: rgba(0, 0, 0, 0.05);
+
+  --typora-mark-bg: #d3d40e;
+  --typora-mark-text: #000000;
+
+  --typora-selection: #4a89dc;
+  --typora-kbd-border: #adb3b9;
+
+  /* 交给 Obsidian 的变量，阅读视图与实时预览共用 */
+  --font-text: var(--typora-font);
+  --font-text-size: var(--typora-body-size);
+  --font-monospace: var(--typora-font-mono);
+  --line-height-normal: var(--typora-line-height);
+  --file-line-width: var(--typora-content-width);
+  --p-spacing: var(--typora-block-gap);
+  --heading-spacing: 0px;
+
+  --list-indent: var(--typora-list-indent);
+  --list-indent-editing: var(--typora-list-indent);
+  --list-indent-source: var(--typora-list-indent);
+  --list-spacing: 0;
+  --list-marker-color: var(--typora-text);
+
+  --checkbox-size: 14px;
+
+  --table-border-width: 1px;
+  --table-border-color: var(--typora-border);
+  --table-text-size: var(--typora-body-size);
+  --table-header-size: var(--typora-body-size);
+  --table-line-height: var(--typora-line-height);
+
+  --code-size: 14.4px;
+  --code-background: var(--typora-code-bg);
+  --code-normal: var(--typora-text);
+  --code-border-width: 0px;
+  --code-border-color: transparent;
+  --code-radius: 0px;
+
+  /* 代码高亮：来自 night/codeblock.dark.css 的 CodeMirror 配色 */
+  --code-comment: #da924a;
+  --code-keyword: #c88fd0;
+  --code-string: #d26b6b;
+  --code-function: #8d8df0;
+  --code-tag: #7df46a;
+  --code-value: #84b6cb;
+  --code-operator: #b8bfc6;
+  --code-property: #b8bfc6;
+  --code-punctuation: #999977;
+  --code-important: #d95050;
+  --code-bracket-background: transparent;
+
+  --hr-thickness: 2px;
+  --hr-color: var(--typora-border);
+
+  --blockquote-border-thickness: 2px;
+  --blockquote-border-color: var(--typora-border);
+  --blockquote-color: var(--typora-quote-text);
+  --blockquote-background-color: transparent;
+  --blockquote-font-style: normal;
+
+  --link-color: var(--typora-link);
+  --link-color-hover: var(--typora-link-hover);
+  --link-decoration: underline;
+  --link-external-decoration: underline;
+  --link-unresolved-decoration-style: dashed;
+
+  /* Night 的标题：字重只有 H2/H3/H5 是 bold */
+  --bold-modifier: 0;
+  --h1-weight: 400;
+  --h2-weight: 700;
+  --h3-weight: 700;
+  --h4-weight: 400;
+  --h5-weight: 700;
+  --h6-weight: 400;
+  --h1-color: var(--typora-heading);
+  --h2-color: var(--typora-heading);
+  --h3-color: var(--typora-heading);
+  --h4-color: var(--typora-heading-bright);
+  --h5-color: var(--typora-heading);
+  --h6-color: var(--typora-heading-bright);
+}
+
+/* --------------------------------------------------------------------------
+   2. 纸张与版心
+   Night 的 #write 没有左右内边距，max-width 直接就是正文宽度 914px
+   -------------------------------------------------------------------------- */
+.markdown-reading-view,
+.markdown-preview-view,
+.markdown-source-view.mod-cm6 {
+  background-color: var(--typora-bg);
+}
+
+.markdown-preview-sizer,
+.markdown-source-view.mod-cm6 .cm-sizer {
+  max-width: var(--typora-content-width);
+  margin-inline: auto;
+}
+
+.markdown-rendered,
+.markdown-source-view.mod-cm6 .cm-content {
+  font-family: var(--typora-font);
+  font-size: var(--typora-body-size);
+  line-height: var(--typora-line-height);
+  color: var(--typora-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Night 没有当前行底色 */
+.markdown-source-view.mod-cm6 .cm-activeLine {
+  background-color: transparent;
+}
+
+::selection {
+  background: var(--typora-selection);
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   3. 标题
+   40 / 26.08 / 18.72 / 17.92 / 15.52 / 14.88 · 400 / 700 / 700 / 400 / 700 / 400
+   行高 44 / 30 / 24 / 22 / 20 / 16；H1 上 80px，其余段前为 0
+   -------------------------------------------------------------------------- */
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3,
+.markdown-rendered h4,
+.markdown-rendered h5,
+.markdown-rendered h6 {
+  font-family: var(--typora-font-heading);
+  font-weight: 400;
+  color: var(--typora-heading);
+  padding-bottom: 0;
+  border-bottom: none;
+  position: relative;
+  cursor: text;
+}
+
+/* 每个级别单独写 --heading-spacing：Obsidian 核心对 `p + h1` 一类选择器
+   有更高优先级的 margin-top 规则，不注入变量会被重置 */
+.markdown-rendered h1 {
+  --heading-spacing: 0px;
+  font-size: 40px;
+  line-height: 44px;
+  font-weight: 400;
+  letter-spacing: -1.5px;
+  margin-block: 80px 24px;
+}
+
+.markdown-rendered h2 {
+  --heading-spacing: 0px;
+  font-size: 26.08px;
+  line-height: 30px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-block: 0 24px;
+}
+
+.markdown-rendered h3 {
+  --heading-spacing: 0px;
+  font-size: 18.72px;
+  line-height: 24px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-block: 0 24px;
+}
+
+.markdown-rendered h4 {
+  --heading-spacing: 0px;
+  font-size: 17.92px;
+  line-height: 22px;
+  font-weight: 400;
+  letter-spacing: normal;
+  color: var(--typora-heading-bright);
+  margin-block: 0 24px;
+}
+
+.markdown-rendered h5 {
+  --heading-spacing: 0px;
+  font-size: 15.52px;
+  line-height: 20px;
+  font-weight: 700;
+  letter-spacing: normal;
+  margin-block: 0 24px;
+}
+
+.markdown-rendered h6 {
+  --heading-spacing: 0px;
+  font-size: 14.88px;
+  line-height: 16px;
+  font-weight: 400;
+  letter-spacing: normal;
+  color: var(--typora-heading-bright);
+  margin-block: 0 12px;
+}
+
+/* 文档标题（Obsidian 的 inline title）：按 Night 的 H1 处理 */
+.inline-title {
+  font-family: var(--typora-font-heading);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 44px;
+  letter-spacing: -1.5px;
+  color: var(--typora-heading);
+  padding-bottom: 0;
+  border-bottom: none;
+  margin-block: 40px 24px;
+}
+
+/* 标题里的行内代码：字号跟随标题 */
+.markdown-rendered h1 code,
+.markdown-rendered h2 code,
+.markdown-rendered h3 code,
+.markdown-rendered h4 code,
+.markdown-rendered h5 code,
+.markdown-rendered h6 code {
+  font-size: 1em;
+}
+
+/* --------------------------------------------------------------------------
+   4. 正文与行内元素
+   -------------------------------------------------------------------------- */
+.markdown-rendered p {
+  margin-block: 0 var(--typora-block-gap);
+}
+
+.markdown-rendered strong,
+.markdown-rendered b {
+  font-weight: 700;
+  color: var(--typora-heading);
+}
+
+.markdown-rendered em,
+.markdown-rendered i {
+  font-style: italic;
+  color: inherit;
+}
+
+.markdown-rendered del,
+.markdown-rendered s {
+  color: inherit;
+  text-decoration: line-through;
+}
+
+/* ==高亮==：Night 只改底色，文字仍是基础样式的黑色 */
+.markdown-rendered mark {
+  background-color: var(--typora-mark-bg);
+  color: var(--typora-mark-text);
+  padding: 0;
+}
+
+/* 链接：#e0e0e0 + 下划线，悬停变白 */
+.markdown-rendered a,
+.markdown-rendered .internal-link,
+.markdown-rendered .external-link {
+  color: var(--typora-link);
+  text-decoration: underline;
+  text-underline-offset: 0.1em;
+  border-bottom: none;
+  --link-decoration: underline;
+  --link-external-decoration: underline;
+}
+
+.markdown-rendered a:hover {
+  color: var(--typora-link-hover);
+  text-decoration: underline;
+}
+
+/* 行内代码：14px / 5% 黑底 / 2px 5px 内边距 / 无边框无圆角 */
+.markdown-rendered code {
+  font-family: var(--typora-font-mono);
+  font-size: 14px;
+  line-height: var(--typora-line-px);
+  color: inherit;
+  background-color: var(--typora-inline-code-bg);
+  border: 0;
+  border-radius: 0;
+  padding: 2px 5px;
+  margin: 0;
+}
+
+/* 键帽：kbd */
+.markdown-rendered kbd {
+  font-family: var(--typora-font-mono);
+  font-size: 14.4px;
+  line-height: var(--typora-line-px);
+  color: #ffffff;
+  background: var(--typora-code-bg);
+  border: 1px solid var(--typora-kbd-border);
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  padding: 2px 5px;
+  margin: 0;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* 脚注角标 */
+.markdown-rendered sup {
+  font-size: 0.75em;
+  line-height: 0;
+}
+
+/* Typora：sup.md-footnote { background:#555; color:#ddd; radius:4px; padding:2px 4px }
+   Obsidian 的脚注角标是 sup.footnote-ref > a.footnote-link，两边都照顾到 */
+.markdown-rendered sup.md-footnote,
+.markdown-rendered sup.footnote-ref,
+.markdown-rendered sup:has(> a.footnote-link) {
+  background-color: #555555;
+  color: #dddddd;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.markdown-rendered sup.footnote-ref > a.footnote-link {
+  color: #dddddd;
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------------------
+   5. 引用与分割线
+   -------------------------------------------------------------------------- */
+.markdown-rendered blockquote {
+  margin: 35px 0 30px 30px;
+  padding: 0 0 0 30px;
+  border-inline-start: 2px solid var(--typora-border);
+  color: var(--typora-quote-text);
+  font-style: normal;
+  background: transparent;
+  border-radius: 0;
+}
+
+.markdown-rendered blockquote p {
+  margin-block: 0 var(--typora-block-gap);
+  color: inherit;
+}
+
+.markdown-rendered blockquote > :first-child {
+  margin-block-start: 0;
+}
+
+.markdown-rendered blockquote > :last-child {
+  margin-block-end: 0;
+}
+
+.markdown-rendered hr {
+  height: 2px;
+  border: 0;
+  background-color: var(--typora-border);
+  margin-block: var(--typora-block-gap);
+}
+
+/* --------------------------------------------------------------------------
+   6. 列表
+   Typora：ul/ol 左内边距 30px，每层再加 30px；条目本身 margin/padding 均为 0
+           一级 disc / 二级 circle / 三级 square，标记颜色 = 正文色
+           有序列表各层都是 1. 2. 3.
+   -------------------------------------------------------------------------- */
+.markdown-rendered ul,
+.markdown-rendered ol {
+  padding-inline-start: 0;
+  margin-block: 0 var(--typora-block-gap);
+  color: inherit;
+}
+
+/* li>ul / li>ol 在 Typora 里 margin: 0 */
+.markdown-rendered ul ul,
+.markdown-rendered ol ol,
+.markdown-rendered ul ol,
+.markdown-rendered ol ul {
+  margin-block: 0;
+}
+
+/* Obsidian 核心给 li 加了 3ch 缩进，全部压回 Typora 的 30px */
+.markdown-rendered ul > li,
+.markdown-rendered ol > li {
+  margin-inline-start: var(--typora-list-indent);
+  padding-block: 0;
+  position: relative;
+}
+
+.markdown-rendered ul ul > li,
+.markdown-rendered ul ol > li,
+.markdown-rendered ol ul > li,
+.markdown-rendered ol ol > li {
+  margin-inline-start: var(--typora-list-indent);
+}
+
+/* 条目里的段落：Typora 是 li p { margin: .5rem 0 }，首尾为 0 */
+.markdown-rendered li p {
+  margin-block: 8px;
+}
+
+.markdown-rendered li > p:first-child {
+  margin-block-start: 0;
+}
+
+.markdown-rendered li > p:last-child {
+  margin-block-end: 0;
+}
+
+/* 无序列表标记：Obsidian 用 .list-bullet:after 画，不用 ::marker */
+.markdown-rendered .list-bullet {
+  margin-inline-start: -0.95em;  /* 圆点中心距文字 15px，与 Typora 的 ::marker 一致 */
+  --list-bullet-size: 5px;
+  --list-bullet-radius: 50%;
+  --list-bullet-border: none;
+}
+
+.markdown-rendered .list-bullet:after {
+  background-color: var(--typora-text);
+  border-color: var(--typora-text);
+}
+
+/* 二级：空心圆，外径 6px、描边 1px */
+.markdown-rendered li ul > li > .list-bullet {
+  --list-bullet-size: 6px;
+  --list-bullet-radius: 50%;
+  --list-bullet-border: 1px solid var(--typora-text);
+}
+
+.markdown-rendered li ul > li > .list-bullet:after {
+  box-sizing: border-box;
+  background-color: transparent;
+}
+
+/* 三级：实心方块 5px，无圆角 */
+.markdown-rendered li li ul > li > .list-bullet {
+  --list-bullet-size: 5px;
+  --list-bullet-radius: 0;
+  --list-bullet-border: none;
+}
+
+.markdown-rendered li li ul > li > .list-bullet:after {
+  background-color: var(--typora-text);
+}
+
+/* 四级起回到实心圆（浏览器默认循环） */
+.markdown-rendered li li li ul > li > .list-bullet {
+  --list-bullet-size: 5px;
+  --list-bullet-radius: 50%;
+  --list-bullet-border: none;
+}
+
+.markdown-rendered li li li ul > li > .list-bullet:after {
+  background-color: var(--typora-text);
+}
+
+/* 有序列表：各层都是 1. 2. 3.，颜色随正文 */
+.markdown-rendered ol {
+  list-style-type: decimal;
+}
+
+.markdown-rendered ol ol,
+.markdown-rendered ul ol,
+.markdown-rendered ol ol ol {
+  list-style-type: decimal;
+}
+
+.markdown-rendered ol > li::marker {
+  color: var(--typora-text);
+  font-weight: 400;
+}
+
+/* 任务清单：14×14 方框，1px #b8bfc6，底 #363B40，勾选显示 √
+   Typora 的 .task-list { padding-left: 0 }，所以条目文字与正文左对齐，
+   复选框悬在左侧 20.8px 处（和 GitHub 任务清单一样的悬挂式对齐） */
+.markdown-rendered ul > li.task-list-item,
+.markdown-rendered ul > li.task-list-item > ul {
+  list-style: none;
+  margin-inline-start: 0;
+  padding-inline-start: 0;
+}
+
+.markdown-rendered ul > li.task-list-item > .list-bullet {
+  display: none;
+}
+
+.markdown-rendered input[type="checkbox"].task-list-item-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  padding: 0;
+  /* Typora：margin-left -1.3em = -20.8px，方框右缘距文字 6.8px */
+  margin: 0 6.8px 0 -20.8px;
+  border: 1px solid var(--typora-text);
+  border-radius: 0;
+  background-color: var(--typora-bg);
+  background-image: none;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 12px 12px;
+  position: relative;
+  top: 0;
+  vertical-align: middle;
+  flex-shrink: 0;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+/* 勾选态：贴一枚 √（Typora 用的是 U+221A，10px、#DEDEDE） */
+.markdown-rendered input[type="checkbox"].task-list-item-checkbox:checked {
+  background-color: var(--typora-bg);
+  border-color: var(--typora-text);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M2.6 7.6 L5.45 10.4 L11.3 3.7' fill='none' stroke='%23DEDEDE' stroke-width='1.2' stroke-linecap='butt' stroke-linejoin='miter'/%3E%3C/svg%3E");
+}
+
+/* 关掉 Obsidian 自绘的对勾，避免叠加 */
+.markdown-rendered input[type="checkbox"].task-list-item-checkbox::after,
+.markdown-rendered input[type="checkbox"].task-list-item-checkbox:checked::after {
+  content: none;
+  display: none;
+}
+
+.markdown-rendered input[type="checkbox"].task-list-item-checkbox:hover {
+  border-color: var(--typora-heading);
+  box-shadow: none;
+}
+
+/* 已完成条目不置灰（Typora 也不置灰） */
+.markdown-rendered ul > li.task-list-item[data-task="x"],
+.markdown-rendered ul > li.task-list-item[data-task="X"] {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 关闭 Obsidian 的列表缩进参考线（Typora 没有） */
+.markdown-rendered.show-indentation-guide li > ul::before,
+.markdown-rendered.show-indentation-guide li > ol::before {
+  display: none;
+}
+
+.markdown-source-view.mod-cm6 .cm-indent::before,
+.markdown-source-view.mod-cm6 .cm-active-indent::before {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   7. 表格
+   1px #474d54 网格 · 单元格 5px 10px · 无表头底色 · 表头 700 #DEDEDE
+   表头下边框被 Typora 基础样式置 0（table tr th { border-bottom: 0 }）
+   -------------------------------------------------------------------------- */
+.markdown-rendered table {
+  width: 100%;
+  margin-block: 0 var(--typora-block-gap);
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: var(--typora-body-size);
+  line-height: var(--typora-line-height);
+  color: var(--typora-text);
+  word-break: normal;
+}
+
+.markdown-rendered th,
+.markdown-rendered td {
+  padding: 5px 10px;
+  border: 1px solid var(--typora-border);
+  font-size: var(--typora-body-size);
+  line-height: var(--typora-line-height);
+  text-align: start;
+  vertical-align: top;
+  background-color: transparent;
+}
+
+.markdown-rendered th {
+  font-weight: 700;
+  color: var(--typora-heading);
+  border-bottom: 0;
+}
+
+.markdown-rendered thead,
+.markdown-rendered thead tr {
+  background-color: transparent;
+}
+
+.markdown-rendered tbody tr:nth-child(2n) {
+  background-color: transparent;
+}
+
+.markdown-rendered tbody tr:hover {
+  background-color: transparent;
+}
+
+/* 表格里的行内代码不要撑破单元格 */
+.markdown-rendered td code,
+.markdown-rendered th code {
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   8. 代码块
+   14.4px Monaco / 底 #333 / 内边距 10px 10px 10px 30px / 无圆角无边框
+   Typora 的 CodeMirror 没有覆盖行高，代码行继承正文的 26px（14.4px 字号下约 1.8）
+   -------------------------------------------------------------------------- */
+.markdown-rendered pre {
+  margin: 0 0 var(--typora-code-gap);
+  padding: 10px 10px 10px 30px;
+  background-color: var(--typora-code-bg);
+  border: 0;
+  border-radius: 0;
+  font-family: var(--typora-font-mono);
+  font-size: 14.4px;
+  line-height: var(--typora-line-px);
+  color: var(--typora-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+}
+
+.markdown-rendered pre code {
+  font-family: var(--typora-font-mono);
+  font-size: 1em;
+  line-height: inherit;
+  color: var(--typora-text);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* 代码块右上角的复制按钮：Typora 没有，悬停才显示即可 */
+.markdown-rendered pre > button.copy-code-button {
+  font-family: var(--font-interface);
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   9. 图片
+   -------------------------------------------------------------------------- */
+.markdown-rendered img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 独占一段的图片居中（Typora：p > img:only-child { display:block; margin:auto }） */
+.markdown-rendered p > img:only-child,
+.markdown-rendered p > .image-embed:only-child,
+.markdown-rendered p > span.image-embed:only-child img {
+  display: block;
+  margin-inline: auto;
+}
+
+/* --------------------------------------------------------------------------
+   10. 实时预览（Live Preview）
+   Obsidian 对 .cm-content > * 强制 margin:0 !important，留白只能用 padding。
+   -------------------------------------------------------------------------- */
+.markdown-source-view.mod-cm6 .HyperMD-header-1,
+.markdown-source-view.mod-cm6 .cm-header-1 {
+  font-family: var(--typora-font-heading);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 44px;
+  letter-spacing: -1.5px;
+  color: var(--typora-heading);
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-header-2,
+.markdown-source-view.mod-cm6 .cm-header-2 {
+  font-family: var(--typora-font-heading);
+  font-size: 26.08px;
+  font-weight: 700;
+  line-height: 30px;
+  letter-spacing: -1px;
+  color: var(--typora-heading);
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-header-3,
+.markdown-source-view.mod-cm6 .cm-header-3 {
+  font-family: var(--typora-font-heading);
+  font-size: 18.72px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -1px;
+  color: var(--typora-heading);
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-header-4,
+.markdown-source-view.mod-cm6 .cm-header-4 {
+  font-family: var(--typora-font-heading);
+  font-size: 17.92px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--typora-heading-bright);
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-header-5,
+.markdown-source-view.mod-cm6 .cm-header-5 {
+  font-family: var(--typora-font-heading);
+  font-size: 15.52px;
+  font-weight: 700;
+  line-height: 20px;
+  color: var(--typora-heading);
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-header-6,
+.markdown-source-view.mod-cm6 .cm-header-6 {
+  font-family: var(--typora-font-heading);
+  font-size: 14.88px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--typora-heading-bright);
+}
+
+/* 标题的上下留白 */
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-1 {
+  padding-block: 80px 24px;
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-2,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-3,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-4,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-5 {
+  padding-block: 0 24px;
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-6 {
+  padding-block: 0 12px;
+}
+
+/* 加粗 / 斜体 / 删除线 / 高亮 */
+.markdown-source-view.mod-cm6 .cm-strong {
+  font-weight: 700;
+  color: var(--typora-heading);
+}
+
+.markdown-source-view.mod-cm6 .cm-em {
+  font-style: italic;
+}
+
+.markdown-source-view.mod-cm6 .cm-strikethrough {
+  text-decoration: line-through;
+}
+
+.markdown-source-view.mod-cm6 .cm-highlight {
+  background-color: var(--typora-mark-bg);
+  color: var(--typora-mark-text);
+}
+
+/* 链接 */
+.markdown-source-view.mod-cm6 .cm-link,
+.markdown-source-view.mod-cm6 .cm-url,
+.markdown-source-view.mod-cm6 .cm-hmd-internal-link {
+  color: var(--typora-link);
+  text-decoration: underline;
+}
+
+/* 源标记（#、**、- 等）弱化，但保留可编辑性 */
+.markdown-source-view.mod-cm6 .cm-formatting {
+  color: #7c848c;
+}
+
+/* 列表标记 */
+.markdown-source-view.mod-cm6 .cm-formatting-list,
+.markdown-source-view.mod-cm6 .list-bullet {
+  color: var(--typora-text);
+}
+
+.markdown-source-view.mod-cm6 .list-bullet:after {
+  background-color: var(--typora-text);
+}
+
+/* 引用 */
+.markdown-source-view.mod-cm6 .HyperMD-quote {
+  border-inline-start: 2px solid var(--typora-border);
+  padding-inline-start: 30px;
+  color: var(--typora-quote-text);
+  font-style: normal;
+  background: transparent;
+}
+
+/* 行内代码 */
+.markdown-source-view.mod-cm6 .cm-inline-code {
+  font-family: var(--typora-font-mono);
+  font-size: 14px;
+  color: inherit;
+  background-color: var(--typora-inline-code-bg);
+  border: 0;
+  border-radius: 0;
+  padding: 2px 5px;
+}
+
+/* 代码块：每行铺底色，左内边距 30px，无圆角无边框 */
+.markdown-source-view.mod-cm6 .HyperMD-codeblock {
+  font-family: var(--typora-font-mono);
+  font-size: 14.4px;
+  line-height: var(--typora-line-px);
+  color: var(--typora-text);
+  background-color: var(--typora-code-bg);
+  border: 0;
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock:not(.HyperMD-list-line) {
+  padding-inline-start: 30px;
+  padding-inline-end: 10px;
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-codeblock-begin {
+  padding-top: 10px;
+  border-radius: 0;
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-codeblock-end {
+  padding-bottom: 10px;
+  border-radius: 0;
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock-begin-before {
+  padding-top: var(--typora-code-gap);
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock-end-after {
+  padding-bottom: var(--typora-code-gap);
+}
+
+/* 表格（LP 里是 widget） */
+.markdown-source-view.mod-cm6 .cm-table-widget table {
+  border-collapse: collapse;
+  font-size: var(--typora-body-size);
+  line-height: var(--typora-line-height);
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget th,
+.markdown-source-view.mod-cm6 .cm-table-widget td {
+  padding: 5px 10px;
+  border: 1px solid var(--typora-border);
+  font-size: var(--typora-body-size);
+  line-height: var(--typora-line-height);
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget th {
+  font-weight: 700;
+  color: var(--typora-heading);
+  background-color: transparent;
+  border-bottom: 0;
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget thead {
+  background-color: transparent;
+}
+
+/* 分割线 */
+.markdown-source-view.mod-cm6 .hr,
+.markdown-source-view.mod-cm6 .cm-hr {
+  background-color: transparent;
+  border-top: 2px solid var(--typora-border);
+}
+
+/* 嵌入的文档 / 内嵌块 */
+.markdown-rendered .markdown-embed,
+.markdown-rendered .internal-embed {
+  margin-block: 0 var(--typora-block-gap);
+}
+
+/* --------------------------------------------------------------------------
+   11. 移动端
+   -------------------------------------------------------------------------- */
+@media (max-width: 500px) {
+  .markdown-preview-sizer,
+  .markdown-source-view.mod-cm6 .cm-sizer {
+    max-width: 100%;
+  }
+
+  body {
+    --typora-body-size: 15px;
+  }
+}

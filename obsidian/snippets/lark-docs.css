@@ -1,0 +1,1020 @@
+/* ==========================================================================
+   Feishu Docs（飞书文档）— Obsidian CSS Snippet
+   --------------------------------------------------------------------------
+   本文件的数值全部取自飞书文档的真实渲染结果（my.feishu.cn 文档 DOM 的
+   getComputedStyle + 官方 ccm-scope 设计令牌），不是按设计规范推测。
+
+   实测基准：
+   · 字体    -apple-system / SF Pro Text + PingFang SC
+   · 正文    16px，行高 26px（1.625），色 #1F2329
+   · 段间距  8px（相邻段落外边距折叠）
+   · 标题    26 / 22 / 20 / 18 / 16 / 16，字重 500，行高 1.4
+   · 引用    左竖线 2px #BBBFC4，缩进 12px，文字 #646A73
+   · 行内码  1em，底 #F5F6F7，框 1px #DEE0E3，圆角 4px（Source Code Pro）
+   · 代码块  底 #F5F6F7，框 1px #DEE0E3，圆角 8px，14px / 行高 22px（Source Code Pro）
+   · 表格    单元格 1px #DEE0E3、内边距 8px、14px 字、无表头底色
+   · 分割线  1px rgba(31,35,41,.15)，上下各留 12px
+   · 版心    820px
+
+   安装：
+     1. 把本文件放到  <你的库>/.obsidian/snippets/feishu-docs.css
+     2. Obsidian → 设置 → 外观 → CSS 代码片段 → 刷新 → 启用
+     3. 建议同时开启 设置 → 编辑器 →「缩减栏宽」
+
+   微调：只改下面 body 里的 --feishu-* 变量即可。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. 代码字体
+   飞书的代码块与行内代码用 Source Code Pro（网页里叫 SourceCodeProMac）。
+   macOS 默认没有这款字体，这里内嵌 latin 子集的 woff2（OFL 许可），
+   中文与特殊符号仍回落到系统字体。
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Feishu Code";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(data:font/woff2;base64,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) format("woff2");
+}
+
+/* --------------------------------------------------------------------------
+   1. 设计变量（数值来源：飞书 ccm-scope 设计令牌）
+   -------------------------------------------------------------------------- */
+body {
+  /* 字体 */
+  --feishu-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+    Arial, sans-serif;
+  --feishu-font-mono: "Feishu Code", "Source Code Pro", "SFMono-Regular",
+    "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* 色板 —— 飞书令牌实测值 */
+  --feishu-text: #1f2329;           /* --text-title  */
+  --feishu-text-secondary: #646a73; /* --text-caption */
+  --feishu-text-tertiary: #8f959e;
+  --feishu-text-disabled: #bbbfc4;
+  --feishu-blue: #336df4;           /* 实测链接色 rgb(51,109,244) */
+  --feishu-blue-strong: #1456f0;    /* --primary-content-default */
+  --feishu-border: #dee0e3;         /* --line-border-card */
+  --feishu-fill: #f5f6f7;           /* --bg-body-overlay */
+  --feishu-n800: #2b2f36;           /* 代码块文字色 */
+  --feishu-quote-bar: #bbbfc4;      /* --udtoken-quote-bar-bg */
+  --feishu-divider: rgba(31, 35, 41, 0.15);
+  --feishu-mark-bg: #fff3c4;
+  --feishu-selection: rgba(20, 86, 240, 0.18);
+  /* 飞书任务勾选框里的对勾图标（14×14，原样取自文档样式表），用作遮罩 */
+  --feishu-check-mark: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEwLjU4OSAzLjkwM2wuODA4LjgwOGEuMzUuMzUgMCAwMTAgLjQ5NUw2LjE4IDEwLjQyNWEuMzUuMzUgMCAwMS0uNDk1IDBMMi43MDMgNy40NDRhLjM1LjM1IDAgMDEwLS40OTVsLjgwOC0uODA4YS4zNS4zNSAwIDAxLjQ5NSAwbDEuOTI1IDEuOTI0IDQuMTYzLTQuMTYzYS4zNS4zNSAwIDAxLjQ5NSAwWiIgZmlsbD0iIzMzNzBGRiIvPjwvc3ZnPg==");
+
+  /* 排版尺度 */
+  --feishu-content-width: 820px;
+  --feishu-body-size: 16px;
+  --feishu-line-height: 1.625;      /* 26px */
+  --feishu-p-spacing: 8px;
+  --feishu-block-gap: 16px;         /* 图片 / 代码块 / 高亮块 */
+  --feishu-table-top: 28px;
+  --feishu-table-bottom: 24px;
+  --feishu-quote-gap: 8px;
+  --feishu-hr-gap: 12px;
+
+  /* 列表：无序列表与待办保持 26px 缩进；
+     有序列表文字相对正文 24px，序号占 18px 宽、右边缘距文字 6px */
+  --feishu-list-indent: 26px;
+  --feishu-ol-indent: 24px;
+  --feishu-nested-indent: 25px;   /* 飞书二、三级每层缩进 25px */
+  --feishu-ol-marker-width: 18px;
+  --feishu-list-gap: 8px;
+  --feishu-list-marker: var(--feishu-blue-strong);  /* 序号与圆点同为 #1456F0 */
+  --feishu-checkbox-size: 16px;
+
+  /* 标题：上 / 下边距（对应飞书 --hN-margin-top / --hN-margin-bottom） */
+  --feishu-h1-top: 26px; --feishu-h1-bottom: 10px;
+  --feishu-h2-top: 22px; --feishu-h2-bottom: 8px;
+  --feishu-h3-top: 20px; --feishu-h3-bottom: 8px;
+  --feishu-h4-top: 18px; --feishu-h4-bottom: 8px;
+  --feishu-h5-top: 18px; --feishu-h5-bottom: 8px;
+  --feishu-h6-top: 16px; --feishu-h6-bottom: 8px;
+
+  /* 接入 Obsidian 自身变量，让阅读 / 编辑两种模式共用同一套尺度 */
+  --font-text: var(--feishu-font);
+  --font-text-size: var(--feishu-body-size);
+  --font-monospace: var(--feishu-font-mono);
+  --line-height-normal: var(--feishu-line-height);
+  --p-spacing: var(--feishu-p-spacing);
+  --heading-spacing: 1.4em;
+
+  --text-normal: var(--feishu-text);
+  --text-muted: var(--feishu-text-secondary);
+  --text-faint: var(--feishu-text-tertiary);
+  --text-accent: var(--feishu-blue);
+  --text-accent-hover: var(--feishu-blue-strong);
+  --link-color: var(--feishu-blue);
+  --link-color-hover: var(--feishu-blue-strong);
+  --link-external-color: var(--feishu-blue);
+  --link-external-color-hover: var(--feishu-blue-strong);
+  --link-unresolved-color: var(--feishu-text-tertiary);
+  --interactive-accent: var(--feishu-blue-strong);
+
+  --background-modifier-border: var(--feishu-border);
+  --background-modifier-border-hover: var(--feishu-border);
+  --background-modifier-hover: rgba(31, 35, 41, 0.06);
+  --code-background: var(--feishu-fill);
+  --code-normal: var(--feishu-n800);
+
+  --file-line-width: var(--feishu-content-width);
+  --file-margins: 48px 56px 96px;
+
+  /* 列表与任务：接管 Obsidian 自身的列表变量，阅读 / 编辑模式一致 */
+  --list-marker-color: var(--feishu-list-marker);
+  --list-indent: var(--feishu-list-indent);
+  --list-spacing: 0;                /* 核心默认 0.075em 的上下内边距，会把条目撑高 2.4px */
+  --list-bullet-size: 6px;          /* 飞书一级圆点约 6px；二三级在下方按层级覆盖 */
+  --list-bullet-radius: 50%;
+  --checkbox-size: var(--feishu-checkbox-size);
+  --checkbox-radius: 4px;
+  --checkbox-border-color: var(--feishu-text);
+  --checkbox-color: var(--feishu-blue-strong);
+  --checklist-done-color: var(--feishu-text-secondary);
+  --checklist-done-decoration: line-through;
+}
+
+/* 暗色模式：沿用飞书暗色盘，字阶与间距保持不变 */
+body.theme-dark {
+  --feishu-text: #dee0e3;
+  --feishu-text-secondary: #a8abb0;
+  --feishu-text-tertiary: #7d8085;
+  --feishu-text-disabled: #5a5d61;
+  --feishu-blue: #5b8cff;
+  --feishu-blue-strong: #7aa2ff;
+  --feishu-border: #3a3d42;
+  --feishu-fill: #25272a;
+  --feishu-n800: #e2e4e7;
+  --feishu-quote-bar: #4e5157;
+  --feishu-divider: rgba(222, 224, 227, 0.18);
+  --feishu-mark-bg: rgba(255, 214, 102, 0.24);
+  --feishu-selection: rgba(91, 140, 255, 0.3);
+  --background-modifier-hover: rgba(255, 255, 255, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   2. 纸张与版心
+   -------------------------------------------------------------------------- */
+/* 飞书是纯白稿纸；用第三方主题但不想白底时，删掉下面两条背景即可 */
+.theme-light .markdown-reading-view,
+.theme-light .markdown-source-view.mod-cm6 {
+  background-color: #ffffff;
+}
+.theme-dark .markdown-reading-view,
+.theme-dark .markdown-source-view.mod-cm6 {
+  background-color: #1b1c1e;
+}
+
+.markdown-preview-view,
+.markdown-source-view.mod-cm6 {
+  --file-line-width: var(--feishu-content-width);
+}
+
+.markdown-preview-sizer,
+.markdown-source-view.mod-cm6 .cm-sizer {
+  max-width: var(--feishu-content-width);
+  margin-inline: auto;
+}
+
+.markdown-rendered,
+.markdown-source-view.mod-cm6 .cm-content {
+  font-family: var(--feishu-font);
+  font-size: var(--feishu-body-size);
+  line-height: var(--feishu-line-height);
+  color: var(--feishu-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.markdown-source-view.mod-cm6 .cm-content {
+  caret-color: var(--feishu-blue-strong);
+}
+
+/* 飞书没有当前行底色 */
+.markdown-source-view.mod-cm6 .cm-activeLine {
+  background-color: transparent;
+}
+
+::selection {
+  background: var(--feishu-selection);
+}
+
+/* --------------------------------------------------------------------------
+   3. 标题
+   飞书：26 / 22 / 20 / 18 / 16 / 16，字重 500，行高 1.4
+   -------------------------------------------------------------------------- */
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3,
+.markdown-rendered h4,
+.markdown-rendered h5,
+.markdown-rendered h6 {
+  font-family: var(--feishu-font);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--feishu-text);
+  letter-spacing: 0;
+}
+
+/* 注意：Obsidian 核心用 --heading-spacing 控制标题上边距，且存在
+   `.markdown-rendered p + h1` 这类更高优先级的规则，所以每个级别都要
+   单独注入该变量，否则 margin-block-start 会被重置。 */
+.markdown-rendered h1 {
+  --heading-spacing: var(--feishu-h1-top);
+  font-size: 26px;
+  margin-block: var(--feishu-h1-top) var(--feishu-h1-bottom);
+}
+.markdown-rendered h2 {
+  --heading-spacing: var(--feishu-h2-top);
+  font-size: 22px;
+  margin-block: var(--feishu-h2-top) var(--feishu-h2-bottom);
+}
+.markdown-rendered h3 {
+  --heading-spacing: var(--feishu-h3-top);
+  font-size: 20px;
+  margin-block: var(--feishu-h3-top) var(--feishu-h3-bottom);
+}
+.markdown-rendered h4 {
+  --heading-spacing: var(--feishu-h4-top);
+  font-size: 18px;
+  margin-block: var(--feishu-h4-top) var(--feishu-h4-bottom);
+}
+.markdown-rendered h5 {
+  --heading-spacing: var(--feishu-h5-top);
+  font-size: 16px;
+  margin-block: var(--feishu-h5-top) var(--feishu-h5-bottom);
+}
+.markdown-rendered h6 {
+  --heading-spacing: var(--feishu-h6-top);
+  font-size: 16px;
+  margin-block: var(--feishu-h6-top) var(--feishu-h6-bottom);
+}
+
+/* 文档大标题：飞书页面标题 34px / 字重 500 */
+.inline-title {
+  font-family: var(--feishu-font);
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--feishu-text);
+  margin-block: 0 24px;
+}
+
+/* --------------------------------------------------------------------------
+   4. 编辑模式（Live Preview）
+   Obsidian 对 .cm-content > * 强制 margin:0 !important，
+   所以标题的上下留白全部改用 padding。
+   -------------------------------------------------------------------------- */
+.markdown-source-view.mod-cm6 .HyperMD-header-1,
+.markdown-source-view.mod-cm6 .cm-header-1 {
+  font-size: 26px; font-weight: 500; line-height: 1.4; color: var(--feishu-text);
+}
+.markdown-source-view.mod-cm6 .HyperMD-header-2,
+.markdown-source-view.mod-cm6 .cm-header-2 {
+  font-size: 22px; font-weight: 500; line-height: 1.4; color: var(--feishu-text);
+}
+.markdown-source-view.mod-cm6 .HyperMD-header-3,
+.markdown-source-view.mod-cm6 .cm-header-3 {
+  font-size: 20px; font-weight: 500; line-height: 1.4; color: var(--feishu-text);
+}
+.markdown-source-view.mod-cm6 .HyperMD-header-4,
+.markdown-source-view.mod-cm6 .cm-header-4 {
+  font-size: 18px; font-weight: 500; line-height: 1.4; color: var(--feishu-text);
+}
+.markdown-source-view.mod-cm6 .HyperMD-header-5,
+.markdown-source-view.mod-cm6 .HyperMD-header-6,
+.markdown-source-view.mod-cm6 .cm-header-5,
+.markdown-source-view.mod-cm6 .cm-header-6 {
+  font-size: 16px; font-weight: 500; line-height: 1.4; color: var(--feishu-text);
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-1 {
+  padding-block: var(--feishu-h1-top) var(--feishu-h1-bottom);
+}
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-2 {
+  padding-block: var(--feishu-h2-top) var(--feishu-h2-bottom);
+}
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-3 {
+  padding-block: var(--feishu-h3-top) var(--feishu-h3-bottom);
+}
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-4 {
+  padding-block: var(--feishu-h4-top) var(--feishu-h4-bottom);
+}
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-5 {
+  padding-block: var(--feishu-h5-top) var(--feishu-h5-bottom);
+}
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-6 {
+  padding-block: var(--feishu-h6-top) var(--feishu-h6-bottom);
+}
+
+/* --------------------------------------------------------------------------
+   5. 正文与行内元素
+   -------------------------------------------------------------------------- */
+.markdown-rendered p {
+  margin-block: 0 var(--feishu-p-spacing);
+}
+
+.markdown-rendered strong,
+.markdown-source-view.mod-cm6 .cm-strong {
+  font-weight: 700;
+  color: inherit;
+}
+
+.markdown-rendered em,
+.markdown-source-view.mod-cm6 .cm-em {
+  font-style: italic;
+}
+
+.markdown-rendered del,
+.markdown-source-view.mod-cm6 .cm-strikethrough {
+  color: var(--feishu-text-secondary);
+  text-decoration: line-through;
+}
+
+/* 链接：飞书是蓝色、默认无下划线；外链不显示小箭头 */
+.markdown-rendered a,
+.markdown-rendered .internal-link,
+.markdown-rendered .external-link,
+.markdown-source-view.mod-cm6 .cm-link,
+.markdown-source-view.mod-cm6 .cm-url,
+.markdown-source-view.mod-cm6 .cm-hmd-internal-link {
+  color: var(--feishu-blue);
+  text-decoration: none;
+  border-bottom: none;
+  --link-decoration: none;
+  --link-external-decoration: none;
+}
+
+.markdown-rendered a:hover,
+.markdown-rendered .internal-link:hover,
+.markdown-rendered .external-link:hover {
+  color: var(--feishu-blue-strong);
+  text-decoration: underline;
+}
+
+.markdown-rendered .external-link::after {
+  display: none;
+}
+
+/* 高亮：飞书是暖黄底、文字不变色 */
+.markdown-rendered mark {
+  background-color: var(--feishu-mark-bg);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.markdown-source-view.mod-cm6 .cm-highlight {
+  background-color: var(--feishu-mark-bg);
+  color: inherit;
+}
+
+/* 编辑模式里的 Markdown 符号压低存在感 */
+.markdown-source-view.mod-cm6 .cm-formatting,
+.markdown-source-view.mod-cm6 .cm-formatting-header,
+.markdown-source-view.mod-cm6 .cm-formatting-strong,
+.markdown-source-view.mod-cm6 .cm-formatting-em,
+.markdown-source-view.mod-cm6 .cm-formatting-highlight,
+.markdown-source-view.mod-cm6 .cm-formatting-strikethrough,
+.markdown-source-view.mod-cm6 .cm-formatting-quote,
+.markdown-source-view.mod-cm6 .cm-formatting-code {
+  color: var(--feishu-text-disabled);
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   6. 列表
+   纵向节奏（飞书实测）：条目行高 26，相邻条目首行距 34（即 8px 间距）；
+        父项文字到子列表首行也是 34（子列表上方 8px、下方不留）；
+        子列表结束到下一个同级条目 8px。
+   横向：一级无序/待办 26px（保持原样），一级有序 24px；
+        二、三级每层 25px。有序序号在 18px 标记列内居中，右边缘距文字 6px。
+   符号（飞书实测）：有序按层级 1. / a. / i.，四级起回到 1.；
+        无序一级实心圆 •、二级空心圆 ◦、三级起实心方块 ▪，统一蓝色 #1456F0。
+   注意：Obsidian 核心用 li 的 margin 做缩进，且圆点由 .list-bullet:after
+        绘制（颜色取 --list-marker-color），所以不能再给 ul/ol 加 padding，
+        否则缩进会叠加成两级。
+   -------------------------------------------------------------------------- */
+.markdown-rendered ul,
+.markdown-rendered ol {
+  padding-inline-start: 0;
+  margin-block: var(--feishu-p-spacing);
+}
+
+/* 有序列表：不用浏览器默认的 ::marker（它与正文的间距由 UA 决定、数字还会左伸），
+   改成绝对定位的 ::before：标记列 24px，序号在其中的 18px 区域内居中，右边缘距文字 6px */
+.markdown-rendered ol {
+  list-style: none;
+}
+
+.markdown-rendered ol > li {
+  position: relative;
+  list-style: none;
+}
+
+/* 用 list-item 计数器而不是自建计数器，这样 Markdown 的起始序号（<ol start="10">）仍然有效 */
+.markdown-rendered ol > li::before {
+  content: counter(list-item) ".";
+  position: absolute;
+  right: 100%;                                   /* 右边缘贴住文字左边界 */
+  margin-inline-end: 6px;                        /* 再左移 6px，即与文字相距 6px */
+  min-width: var(--feishu-ol-marker-width);      /* 18px 标记列 */
+  line-height: var(--feishu-line-height);
+  text-align: center;                            /* 飞书序号在 18px 标记列里居中 */
+  color: var(--feishu-list-marker);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* 序号格式按层级切换（飞书实测）：一级 1. / 二级 a. / 三级 i. / 四级起回到 1.
+   用 counter(list-item, 样式) 而不是自建计数器，<ol start> 仍然生效 */
+.markdown-rendered li ol > li::before {
+  content: counter(list-item, lower-alpha) ".";
+}
+
+.markdown-rendered li li ol > li::before {
+  content: counter(list-item, lower-roman) ".";
+}
+
+.markdown-rendered li li li ol > li::before {
+  content: counter(list-item) ".";
+}
+
+/* 有序列表里的待办项不显示序号 */
+.markdown-rendered ol > li.task-list-item::before {
+  content: none;
+}
+
+/* 无序列表与待办：沿用原来的 26px 缩进 */
+.markdown-rendered ul > li,
+.markdown-rendered .task-list-item {
+  margin-inline-start: var(--feishu-list-indent);
+}
+
+/* 有序列表单独用 24px，避免影响无序列表 */
+.markdown-rendered ol > li {
+  margin-inline-start: var(--feishu-ol-indent);
+}
+
+/* 嵌套的有序/无序列表缩进统一在下方“嵌套列表”规则里处理 */
+
+/* 条目之间 8px（飞书每个列表块 margin 8/8，折叠后即 8px） */
+.markdown-rendered li + li {
+  margin-block-start: var(--feishu-list-gap);
+}
+
+/* 嵌套列表：与父项之间留 8px（飞书实测父行 26 → 子项首行 34），底部不留 */
+.markdown-rendered ul ul,
+.markdown-rendered ol ol,
+.markdown-rendered ul ol,
+.markdown-rendered ol ul {
+  margin-block: var(--feishu-list-gap) 0;
+}
+
+/* 二、三级缩进 25px/层（核心用 --list-indent 接管嵌套项，这里显式覆盖） */
+.markdown-rendered ul ul > li,
+.markdown-rendered ol ol > li,
+.markdown-rendered ul ol > li,
+.markdown-rendered ol ul > li {
+  margin-inline-start: var(--feishu-nested-indent);
+}
+
+/* 圆点：位置右移，让圆点落在标记列左侧 */
+.markdown-rendered .list-bullet {
+  margin-inline-start: -1.05em;
+  --list-bullet-size: 6px;                       /* 飞书一级圆点约 6px */
+}
+
+.markdown-rendered .list-bullet:after {
+  background-color: var(--feishu-list-marker);
+  border-color: var(--feishu-list-marker);
+}
+
+/* 无序符号按层级变化（飞书实测）：一级实心圆 • / 二级空心圆 ◦ / 三级起实心方块 ▪ */
+.markdown-rendered li ul > li .list-bullet {
+  --list-bullet-size: 6px;
+  --list-bullet-border: 1.2px solid var(--feishu-list-marker);
+  --list-bullet-radius: 50%;
+}
+
+.markdown-rendered li ul > li .list-bullet:after {
+  box-sizing: border-box;
+  background-color: transparent;
+}
+
+.markdown-rendered li li ul > li .list-bullet {
+  --list-bullet-size: 5.5px;
+  --list-bullet-border: none;
+  --list-bullet-radius: 0.5px;
+}
+
+.markdown-rendered li li ul > li .list-bullet:after {
+  background-color: var(--feishu-list-marker);
+}
+
+/* 缩进参考线：飞书的嵌套列表只有缩进、没有竖线，这里把 Obsidian 的引导线关掉
+   阅读视图由 ul/ol 的 ::before 绘制（需 .show-indentation-guide 类），
+   编辑模式由 .cm-indent::before 绘制 */
+.markdown-rendered.show-indentation-guide li > ul::before,
+.markdown-rendered.show-indentation-guide li > ol::before {
+  display: none;
+}
+
+.markdown-source-view.mod-cm6 .cm-indent::before,
+.markdown-source-view.mod-cm6 .cm-active-indent::before {
+  display: none;
+}
+
+/* 有序序号的颜色与字距已在上面 ::before 规则里定义 */
+
+/* 任务列表：飞书勾选框 16×16、1px #1F2329 描边、4px 圆角；
+   勾选后描边不变、方框不填充，只在内部出现 #3370FF 的对勾 */
+input[type="checkbox"].task-list-item-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: var(--feishu-checkbox-size);
+  height: var(--feishu-checkbox-size);
+  padding: 0;
+  border: 1px solid var(--feishu-text);
+  border-radius: 4px;
+  background-color: transparent;
+  background-image: none;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: border-color 0.1s ease;
+}
+
+/* 阅读视图里把勾选框放回 2px 处，文字落在 26px */
+.markdown-rendered input[type="checkbox"].task-list-item-checkbox {
+  position: relative;
+  top: 2px;
+  margin: 0 8px 0 calc(2px - var(--feishu-list-indent));
+}
+
+input[type="checkbox"].task-list-item-checkbox:hover {
+  border-color: var(--feishu-blue-strong);
+}
+
+/* 勾选态：取消核心的蓝色填充 */
+input[type="checkbox"].task-list-item-checkbox:checked {
+  background-color: transparent;
+  border-color: var(--feishu-text);
+}
+
+/* 对勾：用飞书原样的 14×14 图标作遮罩，颜色跟随主题蓝 */
+input[type="checkbox"].task-list-item-checkbox:checked::after {
+  content: "";
+  background-color: var(--feishu-blue-strong);
+  -webkit-mask-image: var(--feishu-check-mark);
+  mask-image: var(--feishu-check-mark);
+  -webkit-mask-size: 14px 14px;
+  mask-size: 14px 14px;
+  -webkit-mask-position: 50% 50%;
+  mask-position: 50% 50%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* 完成项：文字转灰 + 1.6px 删除线（飞书用渐变线条画删除线） */
+.markdown-rendered .task-list-item[data-task="x"],
+.markdown-rendered .task-list-item[data-task="X"] {
+  color: var(--feishu-text-secondary);
+  text-decoration-color: var(--feishu-text-secondary);
+  text-decoration-thickness: 1.6px;
+}
+
+.markdown-rendered .task-list-item {
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+.markdown-rendered .task-list-item::before,
+.markdown-rendered .task-list-item > .list-bullet {
+  display: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. 引用
+   实测：左竖线 2px #BBBFC4、缩进 12px、文字 #646A73、行高 1.625
+   -------------------------------------------------------------------------- */
+.markdown-rendered blockquote {
+  margin: var(--feishu-quote-gap) 0;
+  padding: 0 0 0 12px;
+  border-inline-start: 2px solid var(--feishu-quote-bar);
+  border-radius: 0;
+  background: transparent;
+  color: var(--feishu-text-secondary);
+  font-style: normal;
+  line-height: 1.625;
+}
+
+.markdown-rendered blockquote > :first-child {
+  margin-block-start: 0;
+}
+
+.markdown-rendered blockquote > :last-child {
+  margin-block-end: 0;
+}
+
+.markdown-rendered blockquote p {
+  margin-block: 0 var(--feishu-p-spacing);
+  color: inherit;
+}
+
+/* 编辑模式里的引用 */
+.markdown-source-view.mod-cm6 .HyperMD-quote {
+  border-inline-start: 2px solid var(--feishu-quote-bar);
+  padding-inline-start: 12px;
+  color: var(--feishu-text-secondary);
+  font-style: normal;
+  background: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   8. 代码
+   字体：Source Code Pro（内嵌 latin 子集，见文件开头 @font-face）
+   行内：1em，底 #F5F6F7，框 1px #DEE0E3，圆角 4px，内边距 1px 2px，文字色继承
+   代码块：底 #F5F6F7，框 1px #DEE0E3，圆角 8px，14px / 行高 22px
+   -------------------------------------------------------------------------- */
+.markdown-rendered code {
+  font-family: var(--feishu-font-mono);
+  font-size: 1em;                 /* 飞书行内代码与正文同字号 */
+  line-height: inherit;
+  color: inherit;
+  background: var(--feishu-fill);
+  border: 1px solid var(--feishu-border);
+  border-radius: 4px;
+  padding: 1px 2px;               /* 飞书：外壳 1px 0 + 内层 0 2px */
+  margin: 0 3px;
+}
+
+.markdown-source-view.mod-cm6 .cm-inline-code {
+  font-family: var(--feishu-font-mono);
+  color: inherit;
+  background: var(--feishu-fill);
+  border: 1px solid var(--feishu-border);
+  border-radius: 4px;
+  padding: 0 1px;
+}
+
+.markdown-rendered pre {
+  margin: var(--feishu-block-gap) 0;
+  padding: 16px 20px;
+  background: var(--feishu-fill);
+  border: 1px solid var(--feishu-border);
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--feishu-font-mono);
+  /* 字号必须落在 pre 上，否则行高会按 16px 计算、和内部 code 对不齐 */
+  font-size: 14px;
+  line-height: 1.5714;            /* 飞书实测 22px / 14px */
+}
+
+.markdown-rendered pre code {
+  font-family: var(--feishu-font-mono);
+  font-size: 14px;
+  line-height: 1.5714;            /* 22px */
+  color: var(--feishu-n800);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* 编辑模式里的代码块：首尾行补圆角与内边距，否则会显得被切断 */
+.markdown-source-view.mod-cm6 .HyperMD-codeblock {
+  font-family: var(--feishu-font-mono);
+  font-size: 14px;
+  line-height: 1.5714;
+  background: var(--feishu-fill);
+  border-inline: 1px solid var(--feishu-border);
+  color: var(--feishu-n800);
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-codeblock-begin {
+  border-top: 1px solid var(--feishu-border);
+  border-radius: 8px 8px 0 0;
+  padding-top: 12px;
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-codeblock-end {
+  border-bottom: 1px solid var(--feishu-border);
+  border-radius: 0 0 8px 8px;
+  padding-bottom: 12px;
+}
+
+/* 代码块与上一段落之间留出与正文一致的间距 */
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock-begin-before {
+  padding-top: var(--feishu-block-gap);
+}
+
+/* --------------------------------------------------------------------------
+   9. 表格
+   实测：单元格 1px #DEE0E3、内边距 8px、14px 字、无表头底色、表头不加粗
+   -------------------------------------------------------------------------- */
+.markdown-rendered table {
+  width: 100%;
+  margin: var(--feishu-table-top) 0 var(--feishu-table-bottom);
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 14px;
+  line-height: 1.64;
+  color: var(--feishu-text);
+}
+
+.markdown-rendered th,
+.markdown-rendered td {
+  padding: 8px;
+  border: 1px solid var(--feishu-border);
+  text-align: start;
+  vertical-align: top;
+  background: transparent;
+  /* Obsidian 核心会给 th/td 单独设字号与行高，这里必须显式压回 14px */
+  font-size: 14px;
+  line-height: 1.64;
+  color: var(--feishu-text);
+}
+
+.markdown-rendered th {
+  font-weight: 400;
+}
+
+.markdown-rendered thead tr,
+.markdown-rendered tbody tr {
+  background: transparent;
+}
+
+.markdown-rendered .table-wrapper {
+  margin: var(--feishu-table-top) 0 var(--feishu-table-bottom);
+  overflow-x: auto;
+}
+
+/* 编辑模式中的表格 */
+.markdown-source-view.mod-cm6 .cm-table-widget {
+  margin-block: var(--feishu-block-gap);
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget table {
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.64;
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget th,
+.markdown-source-view.mod-cm6 .cm-table-widget td {
+  padding: 8px;
+  border: 1px solid var(--feishu-border);
+  background: transparent;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.64;
+}
+
+/* --------------------------------------------------------------------------
+   10. 分割线、图片、公式、脚注
+   -------------------------------------------------------------------------- */
+.markdown-rendered hr {
+  height: 1px;
+  margin: calc(var(--feishu-p-spacing) + var(--feishu-hr-gap)) 0;
+  border: none;
+  background: var(--feishu-divider);
+}
+
+/* 图片：飞书上下一律 16px，居中，圆角 4px */
+.markdown-rendered img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-inline: auto;
+  border-radius: 4px;
+}
+
+.markdown-rendered .internal-embed.image-embed,
+.markdown-rendered .image-embed {
+  display: block;
+  margin: var(--feishu-block-gap) 0;
+}
+
+/* 图片单独成段时去掉段落自身外边距，避免叠加成 24px */
+.markdown-rendered p:has(> .internal-embed),
+.markdown-rendered p:has(> img) {
+  margin-block: 0;
+}
+
+.markdown-rendered .internal-embed img {
+  margin: 0 auto;
+}
+
+.math-block,
+mjx-container[display="true"] {
+  margin: var(--feishu-block-gap) 0;
+  text-align: center;
+}
+
+.markdown-rendered .footnotes {
+  margin-block-start: 28px;
+  padding-block-start: 12px;
+  border-top: 1px solid var(--feishu-border);
+  font-size: 14px;
+  color: var(--feishu-text-secondary);
+}
+
+.markdown-rendered .footnotes ol {
+  padding-inline-start: 0;
+}
+
+/* --------------------------------------------------------------------------
+   11. 高亮块（Callout）
+   实测：内边距 16px、圆角 8px、1px 透明描边，内容左侧让出 32px 给图标
+   -------------------------------------------------------------------------- */
+.callout {
+  margin-block: var(--feishu-block-gap);
+  margin-inline: 0;
+  padding: 16px;
+  border: 1px solid transparent;
+  border-inline-start: 1px solid transparent;
+  border-radius: 8px;
+  background-color: var(--feishu-fill);
+  --callout-blend-mode: normal;
+}
+
+.callout-title {
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--feishu-text);
+}
+
+.callout-title-inner {
+  font-weight: 500;
+  color: var(--feishu-text);
+}
+
+.callout-content {
+  font-size: 16px;
+  line-height: 1.625;
+  color: var(--feishu-text);
+}
+
+.callout-content p {
+  margin: 4px 0 0;
+}
+
+.callout.is-collapsible .callout-title {
+  cursor: pointer;
+}
+
+/* 蓝色系：说明 / 信息 */
+.callout[data-callout="note"],
+.callout[data-callout="info"],
+.callout[data-callout="todo"],
+.callout[data-callout="abstract"],
+.callout[data-callout="summary"] {
+  --callout-color: 20, 86, 240;
+  background-color: #eef3ff;
+}
+
+/* 绿色系：提示 / 成功 */
+.callout[data-callout="tip"],
+.callout[data-callout="hint"],
+.callout[data-callout="success"],
+.callout[data-callout="check"],
+.callout[data-callout="done"] {
+  --callout-color: 42, 158, 90;
+  background-color: #e9f7ef;
+}
+
+/* 黄色系：注意 / 警告 */
+.callout[data-callout="warning"],
+.callout[data-callout="caution"],
+.callout[data-callout="attention"],
+.callout[data-callout="question"],
+.callout[data-callout="help"],
+.callout[data-callout="faq"] {
+  --callout-color: 214, 137, 16;
+  background-color: #fff6e5;
+}
+
+/* 红色系：危险 / 错误 */
+.callout[data-callout="danger"],
+.callout[data-callout="error"],
+.callout[data-callout="failure"],
+.callout[data-callout="bug"],
+.callout[data-callout="important"] {
+  --callout-color: 216, 57, 49;
+  background-color: #fdeeee;
+}
+
+/* 紫色系：示例 */
+.callout[data-callout="example"] {
+  --callout-color: 124, 82, 214;
+  background-color: #f2edff;
+}
+
+/* 灰色系：引用 / 备注 */
+.callout[data-callout="quote"],
+.callout[data-callout="cite"] {
+  --callout-color: 100, 106, 115;
+  background-color: #f2f3f5;
+}
+
+/* 暗色下的高亮块底色 */
+body.theme-dark .callout[data-callout="note"],
+body.theme-dark .callout[data-callout="info"],
+body.theme-dark .callout[data-callout="todo"],
+body.theme-dark .callout[data-callout="abstract"],
+body.theme-dark .callout[data-callout="summary"] {
+  background-color: rgba(91, 140, 255, 0.14);
+}
+body.theme-dark .callout[data-callout="tip"],
+body.theme-dark .callout[data-callout="hint"],
+body.theme-dark .callout[data-callout="success"],
+body.theme-dark .callout[data-callout="check"],
+body.theme-dark .callout[data-callout="done"] {
+  background-color: rgba(42, 158, 90, 0.16);
+}
+body.theme-dark .callout[data-callout="warning"],
+body.theme-dark .callout[data-callout="caution"],
+body.theme-dark .callout[data-callout="attention"],
+body.theme-dark .callout[data-callout="question"],
+body.theme-dark .callout[data-callout="help"],
+body.theme-dark .callout[data-callout="faq"] {
+  background-color: rgba(214, 137, 16, 0.16);
+}
+body.theme-dark .callout[data-callout="danger"],
+body.theme-dark .callout[data-callout="error"],
+body.theme-dark .callout[data-callout="failure"],
+body.theme-dark .callout[data-callout="bug"],
+body.theme-dark .callout[data-callout="important"] {
+  background-color: rgba(216, 57, 49, 0.16);
+}
+body.theme-dark .callout[data-callout="example"] {
+  background-color: rgba(124, 82, 214, 0.16);
+}
+body.theme-dark .callout[data-callout="quote"],
+body.theme-dark .callout[data-callout="cite"] {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* 高亮块里的代码块、表格不要叠两层底色 */
+.callout pre,
+.callout table th,
+.callout table td {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   12. 标签、Frontmatter
+   -------------------------------------------------------------------------- */
+.markdown-rendered a.tag,
+.markdown-source-view.mod-cm6 .cm-hashtag {
+  color: var(--feishu-blue);
+  background: rgba(51, 109, 244, 0.08);
+  border: none;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.85em;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.markdown-rendered .frontmatter,
+.markdown-rendered .frontmatter-container {
+  background: var(--feishu-fill);
+  border: 1px solid var(--feishu-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-block-end: var(--feishu-block-gap);
+  font-size: 14px;
+  color: var(--feishu-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   13. 小屏适配
+   -------------------------------------------------------------------------- */
+@media (max-width: 700px) {
+  .markdown-preview-view,
+  .markdown-source-view.mod-cm6 {
+    --file-margins: 24px 18px 56px;
+  }
+
+  .markdown-rendered h1 { --heading-spacing: 22px; font-size: 24px; }
+  .markdown-rendered h2 { --heading-spacing: 20px; font-size: 20px; }
+  .markdown-rendered h3 { --heading-spacing: 18px; font-size: 18px; }
+
+  .inline-title {
+    font-size: 28px;
+  }
+
+  .markdown-rendered table {
+    font-size: 13px;
+  }
+}
